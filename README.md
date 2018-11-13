@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/IBM/audit-ci.svg?branch=master)](https://travis-ci.com/IBM/audit-ci)
+![David](https://img.shields.io/david/IBM/audit-ci.svg)
+
 # Overview
 
 This module is intended to be consumed by your favourite continuous integration tool to
