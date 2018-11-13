@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - "8"
+
+# For your packages, include the following:
+# before_install:
+#   - npm i -g audit-ci@latest && audit-ci -m
+
+install:
+  - npm ci
+
+script:
+  - npm run build
+  - node index.js -l # ensure no security vulnerabilities in our packages

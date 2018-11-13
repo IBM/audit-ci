@@ -1,0 +1,9 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": "airbnb-base",
+  "rules": {
+    "linebreak-style": "off"
+  }
+}
