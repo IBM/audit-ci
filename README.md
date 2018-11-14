@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/IBM/audit-ci.svg?branch=master)](https://travis-ci.com/IBM/audit-ci)
+![CircleCI branch](https://img.shields.io/circleci/project/github/IBM/audit-ci/master.svg)
 ![David](https://img.shields.io/david/IBM/audit-ci.svg)
 
 # Overview
