@@ -19,6 +19,11 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
+      # In your code, add this:
+      # - run:
+      #    name: install-and-run-audit-ci
+      #    command: 'sudo npm i -g audit-ci@^1 && audit-ci -m'
+
       - run:
           name: npm-install
           command: npm install
