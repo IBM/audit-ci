@@ -15,14 +15,14 @@ For `Travis-CI` using PR builds (*recommended*):
 
 ```yml
 before_install:
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci@latest && audit-ci -m; fi
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci@^1 && audit-ci -m; fi
 ```
 
 For `Travis-CI` not using PR builds (*not recommended*):
 
 ```yml
 before_install:
-  - npm i -g audit-ci@latest && audit-ci -m
+  - npm i -g audit-ci@^1 && audit-ci -m
 ```
 
 
@@ -34,12 +34,12 @@ For `CircleCI`:
   - checkout
   - run:
       name: update-npm 
-      command: 'sudo npm i -g npm@latest'
+      command: 'sudo npm i -g npm@^1'
   - restore_cache:
       key: dependency-cache-{{ checksum "package.json" }}
   - run:
       name: install-and-run-audit-ci
-      command: 'sudo npm i -g audit-ci@latest && audit-ci -m'
+      command: 'sudo npm i -g audit-ci@^1 && audit-ci -m'
   - run:
       name: install-npm
       command: npm i
@@ -60,22 +60,22 @@ For `CircleCI`:
 
 ### Prevents build on moderate, high, or critical vulnerabilities; ignores low
 ```sh
-npm i -g audit-ci@latest && audit-ci -m
+npm i -g audit-ci@^1 && audit-ci -m
 ```
 
 ### Prevents build on any vulnerability except lodash (low) and base64url (moderate)
 ```sh
-npm i -g audit-ci@latest && audit-ci -l -w lodash base64url
+npm i -g audit-ci@^1 && audit-ci -l -w lodash base64url
 ```
 
 ### Prevents build with critical vulnerabilities using aliases without showing the report
 ```sh
-npm i -g audit-ci@latest && audit-ci --critical --report false
+npm i -g audit-ci@^1 && audit-ci --critical --report false
 ```
 
 ### Continues build regardless of vulnerabilities, but show the report
 ```sh
-npm i -g audit-ci@latest && audit-ci
+npm i -g audit-ci@^1 && audit-ci
 ```
 
 ## Q&A

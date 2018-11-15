@@ -2,9 +2,9 @@ language: node_js
 node_js:
   - "8"
 
-# For your packages, include the following:
+# In your code, add this:
 # before_install:
-#   - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci@latest && audit-ci -m; fi
+#   - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci@^1 && audit-ci -m; fi
 
 install:
   - npm ci
