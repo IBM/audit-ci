@@ -11,4 +11,5 @@ install:
 
 script:
   - npm run build
-  - node index.js -l # ensure no security vulnerabilities in our packages
+  # ensure no security vulnerabilities in our packages
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then node index.js -l; fi
