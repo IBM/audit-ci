@@ -11,12 +11,20 @@ halt execution if `npm audit` finds vulnerabilities at or above the specified th
 
 Assuming medium, high, and critical severity vulnerabilities prevent build continuation:
 
-For `Travis`:
+For `Travis-CI` using PR builds (*recommended*):
+
+```yml
+before_install:
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci@latest && audit-ci -m; fi
+```
+
+For `Travis-CI` not using PR builds (*not recommended*):
 
 ```yml
 before_install:
   - npm i -g audit-ci@latest && audit-ci -m
 ```
+
 
 For `CircleCI`:
 
@@ -51,25 +59,27 @@ For `CircleCI`:
 ## Examples
 
 ### Prevents build on moderate, high, or critical vulnerabilities; ignores low
-```yml
-before_install:
-  - npm i -g audit-ci@latest && audit-ci -m
+```sh
+npm i -g audit-ci@latest && audit-ci -m
 ```
 
 ### Prevents build on any vulnerability except lodash (low) and base64url (moderate)
-```yml
-before_install:
-  - npm i -g audit-ci@latest && audit-ci -l -w lodash base64url
+```sh
+npm i -g audit-ci@latest && audit-ci -l -w lodash base64url
 ```
 
 ### Prevents build with critical vulnerabilities using aliases without showing the report
-```yml
-before_install:
-  - npm i -g audit-ci@latest && audit-ci --critical --report false
+```sh
+npm i -g audit-ci@latest && audit-ci --critical --report false
 ```
 
 ### Continues build regardless of vulnerabilities, but show the report
-```yml
-before_install:
-  - npm i -g audit-ci@latest && audit-ci
+```sh
+npm i -g audit-ci@latest && audit-ci
 ```
+
+## Q&A
+
+> Why run `audit-ci` on PR builds for `Travis` and not the push builds?
+
+If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix. However, they can't be merged until the fix is implemented. Since `audit-ci` performs the audit on the PR build, it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `master` before passing the audit.
