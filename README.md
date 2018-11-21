@@ -45,6 +45,20 @@ For `CircleCI`:
       command: npm i
 ```
 
+### Installing as a devDependency
+
+For maximum security and to improve the speed of your cached CI build,
+you can consider adding this package as a devDependency on a static version.
+
+> `npm install --save-dev audit-ci@{STATIC_VERSION}`
+
+```yml
+scripts:
+  # This script should be the first that runs to limit the risk of
+  # executing a script from a compromised NPM package.
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then audit-ci -l; fi
+```
+
 ## Options
 
 | Args | Alias       | Description                                                                    |
