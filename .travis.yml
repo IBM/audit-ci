@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - "8"
+  - "10"
 
 # In your code, add this:
 # before_install:
@@ -15,6 +16,6 @@ cache:
   - "$HOME/.npm"
 
 script:
-  - npm run build
   # ensure no security vulnerabilities in our packages
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then node index.js -l; fi
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then node lib/audit-ci.js -l; fi
+  - npm run test
