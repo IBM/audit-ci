@@ -37,4 +37,8 @@ jobs:
       # run tests!
       - run:
           name: run-audit-ci
-          command: node index.js -l
+          command: node lib/audit-ci.js -l
+
+      - run:
+          name: run-tests
+          command: npm run test
