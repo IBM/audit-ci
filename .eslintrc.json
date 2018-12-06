@@ -4,6 +4,7 @@
   },
   "extends": "airbnb-base",
   "rules": {
-    "no-console": "off"
+    "no-console": "off",
+    "valid-jsdoc": "error"
   }
 }
