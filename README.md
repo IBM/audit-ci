@@ -9,22 +9,28 @@ halt execution if `npm audit` finds vulnerabilities at or above the specified th
 
 # Set up
 
+> `npm install --save-dev audit-ci`
+
 Assuming medium, high, and critical severity vulnerabilities prevent build continuation:
 
-For `Travis-CI` using PR builds (*recommended*):
+For `Travis-CI` (only on PR builds is [recommended](#qa)):
 
 ```yml
-before_install:
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci@^1 && audit-ci -m; fi
+scripts:
+  # This script should be the first that runs to reduce the risk of
+  # executing a script from a compromised NPM package.
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then audit-ci --moderate; fi
 ```
 
-For `Travis-CI` not using PR builds (*not recommended*):
+
+For `Travis-CI` not using PR builds:
 
 ```yml
-before_install:
-  - npm i -g audit-ci@^1 && audit-ci -m
+scripts:
+  # This script should be the first that runs to reduce the risk of
+  # executing a script from a compromised NPM package.
+  - audit-ci --moderate
 ```
-
 
 For `CircleCI`:
 
@@ -34,29 +40,26 @@ For `CircleCI`:
   - checkout
   - run:
       name: update-npm 
-      command: 'sudo npm i -g npm@^1'
+      command: 'sudo npm install -g npm'
   - restore_cache:
       key: dependency-cache-{{ checksum "package.json" }}
   - run:
-      name: install-and-run-audit-ci
-      command: 'sudo npm i -g audit-ci@^1 && audit-ci -m'
-  - run:
       name: install-npm
-      command: npm i
+      command: 'npm install --no-audit'
+  # This should run immediately after installation to reduce
+  # the risk of executing a script from a compromised NPM package.
+  - run:
+      name: run-audit-ci
+      command: 'audit-ci --moderate'
 ```
 
-### Installing as a devDependency
+### Installing as a global dependency in your CI
 
-For maximum security and to improve the speed of your cached CI build,
-you can consider adding this package as a devDependency on a static version.
-
-> `npm install --save-dev audit-ci@{STATIC_VERSION}`
+An alternative to installing as a devDependency is to install globally within the CI environment at run-time.
 
 ```yml
-scripts:
-  # This script should be the first that runs to limit the risk of
-  # executing a script from a compromised NPM package.
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then audit-ci -l; fi
+before_install:
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci && audit-ci -m; fi
 ```
 
 ## Options
@@ -74,26 +77,26 @@ scripts:
 
 ### Prevents build on moderate, high, or critical vulnerabilities; ignores low
 ```sh
-npm i -g audit-ci@^1 && audit-ci -m
+audit-ci -m
 ```
 
 ### Prevents build on any vulnerability except lodash (low) and base64url (moderate)
 ```sh
-npm i -g audit-ci@^1 && audit-ci -l -w lodash base64url
+audit-ci -l -w lodash base64url
 ```
 
 ### Prevents build with critical vulnerabilities using aliases without showing the report
 ```sh
-npm i -g audit-ci@^1 && audit-ci --critical --report false
+audit-ci --critical --report false
 ```
 
 ### Continues build regardless of vulnerabilities, but show the report
 ```sh
-npm i -g audit-ci@^1 && audit-ci
+audit-ci
 ```
 
 ## Q&A
 
-> Why run `audit-ci` on PR builds for `Travis` and not the push builds?
+#### Why run `audit-ci` on PR builds for `Travis-CI` and not the push builds?
 
 If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix. However, they can't be merged until the fix is implemented. Since `audit-ci` performs the audit on the PR build, it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `master` before passing the audit.
