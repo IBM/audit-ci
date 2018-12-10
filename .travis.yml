@@ -3,12 +3,14 @@ node_js:
   - "8"
   - "10"
 
-# In your code, add this:
-# before_install:
-#   - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci@^1 && audit-ci -m; fi
-
 install:
   - npm ci
+
+# In your code, add this (after installing with `npm install --save-dev audit-ci`):
+# scripts:
+#   # This script should be the first that runs to reduce the risk of
+#   # executing a script from a compromised NPM package.
+#   - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then audit-ci -m; fi
 
 # Keep the npm cache around to speed up installs
 cache:
@@ -16,6 +18,6 @@ cache:
   - "$HOME/.npm"
 
 script:
-  # ensure no security vulnerabilities in our packages
+  # Have audit-ci run audit-ci to audit itself :)
   - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then node lib/audit-ci.js -l; fi
   - npm run test
