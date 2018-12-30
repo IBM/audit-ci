@@ -2,9 +2,11 @@
   "env": {
     "node": true
   },
-  "extends": "airbnb-base",
+  "extends": ["airbnb-base", "plugin:prettier/recommended"],
+  "plugins": ["prettier"],
   "rules": {
     "no-console": "off",
+    "prettier/prettier": "error",
     "valid-jsdoc": "error"
   }
 }
