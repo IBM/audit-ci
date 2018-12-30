@@ -22,7 +22,6 @@ scripts:
   - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then audit-ci --moderate; fi
 ```
 
-
 For `Travis-CI` not using PR builds:
 
 ```yml
@@ -35,11 +34,11 @@ scripts:
 For `CircleCI`:
 
 ```yml
-# ... excludes set up for job 
- steps:
+# ... excludes set up for job
+steps:
   - checkout
   - run:
-      name: update-npm 
+      name: update-npm
       command: 'sudo npm install -g npm'
   - restore_cache:
       key: dependency-cache-{{ checksum "package.json" }}
@@ -65,7 +64,7 @@ before_install:
 ## Options
 
 | Args | Alias       | Description                                                                    |
-|------|-------------|--------------------------------------------------------------------------------|
+| ---- | ----------- | ------------------------------------------------------------------------------ |
 | -l   | --low       | Prevents integration with low or higher vulnerabilities (default `false`)      |
 | -m   | --moderate  | Prevents integration with moderate or higher vulnerabilities (default `false`) |
 | -h   | --high      | Prevents integration with high or critical vulnerabilities (default `false`)   |
@@ -76,21 +75,25 @@ before_install:
 ## Examples
 
 ### Prevents build on moderate, high, or critical vulnerabilities; ignores low
+
 ```sh
 audit-ci -m
 ```
 
 ### Prevents build on any vulnerability except lodash (low) and base64url (moderate)
+
 ```sh
 audit-ci -l -w lodash base64url
 ```
 
 ### Prevents build with critical vulnerabilities using aliases without showing the report
+
 ```sh
 audit-ci --critical --report false
 ```
 
 ### Continues build regardless of vulnerabilities, but show the report
+
 ```sh
 audit-ci
 ```
