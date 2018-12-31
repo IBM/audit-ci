@@ -6,7 +6,6 @@
   "plugins": ["prettier"],
   "rules": {
     "no-console": "off",
-    "prettier/prettier": "error",
-    "valid-jsdoc": "error"
+    "prettier/prettier": "error"
   }
 }
