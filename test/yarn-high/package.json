@@ -1,5 +1,5 @@
 {
-  "name": "audit-ci-high-vulnerability",
+  "name": "audit-ci-yarn-high-vulnerability",
   "description": "Test package.json with high vulnerability",
   "dependencies": {
     "cryo": "0.0.6"
