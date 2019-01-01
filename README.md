@@ -63,14 +63,15 @@ before_install:
 
 ## Options
 
-| Args | Alias       | Description                                                                    |
-| ---- | ----------- | ------------------------------------------------------------------------------ |
-| -l   | --low       | Prevents integration with low or higher vulnerabilities (default `false`)      |
-| -m   | --moderate  | Prevents integration with moderate or higher vulnerabilities (default `false`) |
-| -h   | --high      | Prevents integration with high or critical vulnerabilities (default `false`)   |
-| -c   | --critical  | Prevents integration only with critical vulnerabilities (default `false`)      |
-| -r   | --report    | Shows the `npm audit --json` report (default `true`)                           |
-| -w   | --whitelist | Vulnerable modules to whitelist from preventing integration (default `none`)   |
+| Args | Alias             | Description                                                                    |
+| ---- | ----------------- | ------------------------------------------------------------------------------ |
+| -l   | --low             | Prevents integration with low or higher vulnerabilities (default `false`)      |
+| -m   | --moderate        | Prevents integration with moderate or higher vulnerabilities (default `false`) |
+| -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)   |
+| -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)      |
+| -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)   |
+| -r   | --report          | Shows the `npm audit --json` report (default `true`)                           |
+| -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)   |
 
 ## Examples
 
