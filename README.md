@@ -5,11 +5,15 @@
 # Overview
 
 This module is intended to be consumed by your favourite continuous integration tool to
-halt execution if `npm audit` finds vulnerabilities at or above the specified threshold.
+halt execution if `npm audit` or `yarn audit` finds vulnerabilities at or above the specified threshold.
 
 # Set up
 
 > `npm install --save-dev audit-ci`
+
+or if you're using `yarn`
+
+> `yarn add -D audit-ci`
 
 Assuming medium, high, and critical severity vulnerabilities prevent build continuation:
 
