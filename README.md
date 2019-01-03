@@ -67,15 +67,16 @@ before_install:
 
 ## Options
 
-| Args | Alias             | Description                                                                    |
-| ---- | ----------------- | ------------------------------------------------------------------------------ |
-| -l   | --low             | Prevents integration with low or higher vulnerabilities (default `false`)      |
-| -m   | --moderate        | Prevents integration with moderate or higher vulnerabilities (default `false`) |
-| -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)   |
-| -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)      |
-| -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)   |
-| -r   | --report          | Shows the `npm audit --json` report (default `true`)                           |
-| -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)   |
+| Args | Alias             | Description                                                                       |
+| ---- | ----------------- | --------------------------------------------------------------------------------- |
+| -l   | --low             | Prevents integration with low or higher vulnerabilities (default `false`)         |
+| -m   | --moderate        | Prevents integration with moderate or higher vulnerabilities (default `false`)    |
+| -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)      |
+| -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)         |
+| -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)      |
+| -r   | --report          | Shows the `npm audit --json` report (default `true`)                              |
+| -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`) |
+| -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)      |
 
 ## Examples
 
@@ -85,10 +86,10 @@ before_install:
 audit-ci -m
 ```
 
-### Prevents build on any vulnerability except lodash (low) and base64url (moderate)
+### Prevents build on any vulnerability except advisory 690 and all of lodash and base64url
 
 ```sh
-audit-ci -l -w lodash base64url
+audit-ci -l -a 690 -w lodash base64url
 ```
 
 ### Prevents build with critical vulnerabilities using aliases without showing the report
