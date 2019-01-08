@@ -4,8 +4,8 @@
   "description": "Audits npm and yarn projects in CI environments",
   "license": "Apache-2.0",
   "main": "./lib/audit-ci.js",
-  "homepage": "https://github.com:IBM/audit-ci",
-  "bugs": "https://github.com:IBM/audit-ci/issues",
+  "homepage": "https://github.com/IBM/audit-ci",
+  "bugs": "https://github.com/IBM/audit-ci/issues",
   "repository": {
     "type": "git",
     "url": "git@github.com:IBM/audit-ci.git"
