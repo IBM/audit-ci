@@ -77,6 +77,27 @@ before_install:
 | -r   | --report          | Shows the `npm audit --json` report (default `true`)                              |
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`) |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)      |
+|      | --config          | Path to JSON config file                                                          |
+
+### (_Optional_) Config file specification
+
+A config file can manage auditing preferences `audit-ci`. The config file's keys match the CLI arguments.
+
+```
+{
+  // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
+  "low": <boolean>, // [Optional] defaults `false`
+  "moderate": <boolean>, // [Optional] defaults `false`
+  "high": <boolean>, // [Optional] defaults `false`
+  "critical": <boolean>, // [Optional] defaults `false`
+  "report": <boolean>, // [Optional] defaults `true`
+  "package-manager": <string>, // [Optional] defaults `"auto"`
+  "advisories": <number[]>, // [Optional] defaults `[]`
+  "whitelist": <string[]> // [Optional] defaults `[]`
+}
+```
+
+Review the examples section for an [example of config file usage](#example-config-file-and-usage).
 
 ## Examples
 
@@ -102,6 +123,23 @@ audit-ci --critical --report false
 
 ```sh
 audit-ci
+```
+
+### Example config file and usage
+
+**audit-ci.json**
+
+```json
+{
+  "low": true,
+  "package-manager": "auto",
+  "advisories": [100, 101],
+  "whitelist": ["example1", "example2"]
+}
+```
+
+```sh
+audit-ci --config audit-ci.json
 ```
 
 ## Q&A
