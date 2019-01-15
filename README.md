@@ -79,6 +79,26 @@ before_install:
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)      |
 |      | --config          | Path to JSON config file                                                          |
 
+### (_Optional_) Config file specification
+
+A config file can manage auditing preferences `audit-ci`. The config file's keys match the CLI arguments.
+
+```
+{
+  // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
+  "low": <boolean>, // [Optional] defaults `false`
+  "moderate": <boolean>, // [Optional] defaults `false`
+  "high": <boolean>, // [Optional] defaults `false`
+  "critical": <boolean>, // [Optional] defaults `false`
+  "report": <boolean>, // [Optional] defaults `true`
+  "package-manager": <string>, // [Optional] defaults `"auto"`
+  "advisories": <number[]>, // [Optional] defaults `[]`
+  "whitelist": <string[]> // [Optional] defaults `[]`
+}
+```
+
+Review the examples section for an [example of config file usage](#example-config-file-and-usage).
+
 ## Examples
 
 ### Prevents build on moderate, high, or critical vulnerabilities; ignores low
@@ -109,14 +129,12 @@ audit-ci
 
 **audit-ci.json**
 
-```json5
+```json
 {
-  // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
-  low: true,
-  report: true, // [Optional] defaults `true`
-  'package-manager': 'auto', // [Optional] defaults `auto`
-  advisories: [100, 101], // [Optional] defaults `[]`
-  whitelist: ['example1', 'example2'], // [Optional] defaults `[]`
+  "low": true,
+  "package-manager": "auto",
+  "advisories": [100, 101],
+  "whitelist": ["example1", "example2"]
 }
 ```
 
