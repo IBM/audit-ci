@@ -77,6 +77,7 @@ before_install:
 | -r   | --report          | Shows the `npm audit --json` report (default `true`)                              |
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`) |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)      |
+|      | --settings        | Path to JSON config file                                                          |
 
 ## Examples
 
@@ -102,6 +103,25 @@ audit-ci --critical --report false
 
 ```sh
 audit-ci
+```
+
+### Settings file
+
+**audit-ci.json**
+
+```json5
+{
+  // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
+  low: true,
+  report: true, // [Optional] defaults `true`
+  'package-manager': 'auto', // [Optional] defaults `auto`
+  advisories: [100, 101], // [Optional] defaults `[]`
+  whitelist: ['example1', 'example2'], // [Optional] defaults `[]`
+}
+```
+
+```sh
+audit-ci --settings audit-ci.json
 ```
 
 ## Q&A
