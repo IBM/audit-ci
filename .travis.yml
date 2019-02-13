@@ -7,6 +7,7 @@ node_js:
 # Even though we support Node 6, we still want to use NPM 6
 install:
   - npmv=$(echo $(npm -v) | head -c 1); if [ "$npmv" -lt "6" ]; then npm i -g npm; fi
+  - npm i -g yarn@latest
   - npm ci
 
 # In your code, add this (after installing with `npm install --save-dev audit-ci`):
