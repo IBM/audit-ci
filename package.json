@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "lint": "eslint -c ./.eslintrc.json lib/*",
-    "test": "npm run lint"
+    "test": "mocha --exit --timeout 60000 --recursive --reporter spec lib/**/*.test.js"
   },
   "dependencies": {
     "cross-spawn": "6.0.5",
