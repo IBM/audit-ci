@@ -24,4 +24,5 @@ cache:
 script:
   # Have audit-ci run audit-ci to audit itself :)
   - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then node lib/audit-ci.js -l; fi
+  - npm run lint
   - npm run test

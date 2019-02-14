@@ -42,5 +42,9 @@ jobs:
           command: node lib/audit-ci.js -l
 
       - run:
+          name: run-lint
+          command: npm run lint
+
+      - run:
           name: run-tests
           command: npm run test
