@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "lint": "eslint -c ./.eslintrc.json lib/*",
-    "test": "mocha --exit --timeout 60000 --recursive --reporter spec lib/**/*.test.js"
+    "test": "mocha --exit --timeout 60000 --recursive --reporter spec test/*.js"
   },
   "dependencies": {
     "byline": "^5.0.0",
