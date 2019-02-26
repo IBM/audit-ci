@@ -77,6 +77,7 @@ before_install:
 | -r   | --report          | Shows the `npm audit --json` report (default `true`)                              |
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`) |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)      |
+| -d   | --directory       | The directory containing the package.json to audit. (default `./`)                |
 |      | --config          | Path to JSON config file                                                          |
 
 ### (_Optional_) Config file specification
@@ -98,6 +99,9 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
 ```
 
 Review the examples section for an [example of config file usage](#example-config-file-and-usage).
+
+> Refrain from using `"directory"` within the config file because `directory`
+> is relative to where the command is run, rather than the directory where the config file exists.
 
 ## Examples
 
@@ -125,9 +129,9 @@ audit-ci --critical --report false
 audit-ci
 ```
 
-### Example config file and usage
+### Example config file and different directory usage
 
-**audit-ci.json**
+**test/npm-config-file/audit-ci.json**
 
 ```json
 {
@@ -139,7 +143,7 @@ audit-ci
 ```
 
 ```sh
-audit-ci --config audit-ci.json
+audit-ci --directory test/npm-config-file --config test/npm-config-file/audit-ci.json
 ```
 
 ## Q&A

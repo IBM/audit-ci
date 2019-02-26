@@ -11,6 +11,9 @@ jobs:
       - run:
           name: update-npm
           command: 'sudo npm i -g npm@latest'
+      - run:
+          name: install yarn
+          command: 'sudo npm i -g yarn@latest'
 
       # Download and cache dependencies
       - restore_cache:
@@ -37,6 +40,10 @@ jobs:
       - run:
           name: run-audit-ci
           command: node lib/audit-ci.js -l
+
+      - run:
+          name: run-lint
+          command: npm run lint
 
       - run:
           name: run-tests
