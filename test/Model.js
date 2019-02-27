@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 const { expect } = require('chai');
-const Model = require('./Model');
+const Model = require('../lib/Model');
 
 function config(additions) {
   return Object.assign({}, { whitelist: [], advisories: [] }, additions);

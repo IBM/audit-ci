@@ -5,21 +5,21 @@
  */
 const { expect } = require('chai');
 const path = require('path');
-const { audit } = require('./yarn-auditer');
+const { audit } = require('../lib/npm-auditer');
 
 function config(additions) {
   return Object.assign({}, { whitelist: [], advisories: [] }, additions);
 }
 
 function testDir(s) {
-  return path.resolve(__dirname, '../test', s);
+  return path.resolve(__dirname, s);
 }
 
-describe('yarn-auditer', () => {
+describe('npm-auditer', () => {
   it('reports critical severity', () => {
     return audit(
       config({
-        directory: testDir('yarn-critical'),
+        directory: testDir('npm-critical'),
         levels: { critical: true },
       }),
       summary => summary
@@ -35,7 +35,7 @@ describe('yarn-auditer', () => {
   it('does not report critical severity if it set to false', () => {
     return audit(
       config({
-        directory: testDir('yarn-critical'),
+        directory: testDir('npm-critical'),
         levels: { critical: false },
       }),
       summary => summary
@@ -51,7 +51,7 @@ describe('yarn-auditer', () => {
   it('reports high severity', () => {
     return audit(
       config({
-        directory: testDir('yarn-high'),
+        directory: testDir('npm-high'),
         levels: { high: true },
       }),
       summary => summary
@@ -67,7 +67,7 @@ describe('yarn-auditer', () => {
   it('reports moderate severity', () => {
     return audit(
       config({
-        directory: testDir('yarn-moderate'),
+        directory: testDir('npm-moderate'),
         levels: { moderate: true },
       }),
       summary => summary
@@ -83,7 +83,7 @@ describe('yarn-auditer', () => {
   it('does not report moderate severity if it set to false', () => {
     return audit(
       config({
-        directory: testDir('yarn-moderate'),
+        directory: testDir('npm-moderate'),
         levels: { moderate: false },
       }),
       summary => summary
@@ -99,7 +99,7 @@ describe('yarn-auditer', () => {
   it('ignores an advisory if it is whitelisted', () => {
     return audit(
       config({
-        directory: testDir('yarn-moderate'),
+        directory: testDir('npm-moderate'),
         levels: { moderate: true },
         advisories: [658],
       }),
@@ -116,7 +116,7 @@ describe('yarn-auditer', () => {
   it('does not ignore an advisory that is not whitelisted', () => {
     return audit(
       config({
-        directory: testDir('yarn-moderate'),
+        directory: testDir('npm-moderate'),
         levels: { moderate: true },
         advisories: [659],
       }),
@@ -133,7 +133,7 @@ describe('yarn-auditer', () => {
   it('reports low severity', () => {
     return audit(
       config({
-        directory: testDir('yarn-low'),
+        directory: testDir('npm-low'),
         levels: { low: true },
       }),
       summary => summary
@@ -149,7 +149,7 @@ describe('yarn-auditer', () => {
   it('passes with no vulnerabilities', () => {
     return audit(
       config({
-        directory: testDir('yarn-none'),
+        directory: testDir('npm-none'),
         levels: { low: true },
       }),
       summary => summary

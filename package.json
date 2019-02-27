@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "lint": "eslint -c ./.eslintrc.json lib/*",
-    "test": "mocha --exit --timeout 60000 --recursive --reporter spec lib/**/*.test.js"
+    "test": "mocha --exit --timeout 60000 --recursive --reporter spec test/*.js"
   },
   "dependencies": {
     "byline": "^5.0.0",
@@ -40,13 +40,13 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "5.13.0",
+    "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-config-prettier": "4.0.0",
     "eslint-plugin-import": "2.16.0",
     "eslint-plugin-prettier": "3.0.1",
     "husky": "1.3.1",
-    "mocha": "^5.2.0",
+    "mocha": "^6.0.2",
     "prettier": "1.16.4",
     "pretty-quick": "1.10.0"
   },
