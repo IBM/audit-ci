@@ -21,6 +21,7 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-critical'),
         levels: { critical: true },
+        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -37,6 +38,7 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-critical'),
         levels: { critical: false },
+        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -53,6 +55,7 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-high'),
         levels: { high: true },
+        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -69,6 +72,7 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-moderate'),
         levels: { moderate: true },
+        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -85,6 +89,7 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-moderate'),
         levels: { moderate: false },
+        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -102,6 +107,7 @@ describe('npm-auditer', () => {
         directory: testDir('npm-moderate'),
         levels: { moderate: true },
         advisories: [658],
+        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -119,6 +125,7 @@ describe('npm-auditer', () => {
         directory: testDir('npm-moderate'),
         levels: { moderate: true },
         advisories: [659],
+        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -135,6 +142,7 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-low'),
         levels: { low: true },
+        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -151,6 +159,7 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-none'),
         levels: { low: true },
+        report: {},
       }),
       summary => summary
     ).then(summary => {

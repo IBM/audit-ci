@@ -74,7 +74,8 @@ before_install:
 | -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)      |
 | -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)         |
 | -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)      |
-| -r   | --report          | Shows the `npm audit --json` report (default `true`)                              |
+| -r   | --report          | Shows the full audit report (default `false`)                                     |
+| -s   | --summary         | Shows the summary audit report (default `true`)                                   |
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`) |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)      |
 | -d   | --directory       | The directory containing the package.json to audit. (default `./`)                |
@@ -91,7 +92,8 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "moderate": <boolean>, // [Optional] defaults `false`
   "high": <boolean>, // [Optional] defaults `false`
   "critical": <boolean>, // [Optional] defaults `false`
-  "report": <boolean>, // [Optional] defaults `true`
+  "report": <boolean>, // [Optional] defaults `false`
+  "summary": <boolean>, // [Optional] defaults `true`
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "advisories": <number[]>, // [Optional] defaults `[]`
   "whitelist": <string[]> // [Optional] defaults `[]`
