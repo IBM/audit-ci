@@ -213,7 +213,7 @@ describe('Model', () => {
     });
   });
 
-  it('ignores whitelisted advisotry IDs', () => {
+  it('ignores whitelisted advisory IDs', () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       whitelist: [],

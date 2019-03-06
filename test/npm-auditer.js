@@ -8,20 +8,36 @@ const path = require('path');
 const { audit } = require('../lib/npm-auditer');
 
 function config(additions) {
-  return Object.assign({}, { whitelist: [], advisories: [] }, additions);
+  const defaultConfig = {
+    levels: {
+      low: false,
+      moderate: false,
+      high: false,
+      critical: false,
+    },
+    report: {},
+    advisories: [],
+    whitelist: [],
+    directory: './',
+    registry: undefined,
+  };
+  return Object.assign({}, defaultConfig, additions);
 }
 
 function testDir(s) {
   return path.resolve(__dirname, s);
 }
 
-describe('npm-auditer', () => {
+// To modify what slow times are, need to use
+// function() {} instead of () => {}
+// eslint-disable-next-line func-names
+describe('npm-auditer', function() {
+  this.slow(6000);
   it('reports critical severity', () => {
     return audit(
       config({
         directory: testDir('npm-critical'),
         levels: { critical: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -38,7 +54,6 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-critical'),
         levels: { critical: false },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -55,7 +70,6 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-high'),
         levels: { high: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -72,7 +86,6 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-moderate'),
         levels: { moderate: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -89,7 +102,6 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-moderate'),
         levels: { moderate: false },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -107,7 +119,6 @@ describe('npm-auditer', () => {
         directory: testDir('npm-moderate'),
         levels: { moderate: true },
         advisories: [658],
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -125,7 +136,6 @@ describe('npm-auditer', () => {
         directory: testDir('npm-moderate'),
         levels: { moderate: true },
         advisories: [659],
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -142,7 +152,6 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-low'),
         levels: { low: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -159,7 +168,6 @@ describe('npm-auditer', () => {
       config({
         directory: testDir('npm-none'),
         levels: { low: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -169,6 +177,30 @@ describe('npm-auditer', () => {
         failedLevelsFound: [],
         advisoriesFound: [],
       });
+    });
+  });
+  it('fails with error code ENOTFOUND on a non-existent site', done => {
+    audit(
+      config({
+        directory: testDir('npm-low'),
+        levels: { low: true },
+        registry: 'https://registry.nonexistentdomain0000000000.com',
+      })
+    ).catch(err => {
+      expect(err.message).to.include('code ENOTFOUND');
+      done();
+    });
+  });
+  it('fails errors with code ENOAUDIT on a valid site with no audit', done => {
+    audit(
+      config({
+        directory: testDir('npm-low'),
+        levels: { low: true },
+        registry: 'https://example.com',
+      })
+    ).catch(err => {
+      expect(err.message).to.include('code ENOAUDIT');
+      done();
     });
   });
 });

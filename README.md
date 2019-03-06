@@ -79,6 +79,7 @@ before_install:
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`) |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)      |
 | -d   | --directory       | The directory containing the package.json to audit. (default `./`)                |
+|      | --registry        | The registry to resolve packages by name and version (default to unspecified)     |
 |      | --config          | Path to JSON config file                                                          |
 
 ### (_Optional_) Config file specification
@@ -96,7 +97,8 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "summary": <boolean>, // [Optional] defaults `true`
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "advisories": <number[]>, // [Optional] defaults `[]`
-  "whitelist": <string[]> // [Optional] defaults `[]`
+  "whitelist": <string[]>, // [Optional] defaults `[]`,
+  "registry": <string> // [Optional] defaults `undefined`
 }
 ```
 
@@ -140,7 +142,8 @@ audit-ci
   "low": true,
   "package-manager": "auto",
   "advisories": [100, 101],
-  "whitelist": ["example1", "example2"]
+  "whitelist": ["example1", "example2"],
+  "registry": "https://registry.npmjs.org"
 }
 ```
 
