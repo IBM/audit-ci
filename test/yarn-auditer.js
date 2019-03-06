@@ -8,20 +8,36 @@ const path = require('path');
 const { audit } = require('../lib/yarn-auditer');
 
 function config(additions) {
-  return Object.assign({}, { whitelist: [], advisories: [] }, additions);
+  const defaultConfig = {
+    levels: {
+      low: false,
+      moderate: false,
+      high: false,
+      critical: false,
+    },
+    report: {},
+    advisories: [],
+    whitelist: [],
+    directory: './',
+    registry: undefined,
+  };
+  return Object.assign({}, defaultConfig, additions);
 }
 
 function testDir(s) {
   return path.resolve(__dirname, s);
 }
 
-describe('yarn-auditer', () => {
+// To modify what slow times are, need to use
+// function() {} instead of () => {}
+// eslint-disable-next-line func-names
+describe('yarn-auditer', function() {
+  this.slow(3000);
   it('reports critical severity', () => {
     return audit(
       config({
         directory: testDir('yarn-critical'),
         levels: { critical: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -38,7 +54,6 @@ describe('yarn-auditer', () => {
       config({
         directory: testDir('yarn-critical'),
         levels: { critical: false },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -55,7 +70,6 @@ describe('yarn-auditer', () => {
       config({
         directory: testDir('yarn-high'),
         levels: { high: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -72,7 +86,6 @@ describe('yarn-auditer', () => {
       config({
         directory: testDir('yarn-moderate'),
         levels: { moderate: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -89,7 +102,6 @@ describe('yarn-auditer', () => {
       config({
         directory: testDir('yarn-moderate'),
         levels: { moderate: false },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -107,7 +119,6 @@ describe('yarn-auditer', () => {
         directory: testDir('yarn-moderate'),
         levels: { moderate: true },
         advisories: [658],
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -125,7 +136,6 @@ describe('yarn-auditer', () => {
         directory: testDir('yarn-moderate'),
         levels: { moderate: true },
         advisories: [659],
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -142,7 +152,6 @@ describe('yarn-auditer', () => {
       config({
         directory: testDir('yarn-low'),
         levels: { low: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -159,7 +168,6 @@ describe('yarn-auditer', () => {
       config({
         directory: testDir('yarn-none'),
         levels: { low: true },
-        report: {},
       }),
       summary => summary
     ).then(summary => {
@@ -170,5 +178,15 @@ describe('yarn-auditer', () => {
         advisoriesFound: [],
       });
     });
+  });
+  it("doesn't use the registry flag since it's not supported in Yarn yet", () => {
+    return audit(
+      config({
+        directory: testDir('yarn-low'),
+        levels: { low: true },
+        registry: 'https://example.com',
+      }),
+      summary => summary
+    );
   });
 });
