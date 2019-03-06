@@ -179,18 +179,15 @@ describe('npm-auditer', function() {
       });
     });
   });
-  // eslint-disable-next-line func-names
-  it('fails with error code ETIMEDOUT on an invalid site', function(done) {
-    this.slow(50000);
-    this.timeout(120000);
+  it('fails with error code ENOTFOUND on a non-existent site', done => {
     audit(
       config({
         directory: testDir('npm-low'),
         levels: { low: true },
-        registry: 'https://registry.npmjs.co',
+        registry: 'https://registry.nonexistentdomain0000000000.com',
       })
     ).catch(err => {
-      expect(err.message).to.include('code ETIMEDOUT');
+      expect(err.message).to.include('code ENOTFOUND');
       done();
     });
   });
