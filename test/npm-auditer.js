@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 /*
  * Copyright IBM All Rights Reserved.
  *
