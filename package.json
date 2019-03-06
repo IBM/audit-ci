@@ -29,7 +29,7 @@
     "README.md"
   ],
   "scripts": {
-    "lint": "eslint -c ./.eslintrc.json lib/*",
+    "lint": "eslint -c ./.eslintrc.json **/*.js",
     "test": "mocha --exit --timeout 40000 --recursive --reporter spec test/*.js"
   },
   "dependencies": {
@@ -40,9 +40,9 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^5.14.1",
+    "eslint": "^5.15.1",
     "eslint-config-airbnb-base": "13.1.0",
-    "eslint-config-prettier": "4.0.0",
+    "eslint-config-prettier": "4.1.0",
     "eslint-plugin-import": "2.16.0",
     "eslint-plugin-prettier": "3.0.1",
     "husky": "1.3.1",
