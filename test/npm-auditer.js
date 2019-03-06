@@ -180,8 +180,9 @@ describe('npm-auditer', function() {
     });
   });
   // eslint-disable-next-line func-names
-  it('fails with error code ETIMEDOUT on an invalid site', function(cb) {
-    this.slow(25000);
+  it('fails with error code ETIMEDOUT on an invalid site', function(done) {
+    this.slow(50000);
+    this.timeout(120000);
     audit(
       config({
         directory: testDir('npm-low'),
@@ -190,10 +191,10 @@ describe('npm-auditer', function() {
       })
     ).catch(err => {
       expect(err.message).to.include('code ETIMEDOUT');
-      cb();
+      done();
     });
   });
-  it('fails errors with code ENOAUDIT on a valid site with no audit', cb => {
+  it('fails errors with code ENOAUDIT on a valid site with no audit', done => {
     audit(
       config({
         directory: testDir('npm-low'),
@@ -202,7 +203,7 @@ describe('npm-auditer', function() {
       })
     ).catch(err => {
       expect(err.message).to.include('code ENOAUDIT');
-      cb();
+      done();
     });
   });
 });
