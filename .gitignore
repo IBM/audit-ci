@@ -2,6 +2,7 @@ node_modules
 .tmp
 .vscode/
 npm-debug.log
+yarn-error.log
 .DS_store*
 
 # Editor files
