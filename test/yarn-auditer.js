@@ -18,6 +18,7 @@ function config(additions) {
     report: {},
     advisories: [],
     whitelist: [],
+    'show-not-found': false,
     directory: './',
     registry: undefined,
   };
@@ -44,6 +45,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: ['critical'],
         advisoriesFound: [663],
       });
@@ -60,6 +62,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -76,6 +79,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: ['high'],
         advisoriesFound: [690],
       });
@@ -92,6 +96,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: ['moderate'],
         advisoriesFound: [658],
       });
@@ -108,6 +113,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -125,6 +131,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [658],
+        whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -142,6 +149,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [659],
         failedLevelsFound: ['moderate'],
         advisoriesFound: [658],
       });
@@ -158,6 +166,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: ['low'],
         advisoriesFound: [577],
       });
@@ -174,6 +183,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
