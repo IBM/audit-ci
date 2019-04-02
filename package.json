@@ -1,6 +1,6 @@
 {
   "name": "audit-ci",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Audits npm and yarn projects in CI environments",
   "license": "Apache-2.0",
   "main": "./lib/audit-ci.js",
@@ -35,12 +35,12 @@
   "dependencies": {
     "byline": "^5.0.0",
     "cross-spawn": "6.0.5",
-    "semver": "5.6.0",
+    "semver": "^6.0.0",
     "yargs": "12.0.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^5.15.1",
+    "eslint": "^5.15.3",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-config-prettier": "4.1.0",
     "eslint-plugin-import": "2.16.0",

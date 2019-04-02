@@ -39,7 +39,7 @@ jobs:
       # Have audit-ci run audit-ci to audit itself :)
       - run:
           name: run-audit-ci
-          command: node lib/audit-ci.js -l
+          command: node lib/audit-ci.js -l --config ./audit-ci.json
 
       - run:
           name: run-lint
