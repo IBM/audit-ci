@@ -78,7 +78,8 @@ before_install:
 | -s   | --summary         | Shows the summary audit report (default `true`)                                   |
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`) |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)      |
-| -d   | --directory       | The directory containing the package.json to audit. (default `./`)                |
+| -d   | --directory       | The directory containing the package.json to audit (default `./`)                 |
+|      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                   |
 |      | --registry        | The registry to resolve packages by name and version (default to unspecified)     |
 |      | --config          | Path to JSON config file                                                          |
 
@@ -97,7 +98,8 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "summary": <boolean>, // [Optional] defaults `true`
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "advisories": <number[]>, // [Optional] defaults `[]`
-  "whitelist": <string[]>, // [Optional] defaults `[]`,
+  "whitelist": <string[]>, // [Optional] defaults `[]`
+  "show-whitelisted-advisories": <boolean>, // [Optional] defaults `true`
   "registry": <string> // [Optional] defaults `undefined`
 }
 ```

@@ -28,6 +28,7 @@ describe('Model', () => {
         )
     ).to.throw('Unsupported severity levels found: hgih, mdrate');
   });
+
   it('returns an empty summary for an empty audit output', () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
@@ -43,10 +44,12 @@ describe('Model', () => {
     expect(summary).to.eql({
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: [],
       advisoriesFound: [],
     });
   });
+
   it('compute a summary', () => {
     const model = new Model({
       levels: { critical: true },
@@ -70,10 +73,12 @@ describe('Model', () => {
     expect(summary).to.eql({
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: ['critical'],
       advisoriesFound: [663],
     });
   });
+
   it('ignores severities that are set to false', () => {
     const model = new Model({
       levels: { critical: true, low: true, high: false, moderate: false },
@@ -139,10 +144,12 @@ describe('Model', () => {
     expect(summary).to.eql({
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: ['critical', 'low'],
       advisoriesFound: [1, 2, 5, 6, 7],
     });
   });
+
   it('ignores whitelisted modules', () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
@@ -208,6 +215,7 @@ describe('Model', () => {
     expect(summary).to.eql({
       whitelistedModulesFound: ['M_A', 'M_D'],
       whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: ['critical', 'low', 'moderate'],
       advisoriesFound: [2, 3, 5, 6, 7],
     });
@@ -278,6 +286,7 @@ describe('Model', () => {
     expect(summary).to.eql({
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [2, 3, 6],
+      whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: ['critical', 'high', 'low'],
       advisoriesFound: [1, 4, 5, 7],
     });
@@ -313,6 +322,7 @@ describe('Model', () => {
     expect(summary).to.eql({
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: ['critical', 'low'],
       advisoriesFound: [1, 2],
     });
