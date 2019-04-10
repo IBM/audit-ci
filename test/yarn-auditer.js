@@ -34,6 +34,26 @@ function testDir(s) {
 // eslint-disable-next-line func-names
 describe('yarn-auditer', function() {
   this.slow(3000);
+  it('prints yarn errors', () => {
+    const directory = testDir('yarn-error');
+    const errorMessagePath = path.resolve(directory, 'error-message');
+    const errorMessage = require(errorMessagePath); // eslint-disable-line
+
+    return audit(
+      config({
+        directory,
+        registry: 'https://example.com',
+        yarn: path.join(directory, 'yarn'),
+      })
+    )
+      .then(() => {
+        // Since we expect an error the promise should never resolve
+        throw new Error();
+      })
+      .catch(err => {
+        expect(err.toString()).to.contain(errorMessage);
+      });
+  });
   it('reports critical severity', () => {
     return audit(
       config({
