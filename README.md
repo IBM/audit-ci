@@ -104,7 +104,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
 }
 ```
 
-Review the examples section for an [example of config file usage](#example-config-file-and-usage).
+Review the examples section for an [example of config file usage](#example-config-file-and-different-directory-usage).
 
 > Refrain from using `"directory"` within the config file because `directory`
 > is relative to where the command is run, rather than the directory where the config file exists.
