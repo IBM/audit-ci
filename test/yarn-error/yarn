@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const path = require('path');
 
-const errorMessagePath = path.resolve(__dirname, 'error-message.js');
+const errorMessagePath = path.resolve(__dirname, 'error-message');
 const errorMessage = require(errorMessagePath); //eslint-disable-line
 
 console.error(errorMessage);
