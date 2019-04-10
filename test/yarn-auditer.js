@@ -34,7 +34,7 @@ function testDir(s) {
 // eslint-disable-next-line func-names
 describe('yarn-auditer', function() {
   this.slow(3000);
-  it('prints yarn errors', () => {
+  it('prints unexpected https://registry.yarnpkg.com 503 error message', () => {
     const directory = testDir('yarn-error');
     const errorMessagePath = path.resolve(directory, 'error-message');
     const errorMessage = require(errorMessagePath); // eslint-disable-line
@@ -42,8 +42,7 @@ describe('yarn-auditer', function() {
     return audit(
       config({
         directory,
-        registry: 'https://example.com',
-        yarn: path.join(directory, 'yarn'),
+        _yarn: path.join(directory, 'yarn'),
       })
     )
       .then(() => {
