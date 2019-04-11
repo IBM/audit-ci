@@ -99,7 +99,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "advisories": <number[]>, // [Optional] defaults `[]`
   "whitelist": <string[]>, // [Optional] defaults `[]`
-  "show-whitelisted-advisories": <boolean>, // [Optional] defaults `true`
+  "show-not-found": <boolean>, // [Optional] defaults `true`
   "registry": <string> // [Optional] defaults `undefined`
 }
 ```
