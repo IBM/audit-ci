@@ -5,7 +5,7 @@
  */
 const { expect } = require('chai');
 const path = require('path');
-const { audit } = require('../lib/yarn-auditer');
+const audit = require('../lib/audit').bind(null, 'yarn');
 
 function config(additions) {
   const defaultConfig = {
@@ -19,6 +19,7 @@ function config(additions) {
     advisories: [],
     whitelist: [],
     'show-not-found': false,
+    'retry-count': 5,
     directory: './',
     registry: undefined,
   };
@@ -34,7 +35,7 @@ function testDir(s) {
 // eslint-disable-next-line func-names
 describe('yarn-auditer', function() {
   this.slow(3000);
-  it('prints unexpected https://registry.yarnpkg.com 503 error message', () => {
+  it.only('prints unexpected https://registry.yarnpkg.com 503 error message', () => {
     const directory = testDir('yarn-error');
     const errorMessagePath = path.resolve(directory, 'error-message');
     const errorMessage = require(errorMessagePath); // eslint-disable-line
