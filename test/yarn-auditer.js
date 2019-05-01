@@ -5,7 +5,7 @@
  */
 const { expect } = require('chai');
 const path = require('path');
-const { audit } = require('../lib/yarn-auditer');
+const audit = require('../lib/audit').bind(null, 'yarn');
 
 function config(additions) {
   const defaultConfig = {
@@ -19,6 +19,7 @@ function config(additions) {
     advisories: [],
     whitelist: [],
     'show-not-found': false,
+    'retry-count': 5,
     directory: './',
     registry: undefined,
   };
