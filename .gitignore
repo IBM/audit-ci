@@ -7,3 +7,7 @@ yarn-error.log
 
 # Editor files
 *~
+
+# Coverage
+coverage/
+.nyc_output/
