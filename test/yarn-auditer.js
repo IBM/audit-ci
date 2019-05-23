@@ -15,7 +15,7 @@ function config(additions) {
       high: false,
       critical: false,
     },
-    report: {},
+    'report-type': 'important',
     advisories: [],
     whitelist: [],
     'show-not-found': false,
