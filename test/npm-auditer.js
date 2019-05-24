@@ -36,11 +36,12 @@ function testDir(s) {
 // eslint-disable-next-line func-names
 describe('npm-auditer', function() {
   this.slow(6000);
-  it('reports critical severity', () => {
+  it('prints full report with critical severity', () => {
     return audit(
       config({
         directory: testDir('npm-critical'),
         levels: { critical: true },
+        'report-type': 'full',
       }),
       summary => summary
     ).then(summary => {
@@ -70,11 +71,12 @@ describe('npm-auditer', function() {
       });
     });
   });
-  it('reports high severity', () => {
+  it('reports summary with high severity', () => {
     return audit(
       config({
         directory: testDir('npm-high'),
         levels: { high: true },
+        'report-type': 'summary',
       }),
       summary => summary
     ).then(summary => {
@@ -87,11 +89,12 @@ describe('npm-auditer', function() {
       });
     });
   });
-  it('reports moderate severity', () => {
+  it('reports important info with moderate severity', () => {
     return audit(
       config({
         directory: testDir('npm-moderate'),
         levels: { moderate: true },
+        'report-type': 'important',
       }),
       summary => summary
     ).then(summary => {

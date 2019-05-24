@@ -54,11 +54,12 @@ describe('yarn-auditer', function() {
         expect(err.toString()).to.contain(errorMessage);
       });
   });
-  it('reports critical severity', () => {
+  it('prints full report with critical severity', () => {
     return audit(
       config({
         directory: testDir('yarn-critical'),
         levels: { critical: true },
+        'report-type': 'full',
       }),
       summary => summary
     ).then(summary => {
@@ -88,11 +89,12 @@ describe('yarn-auditer', function() {
       });
     });
   });
-  it('reports high severity', () => {
+  it('reports summary with high severity', () => {
     return audit(
       config({
         directory: testDir('yarn-high'),
         levels: { high: true },
+        'report-type': 'summary',
       }),
       summary => summary
     ).then(summary => {
@@ -105,11 +107,12 @@ describe('yarn-auditer', function() {
       });
     });
   });
-  it('reports moderate severity', () => {
+  it('reports important info with moderate severity', () => {
     return audit(
       config({
         directory: testDir('yarn-moderate'),
         levels: { moderate: true },
+        'report-type': 'important',
       }),
       summary => summary
     ).then(summary => {
