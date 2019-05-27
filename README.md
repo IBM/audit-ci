@@ -58,31 +58,32 @@ steps:
 
 ### Installing as a global dependency in your CI
 
-An alternative to installing as a devDependency is to install globally within the CI environment at run-time.
+An alternative to installing as a devDependency is to use npx to install within the CI environment at run-time.
 
 ```yml
 before_install:
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm i -g audit-ci && audit-ci -m; fi
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npx audit-ci -m; fi
 ```
 
 ## Options
 
-| Args | Alias             | Description                                                                                |
-| ---- | ----------------- | ------------------------------------------------------------------------------------------ |
-| -l   | --low             | Prevents integration with low or higher vulnerabilities (default `false`)                  |
-| -m   | --moderate        | Prevents integration with moderate or higher vulnerabilities (default `false`)             |
-| -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)               |
-| -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)                  |
-| -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)               |
-| -r   | --report          | Shows the full audit report (default `false`)                                              |
-| -s   | --summary         | Shows the summary audit report (default `true`)                                            |
-| -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`)          |
-| -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)               |
-| -d   | --directory       | The directory containing the package.json to audit (default `./`)                          |
-|      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                            |
-|      | --registry        | The registry to resolve packages by name and version (default to unspecified)              |
-|      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`) |
-|      | --config          | Path to JSON config file                                                                   |
+| Args | Alias             | Description                                                                                           |
+| ---- | ----------------- | ----------------------------------------------------------------------------------------------------- |
+| -l   | --low             | Prevents integration with low or higher vulnerabilities (default `false`)                             |
+| -m   | --moderate        | Prevents integration with moderate or higher vulnerabilities (default `false`)                        |
+| -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)                          |
+| -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)                             |
+| -p   | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
+| -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)                          |
+| -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`)                     |
+| -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)                          |
+| -d   | --directory       | The directory containing the package.json to audit (default `./`)                                     |
+|      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                                       |
+|      | --registry        | The registry to resolve packages by name and version (default to unspecified)                         |
+|      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
+|      | --config          | Path to JSON config file                                                                              |
+| -r   | --report          | [_DEPRECATED_] (Use `--report-type full`) Shows the full audit report (default `false`)               |
+| -s   | --summary         | [_DEPRECATED_] (Use `--report-type summary`) Shows the summary audit report (default `false`)         |
 
 ### (_Optional_) Config file specification
 
@@ -95,8 +96,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "moderate": <boolean>, // [Optional] defaults `false`
   "high": <boolean>, // [Optional] defaults `false`
   "critical": <boolean>, // [Optional] defaults `false`
-  "report": <boolean>, // [Optional] defaults `false`
-  "summary": <boolean>, // [Optional] defaults `true`
+  "report-type": <string>, // [Optional] defaults `important`
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "advisories": <number[]>, // [Optional] defaults `[]`
   "whitelist": <string[]>, // [Optional] defaults `[]`
@@ -125,16 +125,16 @@ audit-ci -m
 audit-ci -l -a 690 -w lodash base64url
 ```
 
-### Prevents build with critical vulnerabilities using aliases without showing the report
+### Prevents build with critical vulnerabilities showing the full report
 
 ```sh
-audit-ci --critical --report false
+audit-ci --critical --report-type full
 ```
 
-### Continues build regardless of vulnerabilities, but show the report
+### Continues build regardless of vulnerabilities, but show the summary report
 
 ```sh
-audit-ci
+audit-ci --report-type summary
 ```
 
 ### Example config file and different directory usage
