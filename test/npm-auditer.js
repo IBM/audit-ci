@@ -23,6 +23,7 @@ function config(additions) {
     'retry-count': 5,
     directory: './',
     registry: undefined,
+    'pass-enoaudit': false,
   };
   return Object.assign({}, defaultConfig, additions);
 }
@@ -217,5 +218,15 @@ describe('npm-auditer', function() {
       expect(err.message).to.include('code ENOAUDIT');
       done();
     });
+  });
+  it('passes using --pass-enoaudit', () => {
+    const directory = testDir('npm-500');
+    return audit(
+      config({
+        directory,
+        'pass-enoaudit': true,
+        _npm: path.join(directory, 'npm'),
+      })
+    );
   });
 });
