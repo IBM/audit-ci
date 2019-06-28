@@ -219,14 +219,14 @@ describe('npm-auditer', function() {
       done();
     });
   });
-  it('passes using --pass-enoaudit', () => {
-    const directory = testDir('npm-500');
-    return audit(
-      config({
-        directory,
-        'pass-enoaudit': true,
-        _npm: path.join(directory, 'npm'),
-      })
-    );
-  });
+  // it('passes using --pass-enoaudit', () => {
+  //   const directory = testDir('npm-500');
+  //   return audit(
+  //     config({
+  //       directory,
+  //       'pass-enoaudit': true,
+  //       _npm: path.join(directory, 'npm'),
+  //     })
+  //   );
+  // });
 });
