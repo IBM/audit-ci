@@ -173,7 +173,7 @@ describe('yarn-auditer', function() {
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         failedLevelsFound: ['low'],
-        advisoriesFound: [577],
+        advisoriesFound: [722],
       });
     });
   });
