@@ -78,6 +78,7 @@ before_install:
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`)                     |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)                          |
 | -d   | --directory       | The directory containing the package.json to audit (default `./`)                                     |
+|      | --pass-enoaudit   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
 |      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                                       |
 |      | --registry        | The registry to resolve packages by name and version (default to unspecified)                         |
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
@@ -100,6 +101,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "advisories": <number[]>, // [Optional] defaults `[]`
   "whitelist": <string[]>, // [Optional] defaults `[]`
+  "pass-enoaudit": <boolean>, // [Optional] defaults `false`
   "show-not-found": <boolean>, // [Optional] defaults `true`
   "registry": <string>, // [Optional] defaults `undefined`
   "retry-count": // [Optional] defaults 5
@@ -160,3 +162,7 @@ audit-ci --directory test/npm-config-file --config test/npm-config-file/audit-ci
 #### Why run `audit-ci` on PR builds for `Travis-CI` and not the push builds?
 
 If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix. However, they can't be merged until the fix is implemented. Since `audit-ci` performs the audit on the PR build, it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `master` before passing the audit.
+
+#### NPM/Yarn is returning ENOAUDIT and is breaking my build, what do I do?
+
+The config option `--pass-enoaudit` allows passing if no audit is performed due to the registry returning ENOAUDIT. It is `false` by default to reduce the risk of merging in a vulnerable package. However, if the convenience of passing is more important for your project then you can add `--pass-enoaudit` into the CLI or add it to the config.
