@@ -73,7 +73,6 @@ before_install:
 | -m   | --moderate        | Prevents integration with moderate or higher vulnerabilities (default `false`)                        |
 | -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)                          |
 | -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)                             |
-| -p   | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
 | -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)                          |
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`)                     |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)                          |
@@ -81,6 +80,7 @@ before_install:
 |      | --pass-enoaudit   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
 |      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                                       |
 |      | --registry        | The registry to resolve packages by name and version (default to unspecified)                         |
+|      | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
 |      | --config          | Path to JSON config file                                                                              |
 | -r   | --report          | [_DEPRECATED_] (Use `--report-type full`) Shows the full audit report (default `false`)               |
