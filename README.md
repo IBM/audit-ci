@@ -76,6 +76,7 @@ before_install:
 | -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)                          |
 | -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`)                     |
 | -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)                          |
+|      | --path-whitelist  | Vulnerable module paths to whitelist from preventing integration (default `none`)                     |
 | -d   | --directory       | The directory containing the package.json to audit (default `./`)                                     |
 |      | --pass-enoaudit   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
 |      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                                       |
@@ -101,6 +102,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "advisories": <number[]>, // [Optional] defaults `[]`
   "whitelist": <string[]>, // [Optional] defaults `[]`
+  "path-whitelist": <string[]>, // [Optional] defaults `[]`
   "pass-enoaudit": <boolean>, // [Optional] defaults `false`
   "show-not-found": <boolean>, // [Optional] defaults `true`
   "registry": <string>, // [Optional] defaults `undefined`
@@ -149,6 +151,7 @@ audit-ci --report-type summary
   "package-manager": "auto",
   "advisories": [100, 101],
   "whitelist": ["example1", "example2"],
+  "path-whitelist": ["52|example3"],
   "registry": "https://registry.npmjs.org"
 }
 ```

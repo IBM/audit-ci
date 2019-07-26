@@ -50,6 +50,7 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['critical'],
         advisoriesFound: [663],
       });
@@ -67,6 +68,7 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -85,6 +87,7 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['high'],
         advisoriesFound: [690],
       });
@@ -103,6 +106,7 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['moderate'],
         advisoriesFound: [658],
       });
@@ -120,6 +124,7 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -138,6 +143,7 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [658],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -156,8 +162,47 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [659],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['moderate'],
         advisoriesFound: [658],
+      });
+    });
+  });
+  it('reports only vulnerabilities with a not whitelisted path', () => {
+    return audit(
+      config({
+        directory: testDir('npm-whitelisted-path'),
+        levels: { moderate: true },
+        'path-whitelist': ['880|github-build>axios'],
+      }),
+      summary => summary
+    ).then(summary => {
+      expect(summary).to.eql({
+        whitelistedModulesFound: [],
+        whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: ['880|github-build>axios'],
+        failedLevelsFound: ['moderate'],
+        advisoriesFound: [880],
+      });
+    });
+  });
+  it('whitelist all vulnerabilities with a whitelisted path', () => {
+    return audit(
+      config({
+        directory: testDir('npm-whitelisted-path'),
+        levels: { moderate: true },
+        'path-whitelist': ['880|axios', '880|github-build>axios'],
+      }),
+      summary => summary
+    ).then(summary => {
+      expect(summary).to.eql({
+        whitelistedModulesFound: [],
+        whitelistedAdvisoriesFound: [],
+        whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: ['880|axios', '880|github-build>axios'],
+        failedLevelsFound: [],
+        advisoriesFound: [],
       });
     });
   });
@@ -173,6 +218,7 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['low'],
         advisoriesFound: [722],
       });
@@ -190,6 +236,7 @@ describe('npm-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });

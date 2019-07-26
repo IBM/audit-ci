@@ -49,6 +49,7 @@ describe('yarn-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['critical'],
         advisoriesFound: [663],
       });
@@ -66,6 +67,7 @@ describe('yarn-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -84,6 +86,7 @@ describe('yarn-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['high'],
         advisoriesFound: [690],
       });
@@ -102,6 +105,7 @@ describe('yarn-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['moderate'],
         advisoriesFound: [658],
       });
@@ -119,6 +123,7 @@ describe('yarn-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -137,6 +142,7 @@ describe('yarn-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [658],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });
@@ -154,6 +160,7 @@ describe('yarn-auditer', function() {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
+        whitelistedPathsFound: [],
         whitelistedAdvisoriesNotFound: [659],
         failedLevelsFound: ['moderate'],
         advisoriesFound: [658],
@@ -172,6 +179,7 @@ describe('yarn-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: ['low'],
         advisoriesFound: [722],
       });
@@ -189,6 +197,7 @@ describe('yarn-auditer', function() {
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
+        whitelistedPathsFound: [],
         failedLevelsFound: [],
         advisoriesFound: [],
       });

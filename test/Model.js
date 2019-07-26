@@ -44,6 +44,7 @@ describe('Model', () => {
     expect(summary).to.eql({
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [],
+      whitelistedPathsFound: [],
       whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: [],
       advisoriesFound: [],
@@ -65,6 +66,7 @@ describe('Model', () => {
           module_name: 'open',
           severity: 'critical',
           url: 'https://npmjs.com/advisories/663',
+          findings: [{ paths: ['open'] }],
         },
       },
     };
@@ -74,6 +76,7 @@ describe('Model', () => {
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [],
       whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
       failedLevelsFound: ['critical'],
       advisoriesFound: [663],
     });
@@ -94,6 +97,7 @@ describe('Model', () => {
           module_name: 'M_A',
           severity: 'critical',
           url: 'https://A',
+          findings: [{ paths: ['M_A'] }],
         },
         2: {
           id: 2,
@@ -101,6 +105,7 @@ describe('Model', () => {
           module_name: 'M_B',
           severity: 'low',
           url: 'https://B',
+          findings: [{ paths: ['M_B'] }],
         },
         3: {
           id: 3,
@@ -108,6 +113,7 @@ describe('Model', () => {
           module_name: 'M_C',
           severity: 'moderate',
           url: 'https://C',
+          findings: [{ paths: ['M_C'] }],
         },
         4: {
           id: 4,
@@ -115,6 +121,7 @@ describe('Model', () => {
           module_name: 'M_D',
           severity: 'high',
           url: 'https://D',
+          findings: [{ paths: ['M_D'] }],
         },
         5: {
           id: 5,
@@ -122,6 +129,7 @@ describe('Model', () => {
           module_name: 'M_E',
           severity: 'critical',
           url: 'https://E',
+          findings: [{ paths: ['M_E'] }],
         },
         6: {
           id: 6,
@@ -129,6 +137,7 @@ describe('Model', () => {
           module_name: 'M_F',
           severity: 'low',
           url: 'https://F',
+          findings: [{ paths: ['M_F'] }],
         },
         7: {
           id: 7,
@@ -136,6 +145,7 @@ describe('Model', () => {
           module_name: 'M_G',
           severity: 'low',
           url: 'https://G',
+          findings: [{ paths: ['M_G'] }],
         },
       },
     };
@@ -145,6 +155,7 @@ describe('Model', () => {
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [],
       whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
       failedLevelsFound: ['critical', 'low'],
       advisoriesFound: [1, 2, 5, 6, 7],
     });
@@ -165,6 +176,7 @@ describe('Model', () => {
           module_name: 'M_A',
           severity: 'critical',
           url: 'https://A',
+          findings: [{ paths: ['M_A'] }],
         },
         2: {
           id: 2,
@@ -172,6 +184,7 @@ describe('Model', () => {
           module_name: 'M_B',
           severity: 'low',
           url: 'https://B',
+          findings: [{ paths: ['M_B'] }],
         },
         3: {
           id: 3,
@@ -179,6 +192,7 @@ describe('Model', () => {
           module_name: 'M_C',
           severity: 'moderate',
           url: 'https://C',
+          findings: [{ paths: ['M_C'] }],
         },
         4: {
           id: 4,
@@ -186,6 +200,7 @@ describe('Model', () => {
           module_name: 'M_D',
           severity: 'high',
           url: 'https://D',
+          findings: [{ paths: ['M_D'] }],
         },
         5: {
           id: 5,
@@ -193,6 +208,7 @@ describe('Model', () => {
           module_name: 'M_E',
           severity: 'critical',
           url: 'https://E',
+          findings: [{ paths: ['M_E'] }],
         },
         6: {
           id: 6,
@@ -200,6 +216,7 @@ describe('Model', () => {
           module_name: 'M_F',
           severity: 'low',
           url: 'https://F',
+          findings: [{ paths: ['M_F'] }],
         },
         7: {
           id: 7,
@@ -207,6 +224,7 @@ describe('Model', () => {
           module_name: 'M_G',
           severity: 'low',
           url: 'https://G',
+          findings: [{ paths: ['M_G'] }],
         },
       },
     };
@@ -216,6 +234,7 @@ describe('Model', () => {
       whitelistedModulesFound: ['M_A', 'M_D'],
       whitelistedAdvisoriesFound: [],
       whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
       failedLevelsFound: ['critical', 'low', 'moderate'],
       advisoriesFound: [2, 3, 5, 6, 7],
     });
@@ -236,6 +255,7 @@ describe('Model', () => {
           module_name: 'M_A',
           severity: 'critical',
           url: 'https://A',
+          findings: [{ paths: ['M_A'] }],
         },
         2: {
           id: 2,
@@ -243,6 +263,7 @@ describe('Model', () => {
           module_name: 'M_B',
           severity: 'low',
           url: 'https://B',
+          findings: [{ paths: ['M_B'] }],
         },
         3: {
           id: 3,
@@ -250,6 +271,7 @@ describe('Model', () => {
           module_name: 'M_C',
           severity: 'moderate',
           url: 'https://C',
+          findings: [{ paths: ['M_C'] }],
         },
         4: {
           id: 4,
@@ -257,6 +279,7 @@ describe('Model', () => {
           module_name: 'M_D',
           severity: 'high',
           url: 'https://D',
+          findings: [{ paths: ['M_D'] }],
         },
         5: {
           id: 5,
@@ -264,6 +287,7 @@ describe('Model', () => {
           module_name: 'M_E',
           severity: 'critical',
           url: 'https://E',
+          findings: [{ paths: ['M_E'] }],
         },
         6: {
           id: 6,
@@ -271,6 +295,7 @@ describe('Model', () => {
           module_name: 'M_F',
           severity: 'low',
           url: 'https://F',
+          findings: [{ paths: ['M_F'] }],
         },
         7: {
           id: 7,
@@ -278,6 +303,7 @@ describe('Model', () => {
           module_name: 'M_G',
           severity: 'low',
           url: 'https://G',
+          findings: [{ paths: ['M_G'] }],
         },
       },
     };
@@ -287,6 +313,7 @@ describe('Model', () => {
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [2, 3, 6],
       whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
       failedLevelsFound: ['critical', 'high', 'low'],
       advisoriesFound: [1, 4, 5, 7],
     });
@@ -307,6 +334,7 @@ describe('Model', () => {
           module_name: 'M_A',
           severity: 'low',
           url: 'https://A',
+          findings: [{ paths: ['M_A'] }],
         },
         2: {
           id: 2,
@@ -314,6 +342,7 @@ describe('Model', () => {
           module_name: 'M_B',
           severity: 'critical',
           url: 'https://B',
+          findings: [{ paths: ['M_B'] }],
         },
       },
     };
@@ -323,6 +352,7 @@ describe('Model', () => {
       whitelistedModulesFound: [],
       whitelistedAdvisoriesFound: [],
       whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
       failedLevelsFound: ['critical', 'low'],
       advisoriesFound: [1, 2],
     });
