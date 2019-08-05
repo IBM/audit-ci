@@ -151,7 +151,7 @@ audit-ci --report-type summary
   "package-manager": "auto",
   "advisories": [100, 101],
   "whitelist": ["example1", "example2"],
-  "path-whitelist": ["52|example3"],
+  "path-whitelist": ["52|example3", "880|example4", "880|example5>example4"],
   "registry": "https://registry.npmjs.org"
 }
 ```
