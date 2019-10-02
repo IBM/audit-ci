@@ -295,9 +295,17 @@ describe('Model', () => {
           module_name: 'M_F',
           severity: 'low',
           url: 'https://F',
-          findings: [{ paths: ['M_F'] }],
+          findings: [{ paths: ['M_F_1'] }],
         },
         7: {
+          id: 6,
+          title: 'F',
+          module_name: 'M_F',
+          severity: 'low',
+          url: 'https://F',
+          findings: [{ paths: ['M_F_2'] }],
+        },
+        8: {
           id: 7,
           title: 'G',
           module_name: 'M_G',
