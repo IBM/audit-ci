@@ -45,4 +45,4 @@ e.g.
 
 ## Testing
 
-Currently, testing is performed on a manual basis.
+Mocha + Chai testing is performed in the `test` directory. Most tests are end-to-end tests. In the case for `audit-ci`, when calling `audit-ci`, compare the expected output with the actual output.
