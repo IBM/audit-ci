@@ -34,8 +34,7 @@ function testDir(s) {
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
-// eslint-disable-next-line func-names
-describe('npm-auditer', function() {
+describe('npm-auditer', function testNpmAuditer() {
   this.slow(6000);
   it('prints full report with critical severity', () => {
     return audit(
