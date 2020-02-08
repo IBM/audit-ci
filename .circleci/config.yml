@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:10.13
+      - image: circleci/node:lts
 
     working_directory: ~/repo
 
@@ -11,9 +11,6 @@ jobs:
       - run:
           name: update-npm
           command: 'sudo npm i -g npm@latest'
-      - run:
-          name: install yarn
-          command: 'sudo npm i -g yarn@latest'
 
       # Download and cache dependencies
       - restore_cache:
