@@ -23,7 +23,13 @@ For `Travis-CI` (only on PR builds is [recommended](#qa)):
 scripts:
   # This script should be the first that runs to reduce the risk of
   # executing a script from a compromised NPM package.
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then audit-ci --moderate; fi
+  - audit-ci --moderate
+  # If you use a pull-request-only workflow,
+  # it's better to not run audit-ci on master and only run it on pull requests.
+  # For more info: https://github.com/IBM/audit-ci/issues/69
+  # For a PR-only workflow, use the below script instead of the above script:
+  #
+  # - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then audit-ci --moderate; fi
 ```
 
 For `Travis-CI` not using PR builds:
@@ -53,16 +59,23 @@ steps:
   # the risk of executing a script from a compromised NPM package.
   - run:
       name: run-audit-ci
-      command: 'audit-ci --moderate'
+      # Only have audit-ci checks on pull requests
+      command: audit-ci --moderate
+      # If you use a pull-request-only workflow,
+      # it's better to not run audit-ci on master and only run it on pull requests.
+      # For more info: https://github.com/IBM/audit-ci/issues/69
+      # For a PR-only workflow, use the below command instead of the above command:
+      #
+      # command: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then audit-ci --moderate ; fi
 ```
 
-### Installing as a global dependency in your CI
+### NPX
 
 An alternative to installing as a devDependency is to use npx to install within the CI environment at run-time.
 
 ```yml
 before_install:
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npx audit-ci -m; fi
+  - npx audit-ci -m
 ```
 
 ## Options
