@@ -33,8 +33,7 @@ function testDir(s) {
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
-// eslint-disable-next-line func-names
-describe('yarn-auditer', function() {
+describe('yarn-auditer', function testYarnAuditer() {
   this.slow(3000);
   it('prints full report with critical severity', () => {
     return audit(
