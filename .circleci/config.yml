@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run:
           name: update-npm
-          command: 'sudo npm i -g npm@latest'
+          command: "sudo npm i -g npm@latest"
 
       # Download and cache dependencies
       - restore_cache:
