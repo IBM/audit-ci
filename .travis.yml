@@ -1,12 +1,11 @@
 language: node_js
 node_js:
-  - '6'
-  - '8'
-  - '10'
+  - "8"
+  - "10"
 
 # Docs: https://docs.travis-ci.com/user/languages/javascript-with-nodejs/#using-npm
 before_install:
-  # Even though we support Node 6, we still want to use NPM 6
+  # Use NPM 6
   - npmv=$(echo $(npm -v) | head -c 1); if [ "$npmv" -lt "6" ]; then npm i -g npm; fi
 
 install:
