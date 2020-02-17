@@ -49,12 +49,12 @@ steps:
   - checkout
   - run:
       name: update-npm
-      command: 'sudo npm install -g npm'
+      command: "sudo npm install -g npm"
   - restore_cache:
       key: dependency-cache-{{ checksum "package.json" }}
   - run:
       name: install-npm
-      command: 'npm install --no-audit'
+      command: "npm install --no-audit"
   # This should run immediately after installation to reduce
   # the risk of executing a script from a compromised NPM package.
   - run:

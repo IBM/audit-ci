@@ -3,41 +3,41 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-const { expect } = require('chai');
-const Model = require('../lib/Model');
+const { expect } = require("chai");
+const Model = require("../lib/Model");
 
 function config(additions) {
-  return Object.assign({}, { whitelist: [], advisories: [] }, additions);
+  return { whitelist: [], advisories: [], ...additions };
 }
 
-describe('Model', () => {
-  it('rejects misspelled severity levels', () => {
+describe("Model", () => {
+  it("rejects misspelled severity levels", () => {
     expect(() => new Model(config({ levels: { critical_: true } }))).to.throw(
-      'Unsupported severity levels found: critical_'
+      "Unsupported severity levels found: critical_"
     );
     expect(
       () =>
         new Model(config({ levels: { Low: true, hgih: true, mdrate: true } }))
-    ).to.throw('Unsupported severity levels found: Low, hgih, mdrate');
+    ).to.throw("Unsupported severity levels found: Low, hgih, mdrate");
     expect(
       () =>
         new Model(
           config({
-            levels: { mdrate: true, critical: true, hgih: true, low: true },
+            levels: { mdrate: true, critical: true, hgih: true, low: true }
           })
         )
-    ).to.throw('Unsupported severity levels found: hgih, mdrate');
+    ).to.throw("Unsupported severity levels found: hgih, mdrate");
   });
 
-  it('returns an empty summary for an empty audit output', () => {
+  it("returns an empty summary for an empty audit output", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       whitelist: [],
-      advisories: [],
+      advisories: []
     });
 
     const parsedAuditOutput = {
-      advisories: {},
+      advisories: {}
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -47,28 +47,28 @@ describe('Model', () => {
       whitelistedPathsFound: [],
       whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: [],
-      advisoriesFound: [],
+      advisoriesFound: []
     });
   });
 
-  it('compute a summary', () => {
+  it("compute a summary", () => {
     const model = new Model({
       levels: { critical: true },
       whitelist: [],
-      advisories: [],
+      advisories: []
     });
 
     const parsedAuditOutput = {
       advisories: {
-        '663': {
+        "663": {
           id: 663,
-          title: 'Command Injection',
-          module_name: 'open',
-          severity: 'critical',
-          url: 'https://npmjs.com/advisories/663',
-          findings: [{ paths: ['open'] }],
-        },
-      },
+          title: "Command Injection",
+          module_name: "open",
+          severity: "critical",
+          url: "https://npmjs.com/advisories/663",
+          findings: [{ paths: ["open"] }]
+        }
+      }
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -77,77 +77,77 @@ describe('Model', () => {
       whitelistedAdvisoriesFound: [],
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
-      failedLevelsFound: ['critical'],
-      advisoriesFound: [663],
+      failedLevelsFound: ["critical"],
+      advisoriesFound: [663]
     });
   });
 
-  it('ignores severities that are set to false', () => {
+  it("ignores severities that are set to false", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: false, moderate: false },
       whitelist: [],
-      advisories: [],
+      advisories: []
     });
 
     const parsedAuditOutput = {
       advisories: {
         1: {
           id: 1,
-          title: 'A',
-          module_name: 'M_A',
-          severity: 'critical',
-          url: 'https://A',
-          findings: [{ paths: ['M_A'] }],
+          title: "A",
+          module_name: "M_A",
+          severity: "critical",
+          url: "https://A",
+          findings: [{ paths: ["M_A"] }]
         },
         2: {
           id: 2,
-          title: 'B',
-          module_name: 'M_B',
-          severity: 'low',
-          url: 'https://B',
-          findings: [{ paths: ['M_B'] }],
+          title: "B",
+          module_name: "M_B",
+          severity: "low",
+          url: "https://B",
+          findings: [{ paths: ["M_B"] }]
         },
         3: {
           id: 3,
-          title: 'C',
-          module_name: 'M_C',
-          severity: 'moderate',
-          url: 'https://C',
-          findings: [{ paths: ['M_C'] }],
+          title: "C",
+          module_name: "M_C",
+          severity: "moderate",
+          url: "https://C",
+          findings: [{ paths: ["M_C"] }]
         },
         4: {
           id: 4,
-          title: 'D',
-          module_name: 'M_D',
-          severity: 'high',
-          url: 'https://D',
-          findings: [{ paths: ['M_D'] }],
+          title: "D",
+          module_name: "M_D",
+          severity: "high",
+          url: "https://D",
+          findings: [{ paths: ["M_D"] }]
         },
         5: {
           id: 5,
-          title: 'E',
-          module_name: 'M_E',
-          severity: 'critical',
-          url: 'https://E',
-          findings: [{ paths: ['M_E'] }],
+          title: "E",
+          module_name: "M_E",
+          severity: "critical",
+          url: "https://E",
+          findings: [{ paths: ["M_E"] }]
         },
         6: {
           id: 6,
-          title: 'F',
-          module_name: 'M_F',
-          severity: 'low',
-          url: 'https://F',
-          findings: [{ paths: ['M_F'] }],
+          title: "F",
+          module_name: "M_F",
+          severity: "low",
+          url: "https://F",
+          findings: [{ paths: ["M_F"] }]
         },
         7: {
           id: 7,
-          title: 'G',
-          module_name: 'M_G',
-          severity: 'low',
-          url: 'https://G',
-          findings: [{ paths: ['M_G'] }],
-        },
-      },
+          title: "G",
+          module_name: "M_G",
+          severity: "low",
+          url: "https://G",
+          findings: [{ paths: ["M_G"] }]
+        }
+      }
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -156,164 +156,164 @@ describe('Model', () => {
       whitelistedAdvisoriesFound: [],
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
-      failedLevelsFound: ['critical', 'low'],
-      advisoriesFound: [1, 2, 5, 6, 7],
+      failedLevelsFound: ["critical", "low"],
+      advisoriesFound: [1, 2, 5, 6, 7]
     });
   });
 
-  it('ignores whitelisted modules', () => {
+  it("ignores whitelisted modules", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
-      whitelist: ['M_A', 'M_D'],
-      advisories: [],
+      whitelist: ["M_A", "M_D"],
+      advisories: []
     });
 
     const parsedAuditOutput = {
       advisories: {
         1: {
           id: 1,
-          title: 'A',
-          module_name: 'M_A',
-          severity: 'critical',
-          url: 'https://A',
-          findings: [{ paths: ['M_A'] }],
+          title: "A",
+          module_name: "M_A",
+          severity: "critical",
+          url: "https://A",
+          findings: [{ paths: ["M_A"] }]
         },
         2: {
           id: 2,
-          title: 'B',
-          module_name: 'M_B',
-          severity: 'low',
-          url: 'https://B',
-          findings: [{ paths: ['M_B'] }],
+          title: "B",
+          module_name: "M_B",
+          severity: "low",
+          url: "https://B",
+          findings: [{ paths: ["M_B"] }]
         },
         3: {
           id: 3,
-          title: 'C',
-          module_name: 'M_C',
-          severity: 'moderate',
-          url: 'https://C',
-          findings: [{ paths: ['M_C'] }],
+          title: "C",
+          module_name: "M_C",
+          severity: "moderate",
+          url: "https://C",
+          findings: [{ paths: ["M_C"] }]
         },
         4: {
           id: 4,
-          title: 'D',
-          module_name: 'M_D',
-          severity: 'high',
-          url: 'https://D',
-          findings: [{ paths: ['M_D'] }],
+          title: "D",
+          module_name: "M_D",
+          severity: "high",
+          url: "https://D",
+          findings: [{ paths: ["M_D"] }]
         },
         5: {
           id: 5,
-          title: 'E',
-          module_name: 'M_E',
-          severity: 'critical',
-          url: 'https://E',
-          findings: [{ paths: ['M_E'] }],
+          title: "E",
+          module_name: "M_E",
+          severity: "critical",
+          url: "https://E",
+          findings: [{ paths: ["M_E"] }]
         },
         6: {
           id: 6,
-          title: 'F',
-          module_name: 'M_F',
-          severity: 'low',
-          url: 'https://F',
-          findings: [{ paths: ['M_F'] }],
+          title: "F",
+          module_name: "M_F",
+          severity: "low",
+          url: "https://F",
+          findings: [{ paths: ["M_F"] }]
         },
         7: {
           id: 7,
-          title: 'G',
-          module_name: 'M_G',
-          severity: 'low',
-          url: 'https://G',
-          findings: [{ paths: ['M_G'] }],
-        },
-      },
+          title: "G",
+          module_name: "M_G",
+          severity: "low",
+          url: "https://G",
+          findings: [{ paths: ["M_G"] }]
+        }
+      }
     };
 
     const summary = model.load(parsedAuditOutput);
     expect(summary).to.eql({
-      whitelistedModulesFound: ['M_A', 'M_D'],
+      whitelistedModulesFound: ["M_A", "M_D"],
       whitelistedAdvisoriesFound: [],
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
-      failedLevelsFound: ['critical', 'low', 'moderate'],
-      advisoriesFound: [2, 3, 5, 6, 7],
+      failedLevelsFound: ["critical", "low", "moderate"],
+      advisoriesFound: [2, 3, 5, 6, 7]
     });
   });
 
-  it('ignores whitelisted advisory IDs', () => {
+  it("ignores whitelisted advisory IDs", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       whitelist: [],
-      advisories: [2, 3, 6],
+      advisories: [2, 3, 6]
     });
 
     const parsedAuditOutput = {
       advisories: {
         1: {
           id: 1,
-          title: 'A',
-          module_name: 'M_A',
-          severity: 'critical',
-          url: 'https://A',
-          findings: [{ paths: ['M_A'] }],
+          title: "A",
+          module_name: "M_A",
+          severity: "critical",
+          url: "https://A",
+          findings: [{ paths: ["M_A"] }]
         },
         2: {
           id: 2,
-          title: 'B',
-          module_name: 'M_B',
-          severity: 'low',
-          url: 'https://B',
-          findings: [{ paths: ['M_B'] }],
+          title: "B",
+          module_name: "M_B",
+          severity: "low",
+          url: "https://B",
+          findings: [{ paths: ["M_B"] }]
         },
         3: {
           id: 3,
-          title: 'C',
-          module_name: 'M_C',
-          severity: 'moderate',
-          url: 'https://C',
-          findings: [{ paths: ['M_C'] }],
+          title: "C",
+          module_name: "M_C",
+          severity: "moderate",
+          url: "https://C",
+          findings: [{ paths: ["M_C"] }]
         },
         4: {
           id: 4,
-          title: 'D',
-          module_name: 'M_D',
-          severity: 'high',
-          url: 'https://D',
-          findings: [{ paths: ['M_D'] }],
+          title: "D",
+          module_name: "M_D",
+          severity: "high",
+          url: "https://D",
+          findings: [{ paths: ["M_D"] }]
         },
         5: {
           id: 5,
-          title: 'E',
-          module_name: 'M_E',
-          severity: 'critical',
-          url: 'https://E',
-          findings: [{ paths: ['M_E'] }],
+          title: "E",
+          module_name: "M_E",
+          severity: "critical",
+          url: "https://E",
+          findings: [{ paths: ["M_E"] }]
         },
         6: {
           id: 6,
-          title: 'F',
-          module_name: 'M_F',
-          severity: 'low',
-          url: 'https://F',
-          findings: [{ paths: ['M_F_1'] }],
+          title: "F",
+          module_name: "M_F",
+          severity: "low",
+          url: "https://F",
+          findings: [{ paths: ["M_F_1"] }]
         },
         7: {
           id: 6,
-          title: 'F',
-          module_name: 'M_F',
-          severity: 'low',
-          url: 'https://F',
-          findings: [{ paths: ['M_F_2'] }],
+          title: "F",
+          module_name: "M_F",
+          severity: "low",
+          url: "https://F",
+          findings: [{ paths: ["M_F_2"] }]
         },
         8: {
           id: 7,
-          title: 'G',
-          module_name: 'M_G',
-          severity: 'low',
-          url: 'https://G',
-          findings: [{ paths: ['M_G'] }],
-        },
-      },
+          title: "G",
+          module_name: "M_G",
+          severity: "low",
+          url: "https://G",
+          findings: [{ paths: ["M_G"] }]
+        }
+      }
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -322,37 +322,37 @@ describe('Model', () => {
       whitelistedAdvisoriesFound: [2, 3, 6],
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
-      failedLevelsFound: ['critical', 'high', 'low'],
-      advisoriesFound: [1, 4, 5, 7],
+      failedLevelsFound: ["critical", "high", "low"],
+      advisoriesFound: [1, 4, 5, 7]
     });
   });
 
-  it('sorts the failedLevelsFound field', () => {
+  it("sorts the failedLevelsFound field", () => {
     const model = new Model({
       levels: { critical: true, low: true },
       whitelist: [],
-      advisories: [],
+      advisories: []
     });
 
     const parsedAuditOutput = {
       advisories: {
         1: {
           id: 1,
-          title: 'A',
-          module_name: 'M_A',
-          severity: 'low',
-          url: 'https://A',
-          findings: [{ paths: ['M_A'] }],
+          title: "A",
+          module_name: "M_A",
+          severity: "low",
+          url: "https://A",
+          findings: [{ paths: ["M_A"] }]
         },
         2: {
           id: 2,
-          title: 'B',
-          module_name: 'M_B',
-          severity: 'critical',
-          url: 'https://B',
-          findings: [{ paths: ['M_B'] }],
-        },
-      },
+          title: "B",
+          module_name: "M_B",
+          severity: "critical",
+          url: "https://B",
+          findings: [{ paths: ["M_B"] }]
+        }
+      }
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -361,8 +361,8 @@ describe('Model', () => {
       whitelistedAdvisoriesFound: [],
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
-      failedLevelsFound: ['critical', 'low'],
-      advisoriesFound: [1, 2],
+      failedLevelsFound: ["critical", "low"],
+      advisoriesFound: [1, 2]
     });
   });
 });
