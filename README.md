@@ -97,8 +97,6 @@ before_install:
 |      | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
 |      | --config          | Path to JSON config file                                                                              |
-| -r   | --report          | [_DEPRECATED_] (Use `--report-type full`) Shows the full audit report (default `false`)               |
-| -s   | --summary         | [_DEPRECATED_] (Use `--report-type summary`) Shows the summary audit report (default `false`)         |
 
 ### (_Optional_) Config file specification
 
