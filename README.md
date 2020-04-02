@@ -2,12 +2,17 @@
 ![CircleCI branch](https://img.shields.io/circleci/project/github/IBM/audit-ci/master.svg)
 ![David](https://img.shields.io/david/IBM/audit-ci.svg)
 
-# Overview
+# audit-ci
 
 This module is intended to be consumed by your favourite continuous integration tool to
 halt execution if `npm audit` or `yarn audit` finds vulnerabilities at or above the specified threshold.
 
-# Set up
+## Requirements
+
+- Node >= 8
+- _(Optional)_ Yarn >= 1.12.3 && Yarn < 2
+
+## Set up
 
 > `npm install --save-dev audit-ci`
 
