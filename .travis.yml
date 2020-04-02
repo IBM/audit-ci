@@ -3,11 +3,6 @@ node_js:
   - "8"
   - "10"
 
-# Docs: https://docs.travis-ci.com/user/languages/javascript-with-nodejs/#using-npm
-before_install:
-  # Use NPM 6
-  - npmv=$(echo $(npm -v) | head -c 1); if [ "$npmv" -lt "6" ]; then npm i -g npm; fi
-
 install:
   - npm ci
 
@@ -23,6 +18,9 @@ cache: npm
 
 script:
   # Have audit-ci run audit-ci to audit itself :)
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then node lib/audit-ci.js -l --config ./audit-ci.json; fi
-  - npm run lint
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then node lib/audit-ci.js --config ./audit-ci.json; fi
+  # We support Node.js >= 8 in production. However, we support Node.js >= 10 in development.
+  # Since prettier v2 supports Node.js >= 10, we can't lint when running Node.js 8.
+  # This has no impact on our CI since linting while running Node.js 10 is sufficient.
+  - nodev=$(echo $(node -v) | head -c 1); if [ "$nodev" -gte "10" ]; then npm run lint; fi
   - npm run test
