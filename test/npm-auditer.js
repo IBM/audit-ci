@@ -14,7 +14,7 @@ function config(additions) {
       low: false,
       moderate: false,
       high: false,
-      critical: false
+      critical: false,
     },
     "report-type": "important",
     advisories: [],
@@ -23,7 +23,7 @@ function config(additions) {
     "retry-count": 5,
     directory: "./",
     registry: undefined,
-    "pass-enoaudit": false
+    "pass-enoaudit": false,
   };
   return { ...defaultConfig, ...additions };
 }
@@ -41,17 +41,17 @@ describe("npm-auditer", function testNpmAuditer() {
       config({
         directory: testDir("npm-critical"),
         levels: { critical: true },
-        "report-type": "full"
+        "report-type": "full",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: ["critical"],
-        advisoriesFound: [663]
+        advisoriesFound: [663],
       });
     });
   });
@@ -59,17 +59,17 @@ describe("npm-auditer", function testNpmAuditer() {
     return audit(
       config({
         directory: testDir("npm-critical"),
-        levels: { critical: false }
+        levels: { critical: false },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
@@ -78,17 +78,17 @@ describe("npm-auditer", function testNpmAuditer() {
       config({
         directory: testDir("npm-high"),
         levels: { high: true },
-        "report-type": "summary"
+        "report-type": "summary",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: ["high"],
-        advisoriesFound: [690]
+        advisoriesFound: [690],
       });
     });
   });
@@ -97,17 +97,17 @@ describe("npm-auditer", function testNpmAuditer() {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        "report-type": "important"
+        "report-type": "important",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658]
+        advisoriesFound: [658],
       });
     });
   });
@@ -115,17 +115,17 @@ describe("npm-auditer", function testNpmAuditer() {
     return audit(
       config({
         directory: testDir("npm-moderate"),
-        levels: { moderate: false }
+        levels: { moderate: false },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
@@ -134,17 +134,17 @@ describe("npm-auditer", function testNpmAuditer() {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        advisories: [658]
+        advisories: [658],
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [658],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
@@ -153,17 +153,17 @@ describe("npm-auditer", function testNpmAuditer() {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        advisories: [659]
+        advisories: [659],
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [659],
         whitelistedPathsFound: [],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658]
+        advisoriesFound: [658],
       });
     });
   });
@@ -172,17 +172,17 @@ describe("npm-auditer", function testNpmAuditer() {
       config({
         directory: testDir("npm-whitelisted-path"),
         levels: { moderate: true },
-        "path-whitelist": ["880|github-build>axios"]
+        "path-whitelist": ["880|github-build>axios"],
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: ["880|github-build>axios"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [880]
+        advisoriesFound: [880],
       });
     });
   });
@@ -191,17 +191,17 @@ describe("npm-auditer", function testNpmAuditer() {
       config({
         directory: testDir("npm-whitelisted-path"),
         levels: { moderate: true },
-        "path-whitelist": ["880|axios", "880|github-build>axios"]
+        "path-whitelist": ["880|axios", "880|github-build>axios"],
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: ["880|axios", "880|github-build>axios"],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
@@ -209,17 +209,17 @@ describe("npm-auditer", function testNpmAuditer() {
     return audit(
       config({
         directory: testDir("npm-low"),
-        levels: { low: true }
+        levels: { low: true },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: ["low"],
-        advisoriesFound: [722]
+        advisoriesFound: [722],
       });
     });
   });
@@ -227,40 +227,40 @@ describe("npm-auditer", function testNpmAuditer() {
     return audit(
       config({
         directory: testDir("npm-none"),
-        levels: { low: true }
+        levels: { low: true },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
-  it("fails with error code ENOTFOUND on a non-existent site", done => {
+  it("fails with error code ENOTFOUND on a non-existent site", (done) => {
     audit(
       config({
         directory: testDir("npm-low"),
         levels: { low: true },
-        registry: "https://registry.nonexistentdomain0000000000.com"
+        registry: "https://registry.nonexistentdomain0000000000.com",
       })
-    ).catch(err => {
+    ).catch((err) => {
       expect(err.message).to.include("code ENOTFOUND");
       done();
     });
   });
-  it("fails errors with code ENOAUDIT on a valid site with no audit", done => {
+  it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
     audit(
       config({
         directory: testDir("npm-low"),
         levels: { low: true },
-        registry: "https://example.com"
+        registry: "https://example.com",
       })
-    ).catch(err => {
+    ).catch((err) => {
       expect(err.message).to.include("code ENOAUDIT");
       done();
     });

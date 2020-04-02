@@ -13,7 +13,7 @@ function config(additions) {
       low: false,
       moderate: false,
       high: false,
-      critical: false
+      critical: false,
     },
     "report-type": "important",
     advisories: [],
@@ -22,7 +22,7 @@ function config(additions) {
     "retry-count": 5,
     directory: "./",
     registry: undefined,
-    "pass-enoaudit": false
+    "pass-enoaudit": false,
   };
   return { ...defaultConfig, ...additions };
 }
@@ -40,17 +40,17 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-critical"),
         levels: { critical: true },
-        "report-type": "full"
+        "report-type": "full",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: ["critical"],
-        advisoriesFound: [663]
+        advisoriesFound: [663],
       });
     });
   });
@@ -58,17 +58,17 @@ describe("yarn-auditer", function testYarnAuditer() {
     return audit(
       config({
         directory: testDir("yarn-critical"),
-        levels: { critical: false }
+        levels: { critical: false },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
@@ -77,17 +77,17 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-high"),
         levels: { high: true },
-        "report-type": "summary"
+        "report-type": "summary",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: ["high"],
-        advisoriesFound: [690]
+        advisoriesFound: [690],
       });
     });
   });
@@ -96,17 +96,17 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        "report-type": "important"
+        "report-type": "important",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658]
+        advisoriesFound: [658],
       });
     });
   });
@@ -114,17 +114,17 @@ describe("yarn-auditer", function testYarnAuditer() {
     return audit(
       config({
         directory: testDir("yarn-moderate"),
-        levels: { moderate: false }
+        levels: { moderate: false },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
@@ -133,17 +133,17 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        advisories: [658]
+        advisories: [658],
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [658],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
@@ -152,17 +152,17 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        advisories: [659]
+        advisories: [659],
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedPathsFound: [],
         whitelistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658]
+        advisoriesFound: [658],
       });
     });
   });
@@ -170,17 +170,17 @@ describe("yarn-auditer", function testYarnAuditer() {
     return audit(
       config({
         directory: testDir("yarn-low"),
-        levels: { low: true }
+        levels: { low: true },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: ["low"],
-        advisoriesFound: [722]
+        advisoriesFound: [722],
       });
     });
   });
@@ -188,17 +188,17 @@ describe("yarn-auditer", function testYarnAuditer() {
     return audit(
       config({
         directory: testDir("yarn-none"),
-        levels: { low: true }
+        levels: { low: true },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
         failedLevelsFound: [],
-        advisoriesFound: []
+        advisoriesFound: [],
       });
     });
   });
@@ -207,9 +207,9 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-low"),
         levels: { low: true },
-        registry: "https://example.com"
+        registry: "https://example.com",
       }),
-      summary => summary
+      (summary) => summary
     );
   });
   // it('prints unexpected https://registry.yarnpkg.com 503 error message', () => {

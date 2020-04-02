@@ -23,7 +23,7 @@ describe("Model", () => {
       () =>
         new Model(
           config({
-            levels: { mdrate: true, critical: true, hgih: true, low: true }
+            levels: { mdrate: true, critical: true, hgih: true, low: true },
           })
         )
     ).to.throw("Unsupported severity levels found: hgih, mdrate");
@@ -33,11 +33,11 @@ describe("Model", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       whitelist: [],
-      advisories: []
+      advisories: [],
     });
 
     const parsedAuditOutput = {
-      advisories: {}
+      advisories: {},
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -47,7 +47,7 @@ describe("Model", () => {
       whitelistedPathsFound: [],
       whitelistedAdvisoriesNotFound: [],
       failedLevelsFound: [],
-      advisoriesFound: []
+      advisoriesFound: [],
     });
   });
 
@@ -55,7 +55,7 @@ describe("Model", () => {
     const model = new Model({
       levels: { critical: true },
       whitelist: [],
-      advisories: []
+      advisories: [],
     });
 
     const parsedAuditOutput = {
@@ -66,9 +66,9 @@ describe("Model", () => {
           module_name: "open",
           severity: "critical",
           url: "https://npmjs.com/advisories/663",
-          findings: [{ paths: ["open"] }]
-        }
-      }
+          findings: [{ paths: ["open"] }],
+        },
+      },
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -78,7 +78,7 @@ describe("Model", () => {
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
       failedLevelsFound: ["critical"],
-      advisoriesFound: [663]
+      advisoriesFound: [663],
     });
   });
 
@@ -86,7 +86,7 @@ describe("Model", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: false, moderate: false },
       whitelist: [],
-      advisories: []
+      advisories: [],
     });
 
     const parsedAuditOutput = {
@@ -97,7 +97,7 @@ describe("Model", () => {
           module_name: "M_A",
           severity: "critical",
           url: "https://A",
-          findings: [{ paths: ["M_A"] }]
+          findings: [{ paths: ["M_A"] }],
         },
         2: {
           id: 2,
@@ -105,7 +105,7 @@ describe("Model", () => {
           module_name: "M_B",
           severity: "low",
           url: "https://B",
-          findings: [{ paths: ["M_B"] }]
+          findings: [{ paths: ["M_B"] }],
         },
         3: {
           id: 3,
@@ -113,7 +113,7 @@ describe("Model", () => {
           module_name: "M_C",
           severity: "moderate",
           url: "https://C",
-          findings: [{ paths: ["M_C"] }]
+          findings: [{ paths: ["M_C"] }],
         },
         4: {
           id: 4,
@@ -121,7 +121,7 @@ describe("Model", () => {
           module_name: "M_D",
           severity: "high",
           url: "https://D",
-          findings: [{ paths: ["M_D"] }]
+          findings: [{ paths: ["M_D"] }],
         },
         5: {
           id: 5,
@@ -129,7 +129,7 @@ describe("Model", () => {
           module_name: "M_E",
           severity: "critical",
           url: "https://E",
-          findings: [{ paths: ["M_E"] }]
+          findings: [{ paths: ["M_E"] }],
         },
         6: {
           id: 6,
@@ -137,7 +137,7 @@ describe("Model", () => {
           module_name: "M_F",
           severity: "low",
           url: "https://F",
-          findings: [{ paths: ["M_F"] }]
+          findings: [{ paths: ["M_F"] }],
         },
         7: {
           id: 7,
@@ -145,9 +145,9 @@ describe("Model", () => {
           module_name: "M_G",
           severity: "low",
           url: "https://G",
-          findings: [{ paths: ["M_G"] }]
-        }
-      }
+          findings: [{ paths: ["M_G"] }],
+        },
+      },
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -157,7 +157,7 @@ describe("Model", () => {
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
       failedLevelsFound: ["critical", "low"],
-      advisoriesFound: [1, 2, 5, 6, 7]
+      advisoriesFound: [1, 2, 5, 6, 7],
     });
   });
 
@@ -165,7 +165,7 @@ describe("Model", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       whitelist: ["M_A", "M_D"],
-      advisories: []
+      advisories: [],
     });
 
     const parsedAuditOutput = {
@@ -176,7 +176,7 @@ describe("Model", () => {
           module_name: "M_A",
           severity: "critical",
           url: "https://A",
-          findings: [{ paths: ["M_A"] }]
+          findings: [{ paths: ["M_A"] }],
         },
         2: {
           id: 2,
@@ -184,7 +184,7 @@ describe("Model", () => {
           module_name: "M_B",
           severity: "low",
           url: "https://B",
-          findings: [{ paths: ["M_B"] }]
+          findings: [{ paths: ["M_B"] }],
         },
         3: {
           id: 3,
@@ -192,7 +192,7 @@ describe("Model", () => {
           module_name: "M_C",
           severity: "moderate",
           url: "https://C",
-          findings: [{ paths: ["M_C"] }]
+          findings: [{ paths: ["M_C"] }],
         },
         4: {
           id: 4,
@@ -200,7 +200,7 @@ describe("Model", () => {
           module_name: "M_D",
           severity: "high",
           url: "https://D",
-          findings: [{ paths: ["M_D"] }]
+          findings: [{ paths: ["M_D"] }],
         },
         5: {
           id: 5,
@@ -208,7 +208,7 @@ describe("Model", () => {
           module_name: "M_E",
           severity: "critical",
           url: "https://E",
-          findings: [{ paths: ["M_E"] }]
+          findings: [{ paths: ["M_E"] }],
         },
         6: {
           id: 6,
@@ -216,7 +216,7 @@ describe("Model", () => {
           module_name: "M_F",
           severity: "low",
           url: "https://F",
-          findings: [{ paths: ["M_F"] }]
+          findings: [{ paths: ["M_F"] }],
         },
         7: {
           id: 7,
@@ -224,9 +224,9 @@ describe("Model", () => {
           module_name: "M_G",
           severity: "low",
           url: "https://G",
-          findings: [{ paths: ["M_G"] }]
-        }
-      }
+          findings: [{ paths: ["M_G"] }],
+        },
+      },
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -236,7 +236,7 @@ describe("Model", () => {
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
       failedLevelsFound: ["critical", "low", "moderate"],
-      advisoriesFound: [2, 3, 5, 6, 7]
+      advisoriesFound: [2, 3, 5, 6, 7],
     });
   });
 
@@ -244,7 +244,7 @@ describe("Model", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       whitelist: [],
-      advisories: [2, 3, 6]
+      advisories: [2, 3, 6],
     });
 
     const parsedAuditOutput = {
@@ -255,7 +255,7 @@ describe("Model", () => {
           module_name: "M_A",
           severity: "critical",
           url: "https://A",
-          findings: [{ paths: ["M_A"] }]
+          findings: [{ paths: ["M_A"] }],
         },
         2: {
           id: 2,
@@ -263,7 +263,7 @@ describe("Model", () => {
           module_name: "M_B",
           severity: "low",
           url: "https://B",
-          findings: [{ paths: ["M_B"] }]
+          findings: [{ paths: ["M_B"] }],
         },
         3: {
           id: 3,
@@ -271,7 +271,7 @@ describe("Model", () => {
           module_name: "M_C",
           severity: "moderate",
           url: "https://C",
-          findings: [{ paths: ["M_C"] }]
+          findings: [{ paths: ["M_C"] }],
         },
         4: {
           id: 4,
@@ -279,7 +279,7 @@ describe("Model", () => {
           module_name: "M_D",
           severity: "high",
           url: "https://D",
-          findings: [{ paths: ["M_D"] }]
+          findings: [{ paths: ["M_D"] }],
         },
         5: {
           id: 5,
@@ -287,7 +287,7 @@ describe("Model", () => {
           module_name: "M_E",
           severity: "critical",
           url: "https://E",
-          findings: [{ paths: ["M_E"] }]
+          findings: [{ paths: ["M_E"] }],
         },
         6: {
           id: 6,
@@ -295,7 +295,7 @@ describe("Model", () => {
           module_name: "M_F",
           severity: "low",
           url: "https://F",
-          findings: [{ paths: ["M_F_1"] }]
+          findings: [{ paths: ["M_F_1"] }],
         },
         7: {
           id: 6,
@@ -303,7 +303,7 @@ describe("Model", () => {
           module_name: "M_F",
           severity: "low",
           url: "https://F",
-          findings: [{ paths: ["M_F_2"] }]
+          findings: [{ paths: ["M_F_2"] }],
         },
         8: {
           id: 7,
@@ -311,9 +311,9 @@ describe("Model", () => {
           module_name: "M_G",
           severity: "low",
           url: "https://G",
-          findings: [{ paths: ["M_G"] }]
-        }
-      }
+          findings: [{ paths: ["M_G"] }],
+        },
+      },
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -323,7 +323,7 @@ describe("Model", () => {
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
       failedLevelsFound: ["critical", "high", "low"],
-      advisoriesFound: [1, 4, 5, 7]
+      advisoriesFound: [1, 4, 5, 7],
     });
   });
 
@@ -331,7 +331,7 @@ describe("Model", () => {
     const model = new Model({
       levels: { critical: true, low: true },
       whitelist: [],
-      advisories: []
+      advisories: [],
     });
 
     const parsedAuditOutput = {
@@ -342,7 +342,7 @@ describe("Model", () => {
           module_name: "M_A",
           severity: "low",
           url: "https://A",
-          findings: [{ paths: ["M_A"] }]
+          findings: [{ paths: ["M_A"] }],
         },
         2: {
           id: 2,
@@ -350,9 +350,9 @@ describe("Model", () => {
           module_name: "M_B",
           severity: "critical",
           url: "https://B",
-          findings: [{ paths: ["M_B"] }]
-        }
-      }
+          findings: [{ paths: ["M_B"] }],
+        },
+      },
     };
 
     const summary = model.load(parsedAuditOutput);
@@ -362,7 +362,7 @@ describe("Model", () => {
       whitelistedAdvisoriesNotFound: [],
       whitelistedPathsFound: [],
       failedLevelsFound: ["critical", "low"],
-      advisoriesFound: [1, 2]
+      advisoriesFound: [1, 2],
     });
   });
 });

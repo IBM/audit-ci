@@ -30,6 +30,7 @@
   ],
   "scripts": {
     "lint": "eslint -c ./.eslintrc.json **/*.js",
+    "lint:fix": "eslint -c ./.eslintrc.json **/*.js --fix",
     "test": "mocha --exit --timeout 40000 --recursive --reporter spec test/*.js"
   },
   "engines": {
