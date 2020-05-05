@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-const { expect } = require('chai');
-const path = require('path');
-const audit = require('../lib/audit').bind(null, 'yarn');
+const { expect } = require("chai");
+const path = require("path");
+const audit = require("../lib/audit").bind(null, "yarn");
 
 function config(additions) {
   const defaultConfig = {
@@ -15,16 +15,16 @@ function config(additions) {
       high: false,
       critical: false,
     },
-    'report-type': 'important',
+    "report-type": "important",
     advisories: [],
     whitelist: [],
-    'show-not-found': false,
-    'retry-count': 5,
-    directory: './',
+    "show-not-found": false,
+    "retry-count": 5,
+    directory: "./",
     registry: undefined,
-    'pass-enoaudit': false,
+    "pass-enoaudit": false,
   };
-  return Object.assign({}, defaultConfig, additions);
+  return { ...defaultConfig, ...additions };
 }
 
 function testDir(s) {
@@ -33,35 +33,35 @@ function testDir(s) {
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
-describe('yarn-auditer', function testYarnAuditer() {
+describe("yarn-auditer", function testYarnAuditer() {
   this.slow(3000);
-  it('prints full report with critical severity', () => {
+  it("prints full report with critical severity", () => {
     return audit(
       config({
-        directory: testDir('yarn-critical'),
+        directory: testDir("yarn-critical"),
         levels: { critical: true },
-        'report-type': 'full',
+        "report-type": "full",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
-        failedLevelsFound: ['critical'],
+        failedLevelsFound: ["critical"],
         advisoriesFound: [663],
       });
     });
   });
-  it('does not report critical severity if it set to false', () => {
+  it("does not report critical severity if it set to false", () => {
     return audit(
       config({
-        directory: testDir('yarn-critical'),
+        directory: testDir("yarn-critical"),
         levels: { critical: false },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
@@ -72,52 +72,52 @@ describe('yarn-auditer', function testYarnAuditer() {
       });
     });
   });
-  it('reports summary with high severity', () => {
+  it("reports summary with high severity", () => {
     return audit(
       config({
-        directory: testDir('yarn-high'),
+        directory: testDir("yarn-high"),
         levels: { high: true },
-        'report-type': 'summary',
+        "report-type": "summary",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
-        failedLevelsFound: ['high'],
+        failedLevelsFound: ["high"],
         advisoriesFound: [690],
       });
     });
   });
-  it('reports important info with moderate severity', () => {
+  it("reports important info with moderate severity", () => {
     return audit(
       config({
-        directory: testDir('yarn-moderate'),
+        directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        'report-type': 'important',
+        "report-type": "important",
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
-        failedLevelsFound: ['moderate'],
+        failedLevelsFound: ["moderate"],
         advisoriesFound: [658],
       });
     });
   });
-  it('does not report moderate severity if it set to false', () => {
+  it("does not report moderate severity if it set to false", () => {
     return audit(
       config({
-        directory: testDir('yarn-moderate'),
+        directory: testDir("yarn-moderate"),
         levels: { moderate: false },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
@@ -128,15 +128,15 @@ describe('yarn-auditer', function testYarnAuditer() {
       });
     });
   });
-  it('ignores an advisory if it is whitelisted', () => {
+  it("ignores an advisory if it is whitelisted", () => {
     return audit(
       config({
-        directory: testDir('yarn-moderate'),
+        directory: testDir("yarn-moderate"),
         levels: { moderate: true },
         advisories: [658],
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [658],
@@ -147,51 +147,51 @@ describe('yarn-auditer', function testYarnAuditer() {
       });
     });
   });
-  it('does not ignore an advisory that is not whitelisted', () => {
+  it("does not ignore an advisory that is not whitelisted", () => {
     return audit(
       config({
-        directory: testDir('yarn-moderate'),
+        directory: testDir("yarn-moderate"),
         levels: { moderate: true },
         advisories: [659],
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedPathsFound: [],
         whitelistedAdvisoriesNotFound: [659],
-        failedLevelsFound: ['moderate'],
+        failedLevelsFound: ["moderate"],
         advisoriesFound: [658],
       });
     });
   });
-  it('reports low severity', () => {
+  it("reports low severity", () => {
     return audit(
       config({
-        directory: testDir('yarn-low'),
+        directory: testDir("yarn-low"),
         levels: { low: true },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
         whitelistedAdvisoriesNotFound: [],
         whitelistedPathsFound: [],
-        failedLevelsFound: ['low'],
+        failedLevelsFound: ["low"],
         advisoriesFound: [722],
       });
     });
   });
-  it('passes with no vulnerabilities', () => {
+  it("passes with no vulnerabilities", () => {
     return audit(
       config({
-        directory: testDir('yarn-none'),
+        directory: testDir("yarn-none"),
         levels: { low: true },
       }),
-      summary => summary
-    ).then(summary => {
+      (summary) => summary
+    ).then((summary) => {
       expect(summary).to.eql({
         whitelistedModulesFound: [],
         whitelistedAdvisoriesFound: [],
@@ -205,11 +205,11 @@ describe('yarn-auditer', function testYarnAuditer() {
   it("doesn't use the registry flag since it's not supported in Yarn yet", () => {
     return audit(
       config({
-        directory: testDir('yarn-low'),
+        directory: testDir("yarn-low"),
         levels: { low: true },
-        registry: 'https://example.com',
+        registry: "https://example.com",
       }),
-      summary => summary
+      (summary) => summary
     );
   });
   // it('prints unexpected https://registry.yarnpkg.com 503 error message', () => {
