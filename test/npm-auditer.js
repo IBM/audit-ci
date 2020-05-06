@@ -5,7 +5,6 @@
  */
 const { expect } = require("chai");
 const path = require("path");
-// const { audit } = require('../lib/npm-auditer');
 const audit = require("../lib/audit").bind(null, "npm");
 
 function config(additions) {
@@ -36,209 +35,198 @@ function testDir(s) {
 // function() {} instead of () => {}
 describe("npm-auditer", function testNpmAuditer() {
   this.slow(6000);
-  it("prints full report with critical severity", () => {
-    return audit(
+  it("prints full report with critical severity", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-critical"),
         levels: { critical: true },
         "report-type": "full",
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: [],
-        failedLevelsFound: ["critical"],
-        advisoriesFound: [663],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
+      failedLevelsFound: ["critical"],
+      advisoriesFound: [663],
     });
   });
-  it("does not report critical severity if it set to false", () => {
-    return audit(
+  it("does not report critical severity if it set to false", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-critical"),
         levels: { critical: false },
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: [],
-        failedLevelsFound: [],
-        advisoriesFound: [],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
+      failedLevelsFound: [],
+      advisoriesFound: [],
     });
   });
-  it("reports summary with high severity", () => {
-    return audit(
+  it("reports summary with high severity", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-high"),
         levels: { high: true },
         "report-type": "summary",
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: [],
-        failedLevelsFound: ["high"],
-        advisoriesFound: [690],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
+      failedLevelsFound: ["high"],
+      advisoriesFound: [690],
     });
   });
-  it("reports important info with moderate severity", () => {
-    return audit(
+  it("reports important info with moderate severity", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
         "report-type": "important",
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: [],
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
+      failedLevelsFound: ["moderate"],
+      advisoriesFound: [658],
     });
   });
-  it("does not report moderate severity if it set to false", () => {
-    return audit(
+  it("does not report moderate severity if it set to false", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: false },
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: [],
-        failedLevelsFound: [],
-        advisoriesFound: [],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
+      failedLevelsFound: [],
+      advisoriesFound: [],
     });
   });
-  it("ignores an advisory if it is whitelisted", () => {
-    return audit(
+  it("ignores an advisory if it is whitelisted", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
         advisories: [658],
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [658],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: [],
-        failedLevelsFound: [],
-        advisoriesFound: [],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [658],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
+      failedLevelsFound: [],
+      advisoriesFound: [],
     });
   });
-  it("does not ignore an advisory that is not whitelisted", () => {
-    return audit(
+  it("does not ignore an advisory that is not whitelisted", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
         advisories: [659],
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [659],
-        whitelistedPathsFound: [],
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [659],
+      whitelistedPathsFound: [],
+      failedLevelsFound: ["moderate"],
+      advisoriesFound: [658],
     });
   });
-  it("reports only vulnerabilities with a not whitelisted path", () => {
-    return audit(
+  it("reports only vulnerabilities with a not whitelisted path", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-whitelisted-path"),
         levels: { moderate: true },
         "path-whitelist": ["880|github-build>axios"],
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: ["880|github-build>axios"],
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [880],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: ["880|github-build>axios"],
+      failedLevelsFound: ["moderate"],
+      advisoriesFound: [880],
     });
   });
-  it("whitelist all vulnerabilities with a whitelisted path", () => {
-    return audit(
+  it("whitelist all vulnerabilities with a whitelisted path", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-whitelisted-path"),
         levels: { moderate: true },
         "path-whitelist": ["880|axios", "880|github-build>axios"],
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: ["880|axios", "880|github-build>axios"],
-        failedLevelsFound: [],
-        advisoriesFound: [],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: ["880|axios", "880|github-build>axios"],
+      failedLevelsFound: [],
+      advisoriesFound: [],
     });
   });
-  it("reports low severity", () => {
-    return audit(
+  it("reports low severity", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-low"),
         levels: { low: true },
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: [],
-        failedLevelsFound: ["low"],
-        advisoriesFound: [722],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
+      failedLevelsFound: ["low"],
+      advisoriesFound: [722],
     });
   });
-  it("passes with no vulnerabilities", () => {
-    return audit(
+  it("passes with no vulnerabilities", async () => {
+    const summary = await audit(
       config({
         directory: testDir("npm-none"),
         levels: { low: true },
       }),
-      (summary) => summary
-    ).then((summary) => {
-      expect(summary).to.eql({
-        whitelistedModulesFound: [],
-        whitelistedAdvisoriesFound: [],
-        whitelistedAdvisoriesNotFound: [],
-        whitelistedPathsFound: [],
-        failedLevelsFound: [],
-        advisoriesFound: [],
-      });
+      (_summary) => _summary
+    );
+    expect(summary).to.eql({
+      whitelistedModulesFound: [],
+      whitelistedAdvisoriesFound: [],
+      whitelistedAdvisoriesNotFound: [],
+      whitelistedPathsFound: [],
+      failedLevelsFound: [],
+      advisoriesFound: [],
     });
   });
   it("fails with error code ENOTFOUND on a non-existent site", (done) => {
@@ -265,13 +253,13 @@ describe("npm-auditer", function testNpmAuditer() {
       done();
     });
   });
-  // it('passes using --pass-enoaudit', () => {
-  //   const directory = testDir('npm-500');
+  // it("passes using --pass-enoaudit", () => {
+  //   const directory = testDir("npm-500");
   //   return audit(
   //     config({
   //       directory,
-  //       'pass-enoaudit': true,
-  //       _npm: path.join(directory, 'npm'),
+  //       "pass-enoaudit": true,
+  //       _npm: path.join(directory, "npm"),
   //     })
   //   );
   // });
