@@ -222,13 +222,13 @@ describe("yarn-auditer", function testYarnAuditer() {
   //       expect(err.toString()).to.contain(errorMessage);
   //     });
   // });
-  // it('passes using --pass-enoaudit', () => {
-  //   const directory = testDir('yarn-503');
+  // it("passes using --pass-enoaudit", () => {
+  //   const directory = testDir("yarn-503");
   //   return audit(
   //     config({
   //       directory,
-  //       'pass-enoaudit': true,
-  //       _yarn: path.join(directory, 'yarn'),
+  //       "pass-enoaudit": true,
+  //       _yarn: path.join(directory, "yarn"),
   //     })
   //   );
   // });
