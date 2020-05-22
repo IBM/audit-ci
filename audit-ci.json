@@ -1,7 +1,4 @@
 {
   "low": true,
-  "path-whitelist": [
-    "1179|eslint>file-entry-cache>flat-cache>write>mkdirp>minimist",
-    "1179|eslint>mkdirp>minimist"
-  ]
+  "path-whitelist": []
 }
