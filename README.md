@@ -85,23 +85,23 @@ before_install:
 
 ## Options
 
-| Args | Alias             | Description                                                                                           |
-| ---- | ----------------- | ----------------------------------------------------------------------------------------------------- |
-| -l   | --low             | Prevents integration with low or higher vulnerabilities (default `false`)                             |
-| -m   | --moderate        | Prevents integration with moderate or higher vulnerabilities (default `false`)                        |
-| -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)                          |
-| -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)                             |
-| -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)                          |
-| -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`)                     |
-| -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)                          |
-|      | --path-whitelist  | Vulnerable module paths to whitelist from preventing integration (default `none`)                     |
-| -d   | --directory       | The directory containing the package.json to audit (default `./`)                                     |
-|      | --pass-enoaudit   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
-|      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                                       |
-|      | --registry        | The registry to resolve packages by name and version (default to unspecified)                         |
-|      | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
-|      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
-|      | --config          | Path to JSON config file                                                                              |
+| Args | Alias                             | Description                                                                                           |
+| ---- | --------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| -l   | --low                             | Prevents integration with low or higher vulnerabilities (default `false`)                             |
+| -m   | --moderate                        | Prevents integration with moderate or higher vulnerabilities (default `false`)                        |
+| -h   | --high                            | Prevents integration with high or critical vulnerabilities (default `false`)                          |
+| -c   | --critical                        | Prevents integration only with critical vulnerabilities (default `false`)                             |
+| -p   | --package-manager                 | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)                          |
+| -a   | --advisories                      | Vulnerable advisory ids to whitelist from preventing integration (default `none`)                     |
+| -w   | --whitelist, --allowlist          | Vulnerable modules to whitelist from preventing integration (default `none`)                          |
+|      | --path-whitelist --path-allowlist | Vulnerable module paths to whitelist from preventing integration (default `none`)                     |
+| -d   | --directory                       | The directory containing the package.json to audit (default `./`)                                     |
+|      | --pass-enoaudit                   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
+|      | --show-not-found                  | Show whitelisted advisories that are not found (default `true`)                                       |
+|      | --registry                        | The registry to resolve packages by name and version (default to unspecified)                         |
+|      | --report-type                     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
+|      | --retry-count                     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
+|      | --config                          | Path to JSON config file                                                                              |
 
 ### (_Optional_) Config file specification
 
@@ -117,8 +117,8 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "report-type": <string>, // [Optional] defaults `important`
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "advisories": <number[]>, // [Optional] defaults `[]`
-  "whitelist": <string[]>, // [Optional] defaults `[]`
-  "path-whitelist": <string[]>, // [Optional] defaults `[]`
+  "whitelist": <string[]>, // [Optional] defaults `[]`, also can use `allowlist`
+  "path-whitelist": <string[]>, // [Optional] defaults `[]`, also can use `path-allowlist`
   "pass-enoaudit": <boolean>, // [Optional] defaults `false`
   "show-not-found": <boolean>, // [Optional] defaults `true`
   "registry": <string>, // [Optional] defaults `undefined`
@@ -166,8 +166,8 @@ audit-ci --report-type summary
   "low": true,
   "package-manager": "auto",
   "advisories": [100, 101],
-  "whitelist": ["example1", "example2"],
-  "path-whitelist": ["52|example3", "880|example4", "880|example5>example4"],
+  "allowlist": ["example1", "example2"],
+  "path-allowlist": ["52|example3", "880|example4", "880|example5>example4"],
   "registry": "https://registry.npmjs.org"
 }
 ```
