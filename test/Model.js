@@ -5,6 +5,8 @@
  */
 const { expect } = require("chai");
 const Model = require("../lib/Model");
+const Allowlist = require("../lib/allowlist");
+const { summaryWithDefault } = require("./common");
 
 function config(additions) {
   return { whitelist: [], advisories: [], ...additions };
@@ -32,8 +34,7 @@ describe("Model", () => {
   it("returns an empty summary for an empty audit output", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
-      whitelist: [],
-      advisories: [],
+      allowlist: new Allowlist(),
     });
 
     const parsedAuditOutput = {
@@ -41,21 +42,13 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedPathsFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      failedLevelsFound: [],
-      advisoriesFound: [],
-    });
+    expect(summary).to.eql(summaryWithDefault());
   });
 
   it("compute a summary", () => {
     const model = new Model({
       levels: { critical: true },
-      whitelist: [],
-      advisories: [],
+      allowlist: new Allowlist(),
     });
 
     const parsedAuditOutput = {
@@ -72,21 +65,18 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["critical"],
-      advisoriesFound: [663],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["critical"],
+        advisoriesFound: [663],
+      })
+    );
   });
 
   it("ignores severities that are set to false", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: false, moderate: false },
-      whitelist: [],
-      advisories: [],
+      allowlist: new Allowlist(),
     });
 
     const parsedAuditOutput = {
@@ -151,21 +141,18 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["critical", "low"],
-      advisoriesFound: [1, 2, 5, 6, 7],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["critical", "low"],
+        advisoriesFound: [1, 2, 5, 6, 7],
+      })
+    );
   });
 
   it("ignores whitelisted modules", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
-      whitelist: ["M_A", "M_D"],
-      advisories: [],
+      allowlist: new Allowlist(["M_A", "M_D"]),
     });
 
     const parsedAuditOutput = {
@@ -230,21 +217,19 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql({
-      whitelistedModulesFound: ["M_A", "M_D"],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["critical", "low", "moderate"],
-      advisoriesFound: [2, 3, 5, 6, 7],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedModulesFound: ["M_A", "M_D"],
+        failedLevelsFound: ["critical", "low", "moderate"],
+        advisoriesFound: [2, 3, 5, 6, 7],
+      })
+    );
   });
 
   it("ignores whitelisted advisory IDs", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
-      whitelist: [],
-      advisories: [2, 3, 6],
+      allowlist: new Allowlist([2, 3, 6]),
     });
 
     const parsedAuditOutput = {
@@ -317,21 +302,19 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [2, 3, 6],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["critical", "high", "low"],
-      advisoriesFound: [1, 4, 5, 7],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedAdvisoriesFound: [2, 3, 6],
+        failedLevelsFound: ["critical", "high", "low"],
+        advisoriesFound: [1, 4, 5, 7],
+      })
+    );
   });
 
   it("sorts the failedLevelsFound field", () => {
     const model = new Model({
       levels: { critical: true, low: true },
-      whitelist: [],
-      advisories: [],
+      allowlist: new Allowlist(),
     });
 
     const parsedAuditOutput = {
@@ -356,13 +339,11 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["critical", "low"],
-      advisoriesFound: [1, 2],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["critical", "low"],
+        advisoriesFound: [1, 2],
+      })
+    );
   });
 });

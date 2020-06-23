@@ -6,6 +6,8 @@
 const { expect } = require("chai");
 const path = require("path");
 const audit = require("../lib/audit").bind(null, "yarn");
+const Allowlist = require("../lib/allowlist");
+const { summaryWithDefault } = require("./common");
 
 function config(additions) {
   const defaultConfig = {
@@ -16,8 +18,7 @@ function config(additions) {
       critical: false,
     },
     "report-type": "important",
-    advisories: [],
-    whitelist: [],
+    allowlist: new Allowlist(),
     "show-not-found": false,
     "retry-count": 5,
     directory: "./",
@@ -44,14 +45,12 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["critical"],
-      advisoriesFound: [663],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["critical"],
+        advisoriesFound: [663],
+      })
+    );
   });
   it("does not report critical severity if it set to false", async () => {
     const summary = await audit(
@@ -61,14 +60,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: [],
-      advisoriesFound: [],
-    });
+    expect(summary).to.eql(summaryWithDefault());
   });
   it("reports summary with high severity", async () => {
     const summary = await audit(
@@ -79,14 +71,12 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["high"],
-      advisoriesFound: [690],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["high"],
+        advisoriesFound: [690],
+      })
+    );
   });
   it("reports important info with moderate severity", async () => {
     const summary = await audit(
@@ -97,14 +87,12 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["moderate"],
-      advisoriesFound: [658],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["moderate"],
+        advisoriesFound: [658],
+      })
+    );
   });
   it("does not report moderate severity if it set to false", async () => {
     const summary = await audit(
@@ -114,50 +102,71 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: [],
-      advisoriesFound: [],
-    });
+    expect(summary).to.eql(summaryWithDefault());
   });
-  it("ignores an advisory if it is whitelisted", async () => {
+  it("[DEPRECATED - advisories] ignores an advisory if it is whitelisted", async () => {
     const summary = await audit(
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        advisories: [658],
+        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [658] }),
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [658],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: [],
-      advisoriesFound: [],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedAdvisoriesFound: [658],
+      })
+    );
   });
-  it("does not ignore an advisory that is not whitelisted", async () => {
+  it("ignores an advisory if it is allowlisted", async () => {
     const summary = await audit(
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        advisories: [659],
+        allowlist: new Allowlist([658]),
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedPathsFound: [],
-      whitelistedAdvisoriesNotFound: [659],
-      failedLevelsFound: ["moderate"],
-      advisoriesFound: [658],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedAdvisoriesFound: [658],
+      })
+    );
+  });
+  it("[DEPRECATED - advisories] does not ignore an advisory that is not whitelisted", async () => {
+    const summary = await audit(
+      config({
+        directory: testDir("yarn-moderate"),
+        levels: { moderate: true },
+        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [659] }),
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedAdvisoriesNotFound: [659],
+        failedLevelsFound: ["moderate"],
+        advisoriesFound: [658],
+      })
+    );
+  });
+  it("does not ignore an advisory that is not allowlisted", async () => {
+    const summary = await audit(
+      config({
+        directory: testDir("yarn-moderate"),
+        levels: { moderate: true },
+        allowlist: new Allowlist([659]),
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedAdvisoriesNotFound: [659],
+        failedLevelsFound: ["moderate"],
+        advisoriesFound: [658],
+      })
+    );
   });
   it("reports low severity", async () => {
     const summary = await audit(
@@ -167,14 +176,12 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: ["low"],
-      advisoriesFound: [722],
-    });
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["low"],
+        advisoriesFound: [786],
+      })
+    );
   });
   it("passes with no vulnerabilities", async () => {
     const summary = await audit(
@@ -184,14 +191,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary
     );
-    expect(summary).to.eql({
-      whitelistedModulesFound: [],
-      whitelistedAdvisoriesFound: [],
-      whitelistedAdvisoriesNotFound: [],
-      whitelistedPathsFound: [],
-      failedLevelsFound: [],
-      advisoriesFound: [],
-    });
+    expect(summary).to.eql(summaryWithDefault());
   });
   it("doesn't use the registry flag since it's not supported in Yarn yet", () => {
     return audit(

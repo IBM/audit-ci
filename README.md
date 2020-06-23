@@ -5,7 +5,8 @@
 # audit-ci
 
 This module is intended to be consumed by your favourite continuous integration tool to
-halt execution if `npm audit` or `yarn audit` finds vulnerabilities at or above the specified threshold.
+halt execution if `npm audit` or `yarn audit` finds vulnerabilities at or above the specified
+threshold while ignoring allowlisted advisories.
 
 ## Requirements
 
@@ -92,16 +93,21 @@ before_install:
 | -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)                          |
 | -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)                             |
 | -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)                          |
-| -a   | --advisories      | Vulnerable advisory ids to whitelist from preventing integration (default `none`)                     |
-| -w   | --whitelist       | Vulnerable modules to whitelist from preventing integration (default `none`)                          |
-|      | --path-whitelist  | Vulnerable module paths to whitelist from preventing integration (default `none`)                     |
+| -a   | --allowlist       | Vulnerable modules, advisories, and paths to allowlist from preventing integration (default `none`)   |
 | -d   | --directory       | The directory containing the package.json to audit (default `./`)                                     |
 |      | --pass-enoaudit   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
+|      | --show-found      | Show whitelisted advisories that are found (default `true`)                                           |
 |      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                                       |
 |      | --registry        | The registry to resolve packages by name and version (default to unspecified)                         |
 |      | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
 |      | --config          | Path to JSON config file                                                                              |
+|      | --advisories      | _[DEPRECATED]_ Vulnerable advisory ids to whitelist from preventing integration (default `none`)      |
+| -w   | --whitelist       | _[DEPRECATED]_ Vulnerable modules to whitelist from preventing integration (default `none`)           |
+|      | --path-whitelist  | _[DEPRECATED]_ Vulnerable module paths to whitelist from preventing integration (default `none`)      |
+
+> The options `--advisories`, `--path-whitelist`, `--whitelist`, and `-w` are deprecated in favour of `-a` (alias `--allowlist`)
+> which merge the functionality of all of the deprecated arguments into one argument.
 
 ### (_Optional_) Config file specification
 
@@ -114,15 +120,17 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "moderate": <boolean>, // [Optional] defaults `false`
   "high": <boolean>, // [Optional] defaults `false`
   "critical": <boolean>, // [Optional] defaults `false`
+  "allowlist": <(string | number)[]>, // [Optional] default `[]`
   "report-type": <string>, // [Optional] defaults `important`
   "package-manager": <string>, // [Optional] defaults `"auto"`
-  "advisories": <number[]>, // [Optional] defaults `[]`
-  "whitelist": <string[]>, // [Optional] defaults `[]`
-  "path-whitelist": <string[]>, // [Optional] defaults `[]`
   "pass-enoaudit": <boolean>, // [Optional] defaults `false`
+  "show-found": <boolean>, // [Optional] defaults `true`
   "show-not-found": <boolean>, // [Optional] defaults `true`
   "registry": <string>, // [Optional] defaults `undefined`
-  "retry-count": // [Optional] defaults 5
+  "retry-count": <number>, // [Optional] defaults 5
+  "advisories": <number[]>, // [Deprecated, optional] defaults `[]`
+  "path-whitelist": <string[]>, // [Deprecated, optional] defaults `[]`
+  "whitelist": <string[]> // [Deprecated, optional] defaults `[]`
 }
 ```
 
@@ -139,10 +147,10 @@ Review the examples section for an [example of config file usage](#example-confi
 audit-ci -m
 ```
 
-### Prevents build on any vulnerability except advisory 690 and all of lodash and base64url
+### Prevents build on any vulnerability except advisory 690 and all of lodash and base64url, don't show allowlisted
 
 ```sh
-audit-ci -l -a 690 -w lodash base64url
+audit-ci -l -a 690 lodash base64url --show-found false
 ```
 
 ### Prevents build with critical vulnerabilities showing the full report
@@ -165,9 +173,15 @@ audit-ci --report-type summary
 {
   "low": true,
   "package-manager": "auto",
-  "advisories": [100, 101],
-  "whitelist": ["example1", "example2"],
-  "path-whitelist": ["52|example3", "880|example4", "880|example5>example4"],
+  "allowlist": [
+    100,
+    101,
+    "example1",
+    "example2",
+    "52|example3",
+    "880|example4",
+    "880|example5>example4"
+  ],
   "registry": "https://registry.npmjs.org"
 }
 ```
