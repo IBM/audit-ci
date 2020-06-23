@@ -96,8 +96,8 @@ before_install:
 | -a   | --allowlist       | Vulnerable modules, advisories, and paths to allowlist from preventing integration (default `none`)   |
 | -d   | --directory       | The directory containing the package.json to audit (default `./`)                                     |
 |      | --pass-enoaudit   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
-|      | --show-found      | Show whitelisted advisories that are found (default `true`)                                           |
-|      | --show-not-found  | Show whitelisted advisories that are not found (default `true`)                                       |
+|      | --show-found      | Show allowlisted advisories that are found (default `true`)                                           |
+|      | --show-not-found  | Show allowlisted advisories that are not found (default `true`)                                       |
 |      | --registry        | The registry to resolve packages by name and version (default to unspecified)                         |
 |      | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
