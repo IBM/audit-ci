@@ -1,6 +1,6 @@
 {
   "name": "audit-ci-yarn-no-vulnerability",
-  "description": "Test package.json with low vulnerability",
+  "description": "Test package.json with no vulnerability",
   "dependencies": {
     "lodash": "4.17.11"
   }
