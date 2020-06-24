@@ -21,10 +21,9 @@
     "circleci"
   ],
   "bin": {
-    "audit-ci": "bin/audit-ci"
+    "audit-ci": "./lib/audit-ci.js"
   },
   "files": [
-    "bin",
     "lib/*",
     "README.md"
   ],
