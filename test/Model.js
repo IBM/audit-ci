@@ -333,7 +333,15 @@ describe("Model", () => {
           module_name: "M_B",
           severity: "critical",
           url: "https://B",
-          findings: [{ paths: ["M_B"] }],
+          findings: [{ paths: ["M_B_1"] }],
+        },
+        3: {
+          id: 2,
+          title: "B",
+          module_name: "M_B",
+          severity: "critical",
+          url: "https://B",
+          findings: [{ paths: ["M_B_2"] }],
         },
       },
     };
