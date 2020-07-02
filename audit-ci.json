@@ -1,4 +1,9 @@
 {
   "low": true,
-  "allowlist": []
+  "allowlist": [
+    "1523|eslint>inquirer>lodash",
+    "1523|eslint>lodash",
+    "1523|eslint>table>lodash",
+    "1523|mocha>yargs-unparser>lodash"
+  ]
 }
