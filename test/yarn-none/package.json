@@ -2,6 +2,6 @@
   "name": "audit-ci-yarn-no-vulnerability",
   "description": "Test package.json with no vulnerability",
   "dependencies": {
-    "lodash": "4.17.11"
+    "node-noop": "1.0.0"
   }
 }
