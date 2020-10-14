@@ -1,8 +1,3 @@
-/*
- * Copyright IBM All Rights Reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
 const { expect } = require("chai");
 const path = require("path");
 const audit = require("../lib/audit").bind(null, "npm");

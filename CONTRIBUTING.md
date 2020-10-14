@@ -23,20 +23,6 @@ The project maintainers use the GitHub reviewer functionality to indicate accept
 
 For a list of the maintainers, see the [MAINTAINERS.md](MAINTAINERS.md) page.
 
-## Legal
-
-Each source file must include a license header for the Apache
-Software License 2.0. Using the SPDX format is the simplest approach.
-e.g.
-
-```
-/*
- * Copyright IBM All Rights Reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
-```
-
 ## Setup
 
 1. `git clone git@github.com:IBM/audit-ci.git`
