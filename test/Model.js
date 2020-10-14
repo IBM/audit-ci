@@ -1,8 +1,3 @@
-/*
- * Copyright IBM All Rights Reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
 const { expect } = require("chai");
 const Model = require("../lib/Model");
 const Allowlist = require("../lib/allowlist");
@@ -53,7 +48,7 @@ describe("Model", () => {
 
     const parsedAuditOutput = {
       advisories: {
-        "663": {
+        663: {
           id: 663,
           title: "Command Injection",
           module_name: "open",
