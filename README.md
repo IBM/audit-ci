@@ -11,7 +11,7 @@ threshold while ignoring allowlisted advisories.
 ## Requirements
 
 - Node >= 8
-- _(Optional)_ Yarn >= 1.12.3 && Yarn < 2
+- _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
 
 ## Set up
 
