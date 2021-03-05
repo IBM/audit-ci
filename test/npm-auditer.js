@@ -169,16 +169,16 @@ describe("npm-auditer", function testNpmAuditer() {
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: Allowlist.mapConfigToAllowlist({
-          "path-whitelist": ["880|github-build>axios"],
+          "path-whitelist": ["axios|github-build"],
         }),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedPathsFound: ["880|github-build>axios"],
+        allowlistedPathsFound: ["axios|github-build"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [880],
+        advisoriesFound: ["axios"],
       })
     );
   });
@@ -268,18 +268,19 @@ describe("npm-auditer", function testNpmAuditer() {
       done();
     });
   });
-  it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
-    audit(
-      config({
-        directory: testDir("npm-low"),
-        levels: { low: true },
-        registry: "https://example.com",
-      })
-    ).catch((err) => {
-      expect(err.message).to.include("code ENOAUDIT");
-      done();
-    });
-  });
+  // available in npm 6 only
+  // it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
+  //   audit(
+  //     config({
+  //       directory: testDir("npm-low"),
+  //       levels: { low: true },
+  //       registry: "https://example.com",
+  //     })
+  //   ).catch((err) => {
+  //     expect(err.message).to.include("code ENOAUDIT");
+  //     done();
+  //   });
+  // });
   // it("passes using --pass-enoaudit", () => {
   //   const directory = testDir("npm-500");
   //   return audit(
