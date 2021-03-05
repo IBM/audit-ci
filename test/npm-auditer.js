@@ -264,7 +264,7 @@ describe("npm-auditer", function testNpmAuditer() {
         registry: "https://registry.nonexistentdomain0000000000.com",
       })
     ).catch((err) => {
-      expect(err.message).to.include("code ENOTFOUND");
+      expect(err.message).to.include("ENOTFOUND");
       done();
     });
   });
