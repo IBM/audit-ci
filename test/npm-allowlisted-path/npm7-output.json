@@ -1,0 +1,67 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "axios": {
+      "name": "axios",
+      "severity": "high",
+      "via": [
+        {
+          "source": 1594,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Server-Side Request Forgery",
+          "url": "https://npmjs.com/advisories/1594",
+          "severity": "high",
+          "range": "<0.21.1"
+        },
+        {
+          "source": 880,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Denial of Service",
+          "url": "https://npmjs.com/advisories/880",
+          "severity": "moderate",
+          "range": "<0.18.1"
+        }
+      ],
+      "effects": ["github-build"],
+      "range": "<=0.21.0",
+      "nodes": [
+        "node_modules/axios",
+        "node_modules/github-build/node_modules/axios"
+      ],
+      "fixAvailable": {
+        "name": "axios",
+        "version": "0.21.1",
+        "isSemVerMajor": true
+      }
+    },
+    "github-build": {
+      "name": "github-build",
+      "severity": "moderate",
+      "via": ["axios"],
+      "effects": [],
+      "range": "<=1.2.0",
+      "nodes": ["node_modules/github-build"],
+      "fixAvailable": true
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 1,
+      "critical": 0,
+      "total": 2
+    },
+    "dependencies": {
+      "prod": 9,
+      "dev": 0,
+      "optional": 0,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 8
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "braces": {
+      "name": "braces",
+      "severity": "low",
+      "via": [
+        {
+          "source": 786,
+          "name": "braces",
+          "dependency": "braces",
+          "title": "Regular Expression Denial of Service",
+          "url": "https://npmjs.com/advisories/786",
+          "severity": "low",
+          "range": "<2.3.1"
+        }
+      ],
+      "effects": ["micromatch"],
+      "range": "<2.3.1",
+      "nodes": ["node_modules/braces"],
+      "fixAvailable": {
+        "name": "micromatch",
+        "version": "4.0.2",
+        "isSemVerMajor": true
+      }
+    },
+    "micromatch": {
+      "name": "micromatch",
+      "severity": "low",
+      "via": ["braces"],
+      "effects": [],
+      "range": "0.2.0 - 2.3.11",
+      "nodes": ["node_modules/micromatch"],
+      "fixAvailable": {
+        "name": "micromatch",
+        "version": "4.0.2",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 2,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 2
+    },
+    "dependencies": {
+      "prod": 42,
+      "dev": 0,
+      "optional": 0,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 41
+    }
+  }
+}
