@@ -1,0 +1,73 @@
+{
+  "actions": [
+    {
+      "isMajor": true,
+      "action": "install",
+      "resolves": [
+        {
+          "id": 658,
+          "path": "base64url",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "base64url",
+      "target": "3.0.1"
+    }
+  ],
+  "advisories": {
+    "658": {
+      "findings": [
+        {
+          "version": "2.0.0",
+          "paths": [
+            "base64url"
+          ]
+        }
+      ],
+      "id": 658,
+      "created": "2018-05-16T19:16:37.120Z",
+      "updated": "2018-05-16T19:17:38.115Z",
+      "deleted": null,
+      "title": "Out-of-bounds Read",
+      "found_by": {
+        "name": "Сковорода Никита Андреевич"
+      },
+      "reported_by": {
+        "name": "Сковорода Никита Андреевич"
+      },
+      "module_name": "base64url",
+      "cves": [],
+      "vulnerable_versions": "<3.0.0",
+      "patched_versions": ">=3.0.0",
+      "overview": "Versions of `base64url` before 3.0.0 are vulnerable to to out-of-bounds reads as it allocates uninitialized Buffers when number is passed in input on Node.js 4.x and below.",
+      "recommendation": "Update to version 3.0.0 or later.",
+      "references": "- [HackerOne Report](https://hackerone.com/reports/321687)\n- [PR #25](https://github.com/brianloveswords/base64url/pull/25\")",
+      "access": "public",
+      "severity": "moderate",
+      "cwe": "CWE-125",
+      "metadata": {
+        "module_type": "",
+        "exploitability": 2,
+        "affected_components": ""
+      },
+      "url": "https://npmjs.com/advisories/658"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 0,
+      "critical": 0
+    },
+    "dependencies": 1,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 1
+  },
+  "runId": "ca58c00c-af69-4647-baa9-6e752d962d4b"
+}

@@ -1,0 +1,159 @@
+{
+  "actions": [
+    {
+      "isMajor": false,
+      "action": "install",
+      "resolves": [
+        {
+          "id": 880,
+          "path": "axios",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1594,
+          "path": "axios",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "axios",
+      "target": "0.21.1"
+    },
+    {
+      "isMajor": false,
+      "action": "install",
+      "resolves": [
+        {
+          "id": 880,
+          "path": "github-build>axios",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1594,
+          "path": "github-build>axios",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "github-build",
+      "target": "1.2.2"
+    }
+  ],
+  "advisories": {
+    "880": {
+      "findings": [
+        {
+          "version": "0.15.3",
+          "paths": [
+            "axios"
+          ]
+        },
+        {
+          "version": "0.15.3",
+          "paths": [
+            "github-build>axios"
+          ]
+        }
+      ],
+      "id": 880,
+      "created": "2019-05-06T19:14:45.155Z",
+      "updated": "2019-06-03T17:55:10.532Z",
+      "deleted": null,
+      "title": "Denial of Service",
+      "found_by": {
+        "link": "https://nornagon.net/",
+        "name": "Jeremy Apthorp"
+      },
+      "reported_by": {
+        "link": "https://nornagon.net/",
+        "name": "Jeremy Apthorp"
+      },
+      "module_name": "axios",
+      "cves": [],
+      "vulnerable_versions": "<0.18.1",
+      "patched_versions": ">=0.18.1",
+      "overview": "Versions of `axios` prior to 0.18.1 are vulnerable to Denial of Service. If a request exceeds the `maxContentLength` property, the package prints an error but does not stop the request. This may cause high CPU usage and lead to Denial of Service.",
+      "recommendation": "Upgrade to 0.18.1 or later.",
+      "references": "- [Github Issue](https://github.com/axios/axios/issues/1098)\n- [Snyk Report](https://snyk.io/vuln/SNYK-JS-AXIOS-174505)",
+      "access": "public",
+      "severity": "moderate",
+      "cwe": "CWE-400",
+      "metadata": {
+        "module_type": "",
+        "exploitability": 4,
+        "affected_components": ""
+      },
+      "url": "https://npmjs.com/advisories/880"
+    },
+    "1594": {
+      "findings": [
+        {
+          "version": "0.15.3",
+          "paths": [
+            "axios"
+          ]
+        },
+        {
+          "version": "0.15.3",
+          "paths": [
+            "github-build>axios"
+          ]
+        }
+      ],
+      "id": 1594,
+      "created": "2021-01-04T21:04:59.346Z",
+      "updated": "2021-01-04T21:05:54.214Z",
+      "deleted": null,
+      "title": "Server-Side Request Forgery",
+      "found_by": {
+        "link": "",
+        "name": "Anonymous",
+        "email": ""
+      },
+      "reported_by": {
+        "link": "",
+        "name": "Anonymous",
+        "email": ""
+      },
+      "module_name": "axios",
+      "cves": [
+        "CVE-2020-28168"
+      ],
+      "vulnerable_versions": "<0.21.1",
+      "patched_versions": ">=0.21.1",
+      "overview": "The `axios` NPM package before 0.21.1 contains a Server-Side Request Forgery (SSRF) vulnerability where an attacker is able to bypass a proxy by providing a URL that responds with a redirect to a restricted host or IP address.",
+      "recommendation": "Upgrade to 0.21.1 or later.",
+      "references": "- [Github Issue](https://github.com/axios/axios/issues/3369)\n- [Fix commit](https://github.com/axios/axios/commit/c7329fefc890050edd51e40e469a154d0117fc55)\n- [GitHub Advisory](https://github.com/advisories/GHSA-4w2v-q235-vp99)\n- [Snyk Report](https://snyk.io/vuln/SNYK-JS-AXIOS-1038255)",
+      "access": "public",
+      "severity": "high",
+      "cwe": "CWE-918",
+      "metadata": {
+        "module_type": "",
+        "exploitability": 5,
+        "affected_components": ""
+      },
+      "url": "https://npmjs.com/advisories/1594"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 2,
+      "high": 2,
+      "critical": 0
+    },
+    "dependencies": 8,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 8
+  },
+  "runId": "392f2772-b277-43ce-a5a4-3351f5e082f8"
+}

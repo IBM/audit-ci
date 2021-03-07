@@ -1,8 +1,16 @@
 const { expect } = require("chai");
 const path = require("path");
-const audit = require("../lib/audit").bind(null, "npm");
+const { audit } = require("../lib/npm-auditer");
+const { report } = require("../lib/npm-auditer");
 const Allowlist = require("../lib/allowlist");
 const { summaryWithDefault } = require("./common");
+
+const reportNpmCritical = require("./npm-critical/npm-output.json");
+const reportNpmHighSeverity = require("./npm-high/npm-output.json");
+const reportNpmModerateSeverity = require("./npm-moderate/npm-output.json");
+const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm-output.json");
+const reportNpmLow = require("./npm-low/npm-output.json");
+const reportNpmNone = require("./npm-none/npm-output.json");
 
 function config(additions) {
   const defaultConfig = {
@@ -30,9 +38,9 @@ function testDir(s) {
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
 describe("npm-auditer", function testNpmAuditer() {
-  this.slow(6000);
   it("prints full report with critical severity", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmCritical,
       config({
         directory: testDir("npm-critical"),
         levels: { critical: true },
@@ -48,7 +56,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("does not report critical severity if it set to false", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmCritical,
       config({
         directory: testDir("npm-critical"),
         levels: { critical: false },
@@ -58,7 +67,8 @@ describe("npm-auditer", function testNpmAuditer() {
     expect(summary).to.eql(summaryWithDefault());
   });
   it("reports summary with high severity", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmHighSeverity,
       config({
         directory: testDir("npm-high"),
         levels: { high: true },
@@ -74,7 +84,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("reports important info with moderate severity", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -90,7 +101,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("does not report moderate severity if it set to false", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: false },
@@ -100,7 +112,8 @@ describe("npm-auditer", function testNpmAuditer() {
     expect(summary).to.eql(summaryWithDefault());
   });
   it("[DEPRECATED - advisories] ignores an advisory if it is whitelisted", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -115,7 +128,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("ignores an advisory if it is allowlisted", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -130,7 +144,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("[DEPRECATED - advisories] does not ignore an advisory that is not whitelisted", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -147,7 +162,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("does not ignore an advisory that is not allowlisted", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -164,26 +180,28 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("[DEPRECATED - path-whitelist] reports only vulnerabilities with a not whitelisted path", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmAllowlistedPath,
       config({
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: Allowlist.mapConfigToAllowlist({
-          "path-whitelist": ["axios|github-build"],
+          "path-whitelist": ["880|github-build>axios"],
         }),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedPathsFound: ["axios|github-build"],
+        allowlistedPathsFound: ["880|github-build>axios"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["axios"],
+        advisoriesFound: [880],
       })
     );
   });
   it("reports only vulnerabilities with a not allowlisted path", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmAllowlistedPath,
       config({
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
@@ -217,7 +235,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("allowlist all vulnerabilities with a allowlisted path", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmAllowlistedPath,
       config({
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
@@ -232,7 +251,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("reports low severity", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmLow,
       config({
         directory: testDir("npm-low"),
         levels: { low: true },
@@ -247,7 +267,8 @@ describe("npm-auditer", function testNpmAuditer() {
     );
   });
   it("passes with no vulnerabilities", async () => {
-    const summary = await audit(
+    const summary = await report(
+      reportNpmNone,
       config({
         directory: testDir("npm-none"),
         levels: { low: true },
@@ -264,23 +285,22 @@ describe("npm-auditer", function testNpmAuditer() {
         registry: "https://registry.nonexistentdomain0000000000.com",
       })
     ).catch((err) => {
-      expect(err.message).to.include("ENOTFOUND");
+      expect(err.message).to.include("code ENOTFOUND");
       done();
     });
   });
-  // available in npm 6 only
-  // it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
-  //   audit(
-  //     config({
-  //       directory: testDir("npm-low"),
-  //       levels: { low: true },
-  //       registry: "https://example.com",
-  //     })
-  //   ).catch((err) => {
-  //     expect(err.message).to.include("code ENOAUDIT");
-  //     done();
-  //   });
-  // });
+  it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
+    audit(
+      config({
+        directory: testDir("npm-low"),
+        levels: { low: true },
+        registry: "https://example.com",
+      })
+    ).catch((err) => {
+      expect(err.message).to.include("code ENOAUDIT");
+      done();
+    });
+  });
   // it("passes using --pass-enoaudit", () => {
   //   const directory = testDir("npm-500");
   //   return audit(
