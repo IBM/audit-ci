@@ -1,8 +1,7 @@
 const { expect } = require("chai");
-const path = require("path");
 const { audit, report } = require("../lib/npm-auditer");
 const Allowlist = require("../lib/allowlist");
-const { summaryWithDefault } = require("./common");
+const { summaryWithDefault, config, testDir } = require("./common");
 
 const reportNpmCritical = require("./npm-critical/npm-output.json");
 const reportNpmHighSeverity = require("./npm-high/npm-output.json");
@@ -10,29 +9,6 @@ const reportNpmModerateSeverity = require("./npm-moderate/npm-output.json");
 const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm-output.json");
 const reportNpmLow = require("./npm-low/npm-output.json");
 const reportNpmNone = require("./npm-none/npm-output.json");
-
-function config(additions) {
-  const defaultConfig = {
-    levels: {
-      low: false,
-      moderate: false,
-      high: false,
-      critical: false,
-    },
-    "report-type": "important",
-    allowlist: new Allowlist(),
-    "show-not-found": false,
-    "retry-count": 5,
-    directory: "./",
-    registry: undefined,
-    "pass-enoaudit": false,
-  };
-  return { ...defaultConfig, ...additions };
-}
-
-function testDir(s) {
-  return path.resolve(__dirname, s);
-}
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}

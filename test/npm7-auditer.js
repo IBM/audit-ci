@@ -1,38 +1,14 @@
 const { expect } = require("chai");
-const path = require("path");
 const { audit, report } = require("../lib/npm-auditer");
 const Allowlist = require("../lib/allowlist");
-const { summaryWithDefault } = require("./common");
+const { summaryWithDefault, config, testDir } = require("./common");
 
 const reportNpmCritical = require("./npm-critical/npm7-output.json");
-const reportNpmHigh = require("./npm-high/npm7-output.json");
-const reportNpmModerate = require("./npm-moderate/npm7-output.json");
-const reportNpmAllowlisted = require("./npm-allowlisted-path/npm7-output.json");
-const reportNpmNone = require("./npm-none/npm7-output.json");
+const reportNpmHighSeverity = require("./npm-high/npm7-output.json");
+const reportNpmModerateSeverity = require("./npm-moderate/npm7-output.json");
+const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm7-output.json");
 const reportNpmLow = require("./npm-low/npm7-output.json");
-
-function config(additions) {
-  const defaultConfig = {
-    levels: {
-      low: false,
-      moderate: false,
-      high: false,
-      critical: false,
-    },
-    "report-type": "important",
-    allowlist: new Allowlist(),
-    "show-not-found": false,
-    "retry-count": 5,
-    directory: "./",
-    registry: undefined,
-    "pass-enoaudit": false,
-  };
-  return { ...defaultConfig, ...additions };
-}
-
-function testDir(s) {
-  return path.resolve(__dirname, s);
-}
+const reportNpmNone = require("./npm-none/npm7-output.json");
 
 describe("npm7-auditer", function testNpm7Auditer() {
   it("prints full report with critical severity", () => {
@@ -65,7 +41,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
   });
   it("reports summary with high severity", () => {
     const summary = report(
-      reportNpmHigh,
+      reportNpmHighSeverity,
       config({
         directory: testDir("npm-high"),
         levels: { high: true },
@@ -82,7 +58,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
   });
   it("reports important info with moderate severity", () => {
     const summary = report(
-      reportNpmModerate,
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -99,7 +75,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
   });
   it("does not report moderate severity if it set to false", () => {
     const summary = report(
-      reportNpmModerate,
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: false },
@@ -110,7 +86,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
   });
   it("[DEPRECATED - advisories] ignores an advisory if it is whitelisted", () => {
     const summary = report(
-      reportNpmModerate,
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -126,7 +102,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
   });
   it("ignores an advisory if it is allowlisted", () => {
     const summary = report(
-      reportNpmModerate,
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -142,7 +118,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
   });
   it("[DEPRECATED - advisories] does not ignore an advisory that is not whitelisted", () => {
     const summary = report(
-      reportNpmModerate,
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -160,7 +136,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
   });
   it("does not ignore an advisory that is not allowlisted", () => {
     const summary = report(
-      reportNpmModerate,
+      reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
@@ -178,39 +154,73 @@ describe("npm7-auditer", function testNpm7Auditer() {
   });
   it("[DEPRECATED - path-whitelist] reports only vulnerabilities with a not whitelisted path", () => {
     const summary = report(
-      reportNpmAllowlisted,
+      reportNpmAllowlistedPath,
       config({
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: Allowlist.mapConfigToAllowlist({
-          "path-whitelist": ["axios|github-build"],
+          "path-whitelist": ["880|github-build>axios"],
         }),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedPathsFound: ["axios|github-build"],
+        allowlistedPathsFound: ["880|github-build>axios"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["axios"],
+        advisoriesFound: [880],
       })
     );
   });
   it("reports only vulnerabilities with a not allowlisted path", () => {
     const summary = report(
-      reportNpmAllowlisted,
+      reportNpmAllowlistedPath,
       config({
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
-        allowlist: new Allowlist(["axios|github-build"]),
+        allowlist: new Allowlist(["880|github-build>axios"]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedPathsFound: ["axios|github-build"],
+        allowlistedPathsFound: ["880|github-build>axios"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["axios"],
+        advisoriesFound: [880],
+      })
+    );
+  });
+  it("[DEPRECATED - path-whitelist] whitelist all vulnerabilities with a whitelisted path", () => {
+    const summary = report(
+      reportNpmAllowlistedPath,
+      config({
+        directory: testDir("npm-allowlisted-path"),
+        levels: { moderate: true },
+        allowlist: Allowlist.mapConfigToAllowlist({
+          "path-whitelist": ["880|axios", "880|github-build>axios"],
+        }),
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedPathsFound: ["880|axios", "880|github-build>axios"],
+      })
+    );
+  });
+  it("allowlist all vulnerabilities with a allowlisted path", () => {
+    const summary = report(
+      reportNpmAllowlistedPath,
+      config({
+        directory: testDir("npm-allowlisted-path"),
+        levels: { moderate: true },
+        allowlist: new Allowlist(["880|axios", "880|github-build>axios"]),
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedPathsFound: ["880|axios", "880|github-build>axios"],
       })
     );
   });
@@ -226,7 +236,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [786, "braces"],
+        advisoriesFound: [786],
       })
     );
   });
