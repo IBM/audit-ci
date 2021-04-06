@@ -29,13 +29,10 @@ function testDir(s) {
   return path.resolve(__dirname, s);
 }
 
-function canRunYarnBerry() {
-  const nodeVersion = childProcess
-    .execSync("node -v")
-    .toString()
-    .replace("\n", "");
-  return semver.gte(nodeVersion, "12.13.0");
-}
+const canRunYarnBerry = semver.gte(
+  childProcess.execSync("node -v").toString().replace("\n", ""),
+  "12.13.0"
+);
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
@@ -208,7 +205,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       (_summary) => _summary
     );
   });
-  (canRunYarnBerry() ? it : it.skip)(
+  (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] reports important info with moderate severity",
     async () => {
       const summary = await audit(
@@ -227,7 +224,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       );
     }
   );
-  (canRunYarnBerry() ? it : it.skip)(
+  (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] does not report moderate severity if it set to false",
     async () => {
       const summary = await audit(
@@ -240,7 +237,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       expect(summary).to.eql(summaryWithDefault());
     }
   );
-  (canRunYarnBerry() ? it : it.skip)(
+  (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] ignores an advisory if it is allowlisted",
     async () => {
       const summary = await audit(
