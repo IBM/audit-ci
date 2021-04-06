@@ -10,8 +10,8 @@ threshold while ignoring allowlisted advisories.
 
 ## Requirements
 
-- Node >= 8
-- _(Optional)_ Yarn >= 1.12.3 && Yarn < 2
+- Node >=8 (except Yarn Berry, which requires Node >=12.13.0)
+- _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
 
 ## Set up
 
