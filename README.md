@@ -15,39 +15,32 @@ threshold while ignoring allowlisted advisories.
 
 ## Set up
 
+Install `audit-ci` during your CI environment using `npx` or as a devDependency.
+
+> `npx audit-ci --moderate`
+
+Alternatively, for the devDependency approach with NPM:
+
 > `npm install --save-dev audit-ci`
 
-or if you're using `yarn`
+or, using `yarn`:
 
 > `yarn add -D audit-ci`
 
-Assuming medium, high, and critical severity vulnerabilities prevent build continuation:
+The next section gives examples using `audit-ci` in various CI environments.
+It assumes that medium, high, and critical severity vulnerabilities prevent build continuation.
+For simplicity, the examples use `npx` and do not use a config file.
 
-For `Travis-CI` (only on PR builds is [recommended](#qa)):
-
-```yml
-scripts:
-  # This script should be the first that runs to reduce the risk of
-  # executing a script from a compromised NPM package.
-  - audit-ci --moderate
-  # If you use a pull-request-only workflow,
-  # it's better to not run audit-ci on master and only run it on pull requests.
-  # For more info: https://github.com/IBM/audit-ci/issues/69
-  # For a PR-only workflow, use the below script instead of the above script:
-  #
-  # - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then audit-ci --moderate; fi
-```
-
-For `Travis-CI` not using PR builds:
+### GitHub Actions
 
 ```yml
-scripts:
-  # This script should be the first that runs to reduce the risk of
-  # executing a script from a compromised NPM package.
-  - audit-ci --moderate
+steps:
+  - uses: actions/checkout@v2
+  - name: Audit for vulnerabilities
+    run: npx audit-ci --moderate
 ```
 
-For `CircleCI`:
+### CircleCI
 
 ```yml
 # ... excludes set up for job
@@ -65,8 +58,7 @@ steps:
   # the risk of executing a script from a compromised NPM package.
   - run:
       name: run-audit-ci
-      # Only have audit-ci checks on pull requests
-      command: audit-ci --moderate
+      command: npx audit-ci --moderate
       # If you use a pull-request-only workflow,
       # it's better to not run audit-ci on master and only run it on pull requests.
       # For more info: https://github.com/IBM/audit-ci/issues/69
@@ -75,13 +67,22 @@ steps:
       # command: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then audit-ci --moderate ; fi
 ```
 
-### NPX
+### Travis-CI
 
-An alternative to installing as a devDependency is to use npx to install within the CI environment at run-time.
+Auditing only on PR builds is [recommended](#qa)
 
 ```yml
-before_install:
-  - npx audit-ci -m
+scripts:
+  # This script should be the first that runs to reduce the risk of
+  # executing a script from a compromised NPM package.
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npx audit-ci --moderate; fi
+```
+
+For `Travis-CI` not using PR builds:
+
+```yml
+scripts:
+  - npx audit-ci --moderate
 ```
 
 ## Options
@@ -113,7 +114,7 @@ before_install:
 
 A config file can manage auditing preferences `audit-ci`. The config file's keys match the CLI arguments.
 
-```
+```txt
 {
   // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
   "low": <boolean>, // [Optional] defaults `false`
@@ -144,13 +145,13 @@ Review the examples section for an [example of config file usage](#example-confi
 ### Prevents build on moderate, high, or critical vulnerabilities; ignores low
 
 ```sh
-audit-ci -m
+npx audit-ci -m
 ```
 
 ### Prevents build on any vulnerability except advisory 690 and all of lodash and base64url, don't show allowlisted
 
 ```sh
-audit-ci -l -a 690 lodash base64url --show-found false
+npx audit-ci -l -a 690 lodash base64url --show-found false
 ```
 
 ### Prevents build with critical vulnerabilities showing the full report
@@ -162,12 +163,12 @@ audit-ci --critical --report-type full
 ### Continues build regardless of vulnerabilities, but show the summary report
 
 ```sh
-audit-ci --report-type summary
+npx audit-ci --report-type summary
 ```
 
 ### Example config file and different directory usage
 
-**test/npm-config-file/audit-ci.json**
+#### test/npm-config-file/audit-ci.json
 
 ```json
 {
@@ -187,15 +188,15 @@ audit-ci --report-type summary
 ```
 
 ```sh
-audit-ci --directory test/npm-config-file --config test/npm-config-file/audit-ci.json
+npx audit-ci --directory test/npm-config-file --config test/npm-config-file/audit-ci.json
 ```
 
 ## Q&A
 
-#### Why run `audit-ci` on PR builds for `Travis-CI` and not the push builds?
+### Why run `audit-ci` on PR builds for `Travis-CI` and not the push builds?
 
 If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix. However, they can't be merged until the fix is implemented. Since `audit-ci` performs the audit on the PR build, it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `master` before passing the audit.
 
-#### NPM/Yarn is returning ENOAUDIT and is breaking my build, what do I do?
+### NPM/Yarn is returning ENOAUDIT and is breaking my build, what do I do?
 
 The config option `--pass-enoaudit` allows passing if no audit is performed due to the registry returning ENOAUDIT. It is `false` by default to reduce the risk of merging in a vulnerable package. However, if the convenience of passing is more important for your project then you can add `--pass-enoaudit` into the CLI or add it to the config.
