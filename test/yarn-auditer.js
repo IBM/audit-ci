@@ -1,5 +1,7 @@
 const { expect } = require("chai");
+const childProcess = require("child_process");
 const path = require("path");
+const semver = require("semver");
 const audit = require("../lib/audit").bind(null, "yarn");
 const Allowlist = require("../lib/allowlist");
 const { summaryWithDefault } = require("./common");
@@ -25,6 +27,14 @@ function config(additions) {
 
 function testDir(s) {
   return path.resolve(__dirname, s);
+}
+
+function canRunYarnBerry() {
+  const nodeVersion = childProcess
+    .execSync("node -v")
+    .toString()
+    .replace("\n", "");
+  return semver.gte(nodeVersion, "12.13.0");
 }
 
 // To modify what slow times are, need to use
@@ -198,47 +208,56 @@ describe("yarn-auditer", function testYarnAuditer() {
       (_summary) => _summary
     );
   });
-  it("[Yarn Berry] reports important info with moderate severity", async () => {
-    const summary = await audit(
-      config({
-        directory: testDir("yarn-berry-moderate"),
-        levels: { moderate: true },
-        "report-type": "important",
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
-      })
-    );
-  });
-  it("[Yarn Berry] does not report moderate severity if it set to false", async () => {
-    const summary = await audit(
-      config({
-        directory: testDir("yarn-berry-moderate"),
-        levels: { moderate: false },
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(summaryWithDefault());
-  });
-  it("[Yarn Berry] ignores an advisory if it is allowlisted", async () => {
-    const summary = await audit(
-      config({
-        directory: testDir("yarn-berry-moderate"),
-        levels: { moderate: true },
-        allowlist: new Allowlist([658]),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedAdvisoriesFound: [658],
-      })
-    );
-  });
+  (canRunYarnBerry() ? it : it.skip)(
+    "[Yarn Berry] reports important info with moderate severity",
+    async () => {
+      const summary = await audit(
+        config({
+          directory: testDir("yarn-berry-moderate"),
+          levels: { moderate: true },
+          "report-type": "important",
+        }),
+        (_summary) => _summary
+      );
+      expect(summary).to.eql(
+        summaryWithDefault({
+          failedLevelsFound: ["moderate"],
+          advisoriesFound: [658],
+        })
+      );
+    }
+  );
+  (canRunYarnBerry() ? it : it.skip)(
+    "[Yarn Berry] does not report moderate severity if it set to false",
+    async () => {
+      const summary = await audit(
+        config({
+          directory: testDir("yarn-berry-moderate"),
+          levels: { moderate: false },
+        }),
+        (_summary) => _summary
+      );
+      expect(summary).to.eql(summaryWithDefault());
+    }
+  );
+  (canRunYarnBerry() ? it : it.skip)(
+    "[Yarn Berry] ignores an advisory if it is allowlisted",
+    async () => {
+      const summary = await audit(
+        config({
+          directory: testDir("yarn-berry-moderate"),
+          levels: { moderate: true },
+          allowlist: new Allowlist([658]),
+        }),
+        (_summary) => _summary
+      );
+      expect(summary).to.eql(
+        summaryWithDefault({
+          allowlistedAdvisoriesFound: [658],
+        })
+      );
+    }
+  );
   // it('prints unexpected https://registry.yarnpkg.com 503 error message', () => {
   //   const directory = testDir('yarn-503');
   //   const errorMessagePath = path.resolve(directory, 'error-message');
