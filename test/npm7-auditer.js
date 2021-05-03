@@ -3,16 +3,14 @@ const { audit, report } = require("../lib/npm-auditer");
 const Allowlist = require("../lib/allowlist");
 const { summaryWithDefault, config, testDir } = require("./common");
 
-const reportNpmCritical = require("./npm-critical/npm-output.json");
-const reportNpmHighSeverity = require("./npm-high/npm-output.json");
-const reportNpmModerateSeverity = require("./npm-moderate/npm-output.json");
-const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm-output.json");
-const reportNpmLow = require("./npm-low/npm-output.json");
-const reportNpmNone = require("./npm-none/npm-output.json");
+const reportNpmCritical = require("./npm-critical/npm7-output.json");
+const reportNpmHighSeverity = require("./npm-high/npm7-output.json");
+const reportNpmModerateSeverity = require("./npm-moderate/npm7-output.json");
+const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm7-output.json");
+const reportNpmLow = require("./npm-low/npm7-output.json");
+const reportNpmNone = require("./npm-none/npm7-output.json");
 
-// To modify what slow times are, need to use
-// function() {} instead of () => {}
-describe("npm-auditer", function testNpmAuditer() {
+describe("npm7-auditer", function testNpm7Auditer() {
   it("prints full report with critical severity", () => {
     const summary = report(
       reportNpmCritical,
@@ -265,26 +263,4 @@ describe("npm-auditer", function testNpmAuditer() {
       done();
     });
   });
-  // it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
-  //   audit(
-  //     config({
-  //       directory: testDir("npm-low"),
-  //       levels: { low: true },
-  //       registry: "https://example.com",
-  //     })
-  //   ).catch((err) => {
-  //     expect(err.message).to.include("code ENOAUDIT");
-  //     done();
-  //   });
-  // });
-  // it("passes using --pass-enoaudit", () => {
-  //   const directory = testDir("npm-500");
-  //   return audit(
-  //     config({
-  //       directory,
-  //       "pass-enoaudit": true,
-  //       _npm: path.join(directory, "npm"),
-  //     })
-  //   );
-  // });
 });

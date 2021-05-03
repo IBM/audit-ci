@@ -1,0 +1,42 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "cryo": {
+      "name": "cryo",
+      "severity": "high",
+      "via": [
+        {
+          "source": 690,
+          "name": "cryo",
+          "dependency": "cryo",
+          "title": "Code Injection",
+          "url": "https://npmjs.com/advisories/690",
+          "severity": "high",
+          "range": ">=0.0.0"
+        }
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": ["node_modules/cryo"],
+      "fixAvailable": false
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 1,
+      "critical": 0,
+      "total": 1
+    },
+    "dependencies": {
+      "prod": 2,
+      "dev": 0,
+      "optional": 0,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 1
+    }
+  }
+}

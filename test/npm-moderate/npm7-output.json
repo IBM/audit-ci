@@ -1,0 +1,46 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "base64url": {
+      "name": "base64url",
+      "severity": "moderate",
+      "via": [
+        {
+          "source": 658,
+          "name": "base64url",
+          "dependency": "base64url",
+          "title": "Out-of-bounds Read",
+          "url": "https://npmjs.com/advisories/658",
+          "severity": "moderate",
+          "range": "<3.0.0"
+        }
+      ],
+      "effects": [],
+      "range": "<3.0.0",
+      "nodes": ["node_modules/base64url"],
+      "fixAvailable": {
+        "name": "base64url",
+        "version": "3.0.1",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 0,
+      "critical": 0,
+      "total": 1
+    },
+    "dependencies": {
+      "prod": 2,
+      "dev": 0,
+      "optional": 0,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 1
+    }
+  }
+}

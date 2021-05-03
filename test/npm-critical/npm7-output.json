@@ -1,0 +1,46 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "open": {
+      "name": "open",
+      "severity": "critical",
+      "via": [
+        {
+          "source": 663,
+          "name": "open",
+          "dependency": "open",
+          "title": "Command Injection",
+          "url": "https://npmjs.com/advisories/663",
+          "severity": "critical",
+          "range": "<=0.0.5"
+        }
+      ],
+      "effects": [],
+      "range": "<=0.0.5",
+      "nodes": ["node_modules/open"],
+      "fixAvailable": {
+        "name": "open",
+        "version": "8.0.2",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 1,
+      "total": 1
+    },
+    "dependencies": {
+      "prod": 2,
+      "dev": 0,
+      "optional": 0,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 1
+    }
+  }
+}
