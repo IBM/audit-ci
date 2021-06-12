@@ -9,6 +9,7 @@ const reportNpmModerateSeverity = require("./npm-moderate/npm-output.json");
 const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm-output.json");
 const reportNpmLow = require("./npm-low/npm-output.json");
 const reportNpmNone = require("./npm-none/npm-output.json");
+const reportNpmSkipDev = require("./npm-skip-dev/npm-output.json");
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
@@ -264,6 +265,18 @@ describe("npm-auditer", function testNpmAuditer() {
       expect(err.message).to.include("ENOTFOUND");
       done();
     });
+  });
+  it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
+    const summary = report(
+      reportNpmSkipDev,
+      config({
+        directory: testDir("npm-skip-dev"),
+        "skip-dev": true,
+        "report-type": "important",
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(summaryWithDefault());
   });
   // it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
   //   audit(

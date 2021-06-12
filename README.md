@@ -129,6 +129,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "show-not-found": <boolean>, // [Optional] defaults `true`
   "registry": <string>, // [Optional] defaults `undefined`
   "retry-count": <number>, // [Optional] defaults 5
+  "skip-dev": <boolean>, // [Optional] defaults `false`
   "advisories": <number[]>, // [Deprecated, optional] defaults `[]`
   "path-whitelist": <string[]>, // [Deprecated, optional] defaults `[]`
   "whitelist": <string[]> // [Deprecated, optional] defaults `[]`
