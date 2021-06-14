@@ -103,6 +103,7 @@ scripts:
 |      | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
 |      | --config          | Path to JSON config file                                                                              |
+|      | --skip-dev        | Skip auditing devDependencies (default `false`)                                                       |
 |      | --advisories      | _[DEPRECATED]_ Vulnerable advisory ids to whitelist from preventing integration (default `none`)      |
 | -w   | --whitelist       | _[DEPRECATED]_ Vulnerable modules to whitelist from preventing integration (default `none`)           |
 |      | --path-whitelist  | _[DEPRECATED]_ Vulnerable module paths to whitelist from preventing integration (default `none`)      |
@@ -129,6 +130,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "show-not-found": <boolean>, // [Optional] defaults `true`
   "registry": <string>, // [Optional] defaults `undefined`
   "retry-count": <number>, // [Optional] defaults 5
+  "skip-dev": <boolean>, // [Optional] defaults `false`
   "advisories": <number[]>, // [Deprecated, optional] defaults `[]`
   "path-whitelist": <string[]>, // [Deprecated, optional] defaults `[]`
   "whitelist": <string[]> // [Deprecated, optional] defaults `[]`

@@ -21,6 +21,7 @@ function config(additions) {
     directory: "./",
     registry: undefined,
     "pass-enoaudit": false,
+    "skip-dev": false,
   };
   return { ...defaultConfig, ...additions };
 }
@@ -255,6 +256,19 @@ describe("yarn-auditer", function testYarnAuditer() {
       );
     }
   );
+  it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", async () => {
+    const summary = await audit(
+      config({
+        directory: testDir(
+          canRunYarnBerry ? "yarn-berry-skip-dev" : "yarn-skip-dev"
+        ),
+        "skip-dev": true,
+        "report-type": "important",
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(summaryWithDefault());
+  });
   // it('prints unexpected https://registry.yarnpkg.com 503 error message', () => {
   //   const directory = testDir('yarn-503');
   //   const errorMessagePath = path.resolve(directory, 'error-message');

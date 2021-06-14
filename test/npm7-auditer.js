@@ -9,6 +9,7 @@ const reportNpmModerateSeverity = require("./npm-moderate/npm7-output.json");
 const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm7-output.json");
 const reportNpmLow = require("./npm-low/npm7-output.json");
 const reportNpmNone = require("./npm-none/npm7-output.json");
+const reportNpmSkipDev = require("./npm-skip-dev/npm-output.json");
 
 describe("npm7-auditer", function testNpm7Auditer() {
   it("prints full report with critical severity", () => {
@@ -262,5 +263,17 @@ describe("npm7-auditer", function testNpm7Auditer() {
       expect(err.message).to.include("ENOTFOUND");
       done();
     });
+  });
+  it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
+    const summary = report(
+      reportNpmSkipDev,
+      config({
+        directory: testDir("npm-skip-dev"),
+        "skip-dev": true,
+        "report-type": "important",
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(summaryWithDefault());
   });
 });
