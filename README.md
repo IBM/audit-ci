@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.com/IBM/audit-ci.svg?branch=master)](https://travis-ci.com/IBM/audit-ci)
-![CircleCI branch](https://img.shields.io/circleci/project/github/IBM/audit-ci/master.svg)
+[![Build Status](https://travis-ci.com/IBM/audit-ci.svg?branch=main)](https://travis-ci.com/IBM/audit-ci)
+![CircleCI branch](https://img.shields.io/circleci/project/github/IBM/audit-ci/main.svg)
 ![David](https://img.shields.io/david/IBM/audit-ci.svg)
 
 # audit-ci
@@ -60,7 +60,7 @@ steps:
       name: run-audit-ci
       command: npx audit-ci --moderate
       # If you use a pull-request-only workflow,
-      # it's better to not run audit-ci on master and only run it on pull requests.
+      # it's better to not run audit-ci on `main` and only run it on pull requests.
       # For more info: https://github.com/IBM/audit-ci/issues/69
       # For a PR-only workflow, use the below command instead of the above command:
       #
@@ -197,7 +197,7 @@ npx audit-ci --directory test/npm-config-file --config test/npm-config-file/audi
 
 ### Why run `audit-ci` on PR builds for `Travis-CI` and not the push builds?
 
-If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix. However, they can't be merged until the fix is implemented. Since `audit-ci` performs the audit on the PR build, it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `master` before passing the audit.
+If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix. However, they can't be merged until the fix is implemented. Since `audit-ci` performs the audit on the PR build, it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `main` before passing the audit.
 
 ### NPM/Yarn is returning ENOAUDIT and is breaking my build, what do I do?
 
