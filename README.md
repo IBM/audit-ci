@@ -95,6 +95,7 @@ scripts:
 | -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)                             |
 | -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)                          |
 | -a   | --allowlist       | Vulnerable modules, advisories, and paths to allowlist from preventing integration (default `none`)   |
+| -o   | --output-format   | The format of the output of audit-ci [_choices_: `text`, `json`] (default `text`)                     |
 | -d   | --directory       | The directory containing the package.json to audit (default `./`)                                     |
 |      | --pass-enoaudit   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
 |      | --show-found      | Show allowlisted advisories that are found (default `true`)                                           |
@@ -125,6 +126,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "allowlist": <(string | number)[]>, // [Optional] default `[]`
   "report-type": <string>, // [Optional] defaults `important`
   "package-manager": <string>, // [Optional] defaults `"auto"`
+  "output-format": <string>, // [Optional] defaults `"text"`
   "pass-enoaudit": <boolean>, // [Optional] defaults `false`
   "show-found": <boolean>, // [Optional] defaults `true`
   "show-not-found": <boolean>, // [Optional] defaults `true`
