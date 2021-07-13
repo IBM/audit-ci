@@ -34,7 +34,7 @@
     "test": "mocha --exit --timeout 40000 --recursive --reporter spec test/*.js"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "dependencies": {
     "cross-spawn": "^7.0.3",
