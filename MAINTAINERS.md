@@ -1,5 +1,5 @@
 # MAINTAINERS
 
-Quinn Turner - quinn.turner@edu.uwaterloo.ca
+Quinn Turner - quinn.turner@uwaterloo.ca
 
-Andy Patterson - andypatt@ca.ibm.com
+Andy Patterson
