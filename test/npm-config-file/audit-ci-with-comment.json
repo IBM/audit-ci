@@ -1,4 +1,5 @@
 {
+  // JSON comment
   "low": "true",
   "allowlist": ["open"]
 }
