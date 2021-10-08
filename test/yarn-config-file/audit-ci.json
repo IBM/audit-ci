@@ -1,4 +1,6 @@
 {
   "low": "true",
-  "advisories": [663]
+  "advisories": [
+    1004291
+  ]
 }

@@ -5,7 +5,7 @@
       "action": "install",
       "resolves": [
         {
-          "id": 786,
+          "id": 1004319,
           "path": "micromatch>braces",
           "dev": false,
           "optional": false,
@@ -17,7 +17,7 @@
     }
   ],
   "advisories": {
-    "786": {
+    "1004319": {
       "findings": [
         {
           "version": "1.8.5",
@@ -26,7 +26,7 @@
           ]
         }
       ],
-      "id": 786,
+      "id": 1004319,
       "created": "2019-02-15T21:44:30.680Z",
       "updated": "2019-04-02T18:18:29.356Z",
       "deleted": null,
@@ -54,7 +54,7 @@
         "exploitability": 4,
         "affected_components": ""
       },
-      "url": "https://npmjs.com/advisories/786"
+      "url": "https://npmjs.com/advisories/1004319"
     }
   },
   "muted": [],

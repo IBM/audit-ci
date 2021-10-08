@@ -51,7 +51,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [663],
+        advisoriesFound: [1004291],
       })
     );
   });
@@ -77,7 +77,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [690],
+        advisoriesFound: [1003653],
       })
     );
   });
@@ -93,7 +93,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
+        advisoriesFound: [1003671],
       })
     );
   });
@@ -112,13 +112,13 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [658] }),
+        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1003671] }),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [658],
+        allowlistedAdvisoriesFound: [1003671],
       })
     );
   });
@@ -127,13 +127,13 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([658]),
+        allowlist: new Allowlist([1003671]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [658],
+        allowlistedAdvisoriesFound: [1003671],
       })
     );
   });
@@ -150,7 +150,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
+        advisoriesFound: [1003671],
       })
     );
   });
@@ -167,7 +167,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
+        advisoriesFound: [1003671],
       })
     );
   });
@@ -182,7 +182,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [786],
+        advisoriesFound: [1004319],
       })
     );
   });
@@ -220,7 +220,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       expect(summary).to.eql(
         summaryWithDefault({
           failedLevelsFound: ["moderate"],
-          advisoriesFound: [658],
+          advisoriesFound: [1003671],
         })
       );
     }
@@ -245,13 +245,13 @@ describe("yarn-auditer", function testYarnAuditer() {
         config({
           directory: testDir("yarn-berry-moderate"),
           levels: { moderate: true },
-          allowlist: new Allowlist([658]),
+          allowlist: new Allowlist([1003671]),
         }),
         (_summary) => _summary
       );
       expect(summary).to.eql(
         summaryWithDefault({
-          allowlistedAdvisoriesFound: [658],
+          allowlistedAdvisoriesFound: [1003671],
         })
       );
     }

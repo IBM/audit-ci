@@ -6,18 +6,20 @@
       "severity": "high",
       "via": [
         {
-          "source": 690,
+          "source": 1003653,
           "name": "cryo",
           "dependency": "cryo",
           "title": "Code Injection",
-          "url": "https://npmjs.com/advisories/690",
+          "url": "https://npmjs.com/advisories/1003653",
           "severity": "high",
           "range": ">=0.0.0"
         }
       ],
       "effects": [],
       "range": "*",
-      "nodes": ["node_modules/cryo"],
+      "nodes": [
+        "node_modules/cryo"
+      ],
       "fixAvailable": false
     }
   },
