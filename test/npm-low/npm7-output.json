@@ -6,18 +6,22 @@
       "severity": "low",
       "via": [
         {
-          "source": 786,
+          "source": 1004319,
           "name": "braces",
           "dependency": "braces",
           "title": "Regular Expression Denial of Service",
-          "url": "https://npmjs.com/advisories/786",
+          "url": "https://npmjs.com/advisories/1004319",
           "severity": "low",
           "range": "<2.3.1"
         }
       ],
-      "effects": ["micromatch"],
+      "effects": [
+        "micromatch"
+      ],
       "range": "<2.3.1",
-      "nodes": ["node_modules/braces"],
+      "nodes": [
+        "node_modules/braces"
+      ],
       "fixAvailable": {
         "name": "micromatch",
         "version": "4.0.2",
@@ -27,10 +31,14 @@
     "micromatch": {
       "name": "micromatch",
       "severity": "low",
-      "via": ["braces"],
+      "via": [
+        "braces"
+      ],
       "effects": [],
       "range": "0.2.0 - 2.3.11",
-      "nodes": ["node_modules/micromatch"],
+      "nodes": [
+        "node_modules/micromatch"
+      ],
       "fixAvailable": {
         "name": "micromatch",
         "version": "4.0.2",

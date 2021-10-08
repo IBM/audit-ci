@@ -6,18 +6,20 @@
       "severity": "critical",
       "via": [
         {
-          "source": 663,
+          "source": 1004291,
           "name": "open",
           "dependency": "open",
           "title": "Command Injection",
-          "url": "https://npmjs.com/advisories/663",
+          "url": "https://npmjs.com/advisories/1004291",
           "severity": "critical",
           "range": "<=0.0.5"
         }
       ],
       "effects": [],
       "range": "<=0.0.5",
-      "nodes": ["node_modules/open"],
+      "nodes": [
+        "node_modules/open"
+      ],
       "fixAvailable": {
         "name": "open",
         "version": "8.0.2",

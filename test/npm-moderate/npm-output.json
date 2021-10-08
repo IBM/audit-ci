@@ -5,7 +5,7 @@
       "action": "install",
       "resolves": [
         {
-          "id": 658,
+          "id": 1003671,
           "path": "base64url",
           "dev": false,
           "optional": false,
@@ -17,7 +17,7 @@
     }
   ],
   "advisories": {
-    "658": {
+    "1003671": {
       "findings": [
         {
           "version": "2.0.0",
@@ -26,7 +26,7 @@
           ]
         }
       ],
-      "id": 658,
+      "id": 1003671,
       "created": "2018-05-16T19:16:37.120Z",
       "updated": "2018-05-16T19:17:38.115Z",
       "deleted": null,
@@ -52,7 +52,7 @@
         "exploitability": 2,
         "affected_components": ""
       },
-      "url": "https://npmjs.com/advisories/658"
+      "url": "https://npmjs.com/advisories/1003671"
     }
   },
   "muted": [],

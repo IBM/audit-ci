@@ -5,7 +5,7 @@
       "module": "cryo",
       "resolves": [
         {
-          "id": 690,
+          "id": 1003653,
           "path": "cryo",
           "dev": false,
           "bundled": false,
@@ -15,7 +15,7 @@
     }
   ],
   "advisories": {
-    "690": {
+    "1003653": {
       "findings": [
         {
           "version": "0.0.6",
@@ -24,7 +24,7 @@
           ]
         }
       ],
-      "id": 690,
+      "id": 1003653,
       "created": "2018-08-16T19:50:35.895Z",
       "updated": "2019-06-24T23:04:26.491Z",
       "deleted": null,
@@ -54,7 +54,7 @@
         "exploitability": 7,
         "affected_components": ""
       },
-      "url": "https://npmjs.com/advisories/690"
+      "url": "https://npmjs.com/advisories/1003653"
     }
   },
   "muted": [],

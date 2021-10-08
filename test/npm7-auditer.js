@@ -25,7 +25,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [663],
+        advisoriesFound: [1004291],
       })
     );
   });
@@ -53,7 +53,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [690],
+        advisoriesFound: [1003653],
       })
     );
   });
@@ -70,7 +70,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
+        advisoriesFound: [1003671],
       })
     );
   });
@@ -91,13 +91,13 @@ describe("npm7-auditer", function testNpm7Auditer() {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [658] }),
+        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1003671] }),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [658],
+        allowlistedAdvisoriesFound: [1003671],
       })
     );
   });
@@ -107,13 +107,13 @@ describe("npm7-auditer", function testNpm7Auditer() {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([658]),
+        allowlist: new Allowlist([1003671]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [658],
+        allowlistedAdvisoriesFound: [1003671],
       })
     );
   });
@@ -131,7 +131,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
+        advisoriesFound: [1003671],
       })
     );
   });
@@ -149,7 +149,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [658],
+        advisoriesFound: [1003671],
       })
     );
   });
@@ -237,7 +237,7 @@ describe("npm7-auditer", function testNpm7Auditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [786],
+        advisoriesFound: [1004319],
       })
     );
   });
