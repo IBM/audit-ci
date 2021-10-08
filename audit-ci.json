@@ -1,4 +1,6 @@
 {
   "low": true,
-  "allowlist": ["1002401", "1002465", "1002536"]
+  "allowlist": [
+    "1002401|mocha>wide-align>string-width>strip-ansi>ansi-regex"
+  ]
 }
