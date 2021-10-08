@@ -37,9 +37,10 @@
     "node": ">=8"
   },
   "dependencies": {
+    "JSONStream": "^1.3.5",
     "cross-spawn": "^7.0.3",
     "event-stream": "4.0.1",
-    "JSONStream": "^1.3.5",
+    "jju": "^1.4.0",
     "readline-transform": "1.0.0",
     "semver": "^7.0.0",
     "yargs": "^15.0.0"

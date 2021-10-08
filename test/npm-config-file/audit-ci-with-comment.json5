@@ -1,0 +1,8 @@
+{
+  // JSON comment
+  low: "true",
+  allowlist: [
+    /** JSON comment */
+    "open",
+  ],
+}
