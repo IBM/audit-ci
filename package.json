@@ -1,6 +1,6 @@
 {
   "name": "audit-ci",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "description": "Audits npm and yarn projects in CI environments",
   "license": "Apache-2.0",
   "main": "./lib/audit-ci.js",
@@ -16,9 +16,9 @@
     "npm",
     "yarn",
     "security",
+    "github",
     "actions",
-    "travis",
-    "travis-ci",
+    "github-actions",
     "circleci"
   ],
   "bin": {
