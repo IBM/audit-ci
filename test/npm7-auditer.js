@@ -225,6 +225,22 @@ describe("npm7-auditer", function testNpm7Auditer() {
       })
     );
   });
+  it("allowlist all vulnerabilities matching a wildcard allowlist path", () => {
+    const summary = report(
+      reportNpmAllowlistedPath,
+      config({
+        directory: testDir("npm-allowlisted-path"),
+        levels: { moderate: true },
+        allowlist: new Allowlist(["*|axios", "*|github-build>*"]),
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedPathsFound: ["880|axios", "880|github-build>axios"],
+      })
+    );
+  });
   it("reports low severity", () => {
     const summary = report(
       reportNpmLow,

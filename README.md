@@ -185,7 +185,8 @@ npx audit-ci --report-type summary
     "example2",
     "52|example3",
     "880|example4",
-    "880|example5>example4"
+    "880|example5>example4",
+    "*|example6>*"
   ],
   "registry": "https://registry.npmjs.org"
 }
