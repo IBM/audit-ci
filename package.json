@@ -1,6 +1,6 @@
 {
   "name": "audit-ci",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Audits npm and yarn projects in CI environments",
   "license": "Apache-2.0",
   "main": "./lib/audit-ci.js",
