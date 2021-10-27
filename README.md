@@ -1,5 +1,5 @@
 [![Build Status](https://app.travis-ci.com/IBM/audit-ci.svg?branch=main)](https://app.travis-ci.com/github/IBM/audit-ci)
-![CircleCI branch](https://img.shields.io/circleci/project/github/IBM/audit-ci/main.svg)
+[![CircleCI](https://circleci.com/gh/IBM/audit-ci/tree/main.svg?style=svg)](https://circleci.com/gh/IBM/audit-ci/tree/main)
 
 # audit-ci
 
