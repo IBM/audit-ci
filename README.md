@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/IBM/audit-ci.svg?branch=main)](https://travis-ci.com/IBM/audit-ci)
+[![Build Status](https://app.travis-ci.com/IBM/audit-ci.svg?branch=main)](https://app.travis-ci.com/github/IBM/audit-ci)
 ![CircleCI branch](https://img.shields.io/circleci/project/github/IBM/audit-ci/main.svg)
 
 # audit-ci
