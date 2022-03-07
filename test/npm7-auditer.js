@@ -25,7 +25,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [1004291],
+        advisoriesFound: [1040620],
       })
     );
   });
@@ -53,7 +53,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [1003653],
+        advisoriesFound: [1039985],
       })
     );
   });
@@ -70,7 +70,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
+        advisoriesFound: [1040003],
       })
     );
   });
@@ -91,13 +91,13 @@ describe("npm7-auditer", () => {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1003671] }),
+        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1040003] }),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1003671],
+        allowlistedAdvisoriesFound: [1040003],
       })
     );
   });
@@ -107,13 +107,13 @@ describe("npm7-auditer", () => {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([1003671]),
+        allowlist: new Allowlist([1040003]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1003671],
+        allowlistedAdvisoriesFound: [1040003],
       })
     );
   });
@@ -131,7 +131,7 @@ describe("npm7-auditer", () => {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
+        advisoriesFound: [1040003],
       })
     );
   });
@@ -149,7 +149,7 @@ describe("npm7-auditer", () => {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
+        advisoriesFound: [1040003],
       })
     );
   });
