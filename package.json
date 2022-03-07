@@ -34,7 +34,7 @@
     "test": "mocha --exit --timeout 40000 --recursive --reporter spec test/*.js"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "dependencies": {
     "JSONStream": "^1.3.5",
