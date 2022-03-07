@@ -11,7 +11,7 @@ const reportNpmLow = require("./npm-low/npm7-output.json");
 const reportNpmNone = require("./npm-none/npm7-output.json");
 const reportNpmSkipDev = require("./npm-skip-dev/npm-output.json");
 
-describe("npm7-auditer", function testNpm7Auditer() {
+describe("npm7-auditer", () => {
   it("prints full report with critical severity", () => {
     const summary = report(
       reportNpmCritical,

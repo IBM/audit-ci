@@ -13,7 +13,7 @@ const reportNpmSkipDev = require("./npm-skip-dev/npm-output.json");
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
-describe("npm-auditer", function testNpmAuditer() {
+describe("npm-auditer", () => {
   it("prints full report with critical severity", () => {
     const summary = report(
       reportNpmCritical,

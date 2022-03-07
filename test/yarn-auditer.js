@@ -196,16 +196,14 @@ describe("yarn-auditer", function testYarnAuditer() {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
-  it("doesn't use the registry flag since it's not supported in Yarn yet", () => {
-    return audit(
+  it("doesn't use the registry flag since it's not supported in Yarn yet", () => audit(
       config({
         directory: testDir("yarn-low"),
         levels: { low: true },
         registry: "https://example.com",
       }),
       (_summary) => _summary
-    );
-  });
+    ));
   (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] reports important info with moderate severity",
     async () => {
