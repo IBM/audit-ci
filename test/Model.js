@@ -414,4 +414,69 @@ describe("Model", () => {
       })
     );
   });
+
+  it("should handle undefined `via`", () => {
+    const model = new Model({
+      levels: { moderate: true },
+      allowlist: new Allowlist(),
+    });
+
+    const parsedAuditOutput = {
+      vulnerabilities: {
+        package1: {
+          name: "package1",
+          severity: "moderate",
+          via: ["package2", "package3"],
+          effects: ["package2"],
+          range: ">=3.0.1",
+          nodes: ["node_modules/package1"],
+          fixAvailable: {
+            name: "package2",
+            version: "3.0.1",
+            isSemVerMajor: true,
+          },
+        },
+        package2: {
+          name: "package2",
+          severity: "moderate",
+          via: [],
+          effects: ["package1"],
+          range: ">=3.0.2",
+          nodes: ["node_modules/package2"],
+          fixAvailable: {
+            name: "package2",
+            version: "3.0.1",
+            isSemVerMajor: true,
+          },
+        },
+        package3: {
+          name: "package3",
+          severity: "moderate",
+          via: [
+            {
+              source: 123,
+              name: "package3",
+              dependency: "package3",
+              title: "title",
+              url: "https://url",
+              severity: "moderate",
+              range: ">2.1.1 <5.0.1",
+            },
+          ],
+          effects: ["package3"],
+          range: ">2.1.1 <5.0.1",
+          nodes: ["node_modules/package1/node_modules/package3"],
+          fixAvailable: false,
+        },
+      },
+    };
+
+    const summary = model.load(parsedAuditOutput);
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["moderate"],
+        advisoriesFound: [123],
+      })
+    );
+  });
 });
