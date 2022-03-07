@@ -1,6 +1,6 @@
 {
   "low": "true",
   "advisories": [
-    1066786
+    "GHSA-28xh-wpgr-7fm8"
   ]
 }

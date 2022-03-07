@@ -25,7 +25,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [1066786],
+        advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
       })
     );
   });
@@ -53,7 +53,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [1066151],
+        advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
       })
     );
   });
@@ -70,7 +70,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1066169],
+        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       })
     );
   });
@@ -91,13 +91,13 @@ describe("npm7-auditer", () => {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([1066169]),
+        allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1066169],
+        allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       })
     );
   });
@@ -107,15 +107,15 @@ describe("npm7-auditer", () => {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([659]),
+        allowlist: new Allowlist(["GHSA-cff4-rrq6-h78w"]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesNotFound: [659],
+        allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1066169],
+        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       })
     );
   });
@@ -126,10 +126,10 @@ describe("npm7-auditer", () => {
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: new Allowlist([
-          "1040655|axios",
-          "1040655|github-build>*",
-          "1038442|axios>follow-redirects",
-          "1038442|github-build>axios>follow-redirects",
+          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>*",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
           "*|github-build>axios",
         ]),
       }),
@@ -137,15 +137,15 @@ describe("npm7-auditer", () => {
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        advisoriesFound: [1038749, 1039327, 1038495],
+        advisoriesFound: ["GHSA-cph5-m8f7-6c5x", "GHSA-4w2v-q235-vp99", "GHSA-74fj-2j2h-c42q"],
         failedLevelsFound: ["high"],
         allowlistedPathsFound: [
-          "1038749|github-build>axios",
-          "1039327|github-build>axios",
-          "1040655|axios",
-          "1040655|github-build>axios",
-          "1038442|github-build>axios>follow-redirects",
-          "1038442|axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
+          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
         ],
       })
     );
@@ -157,16 +157,16 @@ describe("npm7-auditer", () => {
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: new Allowlist([
-          "1038749|axios",
-          "1039327|axios",
-          "1040655|axios",
-          "1038442|axios>follow-redirects",
-          "1038442|github-build>axios>follow-redirects",
-          "1038495|axios>follow-redirects",
-          "1038495|github-build>axios>follow-redirects",
-          "1038749|github-build>axios",
-          "1039327|github-build>axios",
-          "1040655|github-build>axios",
+          "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
         ]),
       }),
       (_summary) => _summary
@@ -174,16 +174,16 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedPathsFound: [
-          "1038749|axios",
-          "1038749|github-build>axios",
-          "1039327|axios",
-          "1039327|github-build>axios",
-          "1040655|axios",
-          "1040655|github-build>axios",
-          "1038442|github-build>axios>follow-redirects",
-          "1038442|axios>follow-redirects",
-          "1038495|github-build>axios>follow-redirects",
-          "1038495|axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
+          "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
+          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
         ],
       })
     );
@@ -201,16 +201,16 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedPathsFound: [
-          "1038749|axios",
-          "1038749|github-build>axios",
-          "1039327|axios",
-          "1039327|github-build>axios",
-          "1040655|axios",
-          "1040655|github-build>axios",
-          "1038442|github-build>axios>follow-redirects",
-          "1038442|axios>follow-redirects",
-          "1038495|github-build>axios>follow-redirects",
-          "1038495|axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
+          "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
+          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
         ],
       })
     );
@@ -227,7 +227,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [1065151],
+        advisoriesFound: ["GHSA-c6rq-rjc2-86v2"],
       })
     );
   });
