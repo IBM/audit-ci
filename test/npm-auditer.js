@@ -55,7 +55,7 @@ describe("npm-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [1039985],
+        advisoriesFound: [1003653],
       })
     );
   });
@@ -72,7 +72,7 @@ describe("npm-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1040003],
+        advisoriesFound: [1003671],
       })
     );
   });
@@ -93,13 +93,13 @@ describe("npm-auditer", () => {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1040003] }),
+        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1003671] }),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1040003],
+        allowlistedAdvisoriesFound: [1003671],
       })
     );
   });
@@ -109,13 +109,13 @@ describe("npm-auditer", () => {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([1040003]),
+        allowlist: new Allowlist([1003671]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1040003],
+        allowlistedAdvisoriesFound: [1003671],
       })
     );
   });
@@ -133,7 +133,7 @@ describe("npm-auditer", () => {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1040003],
+        advisoriesFound: [1003671],
       })
     );
   });
@@ -151,7 +151,7 @@ describe("npm-auditer", () => {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1040003],
+        advisoriesFound: [1003671],
       })
     );
   });

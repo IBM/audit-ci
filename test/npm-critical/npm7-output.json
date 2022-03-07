@@ -6,11 +6,11 @@
       "severity": "critical",
       "via": [
         {
-          "source": 1004291,
+          "source": 1040620,
           "name": "open",
           "dependency": "open",
           "title": "Command Injection",
-          "url": "https://npmjs.com/advisories/1004291",
+          "url": "https://npmjs.com/advisories/1040620",
           "severity": "critical",
           "range": "<=0.0.5"
         }
