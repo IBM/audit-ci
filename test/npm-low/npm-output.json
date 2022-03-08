@@ -5,56 +5,54 @@
       "action": "install",
       "resolves": [
         {
-          "id": 1004319,
-          "path": "micromatch>braces",
+          "id": 1038984,
+          "path": "chownr",
           "dev": false,
           "optional": false,
           "bundled": false
         }
       ],
-      "module": "micromatch",
-      "target": "4.0.2"
+      "module": "chownr",
+      "target": "2.0.0"
     }
   ],
   "advisories": {
-    "1004319": {
+    "1038984": {
       "findings": [
         {
-          "version": "1.8.5",
+          "version": "1.0.0",
           "paths": [
-            "micromatch>braces"
+            "chownr"
           ]
         }
       ],
-      "id": 1004319,
-      "created": "2019-02-15T21:44:30.680Z",
-      "updated": "2019-04-02T18:18:29.356Z",
-      "deleted": null,
-      "title": "Regular Expression Denial of Service",
-      "found_by": {
-        "link": "",
-        "name": "Santosh Rao"
-      },
-      "reported_by": {
-        "link": "",
-        "name": "Santosh Rao"
-      },
-      "module_name": "braces",
-      "cves": [],
-      "vulnerable_versions": "<2.3.1",
-      "patched_versions": ">=2.3.1",
-      "overview": "Versions of `braces` prior to 2.3.1 are vulnerable to Regular Expression Denial of Service (ReDoS). Untrusted input may cause catastrophic backtracking while matching regular expressions. This can cause the application to be unresponsive leading to Denial of Service.",
-      "recommendation": "Upgrade to version 2.3.1 or higher.",
-      "references": "- [GitHub Commit](https://github.com/micromatch/braces/commit/abdafb0cae1e0c00f184abbadc692f4eaa98f451)",
-      "access": "public",
+      "metadata": null,
+      "vulnerable_versions": "<1.1.0",
+      "module_name": "chownr",
       "severity": "low",
-      "cwe": "CWE-185",
-      "metadata": {
-        "module_type": "",
-        "exploitability": 4,
-        "affected_components": ""
+      "github_advisory_id": "GHSA-c6rq-rjc2-86v2",
+      "cves": [
+        "CVE-2017-18869"
+      ],
+      "access": "public",
+      "patched_versions": ">=1.1.0",
+      "cvss": {
+        "score": 2.5,
+        "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:N"
       },
-      "url": "https://npmjs.com/advisories/1004319"
+      "updated": "2021-05-12T20:23:30.000Z",
+      "recommendation": "Upgrade to version 1.1.0 or later",
+      "cwe": "[\"CWE-367\"]",
+      "found_by": null,
+      "deleted": null,
+      "id": 1038984,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2017-18869\n- https://github.com/isaacs/chownr/issues/14\n- https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863985\n- https://bugzilla.redhat.com/show_bug.cgi?id=1611614\n- https://snyk.io/vuln/npm:chownr:20180731\n- https://github.com/advisories/GHSA-c6rq-rjc2-86v2",
+      "created": "2022-03-07T18:00:45.341Z",
+      "reported_by": null,
+      "title": "Time-of-check Time-of-use (TOCTOU) Race Condition in chownr",
+      "npm_advisory_id": null,
+      "overview": "A TOCTOU issue in the chownr package before 1.1.0 for Node.js 10.10 could allow a local attacker to trick it into descending into unintended directories via symlink attacks.",
+      "url": "https://github.com/advisories/GHSA-c6rq-rjc2-86v2"
     }
   },
   "muted": [],
@@ -66,10 +64,10 @@
       "high": 0,
       "critical": 0
     },
-    "dependencies": 41,
+    "dependencies": 1,
     "devDependencies": 0,
     "optionalDependencies": 0,
-    "totalDependencies": 41
+    "totalDependencies": 1
   },
-  "runId": "b40b7357-dc68-4dd9-a110-cea586e092a7"
+  "runId": "9a93f0a4-81ec-478e-a3f4-6918eb674781"
 }

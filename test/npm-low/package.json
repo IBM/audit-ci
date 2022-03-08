@@ -2,6 +2,6 @@
   "name": "audit-ci-npm-low-vulnerability",
   "description": "Test package.json with low vulnerability",
   "dependencies": {
-    "micromatch": "2.3.0"
+    "chownr": "1.0.0"
   }
 }

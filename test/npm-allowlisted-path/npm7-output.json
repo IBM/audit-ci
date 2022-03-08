@@ -4,45 +4,101 @@
     "axios": {
       "name": "axios",
       "severity": "high",
+      "isDirect": true,
       "via": [
         {
-          "source": 1594,
+          "source": 1038749,
           "name": "axios",
           "dependency": "axios",
-          "title": "Server-Side Request Forgery",
-          "url": "https://npmjs.com/advisories/1594",
+          "title": "Incorrect Comparison in axios",
+          "url": "https://github.com/advisories/GHSA-cph5-m8f7-6c5x",
+          "severity": "high",
+          "range": "<=0.21.1"
+        },
+        {
+          "source": 1039327,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Server-Side Request Forgery in Axios",
+          "url": "https://github.com/advisories/GHSA-4w2v-q235-vp99",
           "severity": "high",
           "range": "<0.21.1"
         },
         {
-          "source": 880,
+          "source": 1040655,
           "name": "axios",
           "dependency": "axios",
-          "title": "Denial of Service",
-          "url": "https://npmjs.com/advisories/880",
-          "severity": "moderate",
-          "range": "<0.18.1"
-        }
+          "title": "Denial of Service in axios",
+          "url": "https://github.com/advisories/GHSA-42xw-2xvc-qx8m",
+          "severity": "high",
+          "range": "<=0.18.0"
+        },
+        "follow-redirects"
       ],
-      "effects": ["github-build"],
-      "range": "<=0.21.0",
+      "effects": [
+        "github-build"
+      ],
+      "range": "<=0.21.1",
       "nodes": [
         "node_modules/axios",
         "node_modules/github-build/node_modules/axios"
       ],
       "fixAvailable": {
         "name": "axios",
-        "version": "0.21.1",
+        "version": "0.26.0",
+        "isSemVerMajor": true
+      }
+    },
+    "follow-redirects": {
+      "name": "follow-redirects",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1038442,
+          "name": "follow-redirects",
+          "dependency": "follow-redirects",
+          "title": "Exposure of Sensitive Information to an Unauthorized Actor in follow-redirects",
+          "url": "https://github.com/advisories/GHSA-pw2r-vq6v-hr8c",
+          "severity": "moderate",
+          "range": "<1.14.8"
+        },
+        {
+          "source": 1038495,
+          "name": "follow-redirects",
+          "dependency": "follow-redirects",
+          "title": "Exposure of sensitive information in follow-redirects",
+          "url": "https://github.com/advisories/GHSA-74fj-2j2h-c42q",
+          "severity": "high",
+          "range": "<1.14.7"
+        }
+      ],
+      "effects": [
+        "axios"
+      ],
+      "range": "<=1.14.7",
+      "nodes": [
+        "node_modules/follow-redirects",
+        "node_modules/github-build/node_modules/follow-redirects"
+      ],
+      "fixAvailable": {
+        "name": "axios",
+        "version": "0.26.0",
         "isSemVerMajor": true
       }
     },
     "github-build": {
       "name": "github-build",
-      "severity": "moderate",
-      "via": ["axios"],
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "axios"
+      ],
       "effects": [],
-      "range": "<=1.2.0",
-      "nodes": ["node_modules/github-build"],
+      "range": "<=1.2.2",
+      "nodes": [
+        "node_modules/github-build"
+      ],
       "fixAvailable": true
     }
   },
@@ -50,10 +106,10 @@
     "vulnerabilities": {
       "info": 0,
       "low": 0,
-      "moderate": 1,
-      "high": 1,
+      "moderate": 0,
+      "high": 3,
       "critical": 0,
-      "total": 2
+      "total": 3
     },
     "dependencies": {
       "prod": 9,
