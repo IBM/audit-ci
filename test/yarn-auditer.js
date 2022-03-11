@@ -51,7 +51,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [1040620],
+        advisoriesFound: [1066786],
       })
     );
   });
@@ -77,7 +77,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [1039985],
+        advisoriesFound: [1066151],
       })
     );
   });
@@ -93,7 +93,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1040003],
+        advisoriesFound: [1066169],
       })
     );
   });
@@ -107,50 +107,18 @@ describe("yarn-auditer", function testYarnAuditer() {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
-  it("[DEPRECATED - advisories] ignores an advisory if it is whitelisted", async () => {
-    const summary = await audit(
-      config({
-        directory: testDir("yarn-moderate"),
-        levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1040003] }),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedAdvisoriesFound: [1040003],
-      })
-    );
-  });
   it("ignores an advisory if it is allowlisted", async () => {
     const summary = await audit(
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([1040003]),
+        allowlist: new Allowlist([1066169]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1040003],
-      })
-    );
-  });
-  it("[DEPRECATED - advisories] does not ignore an advisory that is not whitelisted", async () => {
-    const summary = await audit(
-      config({
-        directory: testDir("yarn-moderate"),
-        levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [659] }),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedAdvisoriesNotFound: [659],
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [1040003],
+        allowlistedAdvisoriesFound: [1066169],
       })
     );
   });
@@ -167,7 +135,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1040003],
+        advisoriesFound: [1066169],
       })
     );
   });
@@ -182,7 +150,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [1039183, 1040648],
+        advisoriesFound: [1065151],
       })
     );
   });
@@ -219,7 +187,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       expect(summary).to.eql(
         summaryWithDefault({
           failedLevelsFound: ["moderate"],
-          advisoriesFound: [1040003],
+          advisoriesFound: [1066169],
         })
       );
     }
@@ -244,13 +212,13 @@ describe("yarn-auditer", function testYarnAuditer() {
         config({
           directory: testDir("yarn-berry-moderate"),
           levels: { moderate: true },
-          allowlist: new Allowlist([1040003]),
+          allowlist: new Allowlist([1066169]),
         }),
         (_summary) => _summary
       );
       expect(summary).to.eql(
         summaryWithDefault({
-          allowlistedAdvisoriesFound: [1040003],
+          allowlistedAdvisoriesFound: [1066169],
         })
       );
     }

@@ -53,7 +53,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [1003653],
+        advisoriesFound: [1039985],
       })
     );
   });
@@ -70,7 +70,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
+        advisoriesFound: [1040003],
       })
     );
   });
@@ -85,53 +85,19 @@ describe("npm7-auditer", () => {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
-  it("[DEPRECATED - advisories] ignores an advisory if it is whitelisted", () => {
-    const summary = report(
-      reportNpmModerateSeverity,
-      config({
-        directory: testDir("npm-moderate"),
-        levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1003671] }),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedAdvisoriesFound: [1003671],
-      })
-    );
-  });
   it("ignores an advisory if it is allowlisted", () => {
     const summary = report(
       reportNpmModerateSeverity,
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([1003671]),
+        allowlist: new Allowlist([1040003]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1003671],
-      })
-    );
-  });
-  it("[DEPRECATED - advisories] does not ignore an advisory that is not whitelisted", () => {
-    const summary = report(
-      reportNpmModerateSeverity,
-      config({
-        directory: testDir("npm-moderate"),
-        levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [659] }),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedAdvisoriesNotFound: [659],
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
+        allowlistedAdvisoriesFound: [1040003],
       })
     );
   });
@@ -149,27 +115,7 @@ describe("npm7-auditer", () => {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
-      })
-    );
-  });
-  it("[DEPRECATED - path-whitelist] reports only vulnerabilities with a not whitelisted path", () => {
-    const summary = report(
-      reportNpmAllowlistedPath,
-      config({
-        directory: testDir("npm-allowlisted-path"),
-        levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({
-          "path-whitelist": ["880|github-build>axios"],
-        }),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedPathsFound: ["880|github-build>axios"],
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [880],
+        advisoriesFound: [1040003],
       })
     );
   });
@@ -179,49 +125,66 @@ describe("npm7-auditer", () => {
       config({
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
-        allowlist: new Allowlist(["880|github-build>axios"]),
+        allowlist: new Allowlist([
+          "1040655|axios",
+          "1040655|github-build>*",
+          "1038442|axios>follow-redirects",
+          "1038442|github-build>axios>follow-redirects",
+          "*|github-build>axios",
+        ]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedPathsFound: ["880|github-build>axios"],
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [880],
+        advisoriesFound: [1038749, 1039327, 1038495],
+        failedLevelsFound: ["high"],
+        allowlistedPathsFound: [
+          "1038749|github-build>axios",
+          "1039327|github-build>axios",
+          "1040655|axios",
+          "1040655|github-build>axios",
+          "1038442|github-build>axios>follow-redirects",
+          "1038442|axios>follow-redirects",
+        ],
       })
     );
   });
-  it("[DEPRECATED - path-whitelist] whitelist all vulnerabilities with a whitelisted path", () => {
+  it("allowlist all vulnerabilities with an allowlisted path", () => {
     const summary = report(
       reportNpmAllowlistedPath,
       config({
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({
-          "path-whitelist": ["880|axios", "880|github-build>axios"],
-        }),
+        allowlist: new Allowlist([
+          "1038749|axios",
+          "1039327|axios",
+          "1040655|axios",
+          "1038442|axios>follow-redirects",
+          "1038442|github-build>axios>follow-redirects",
+          "1038495|axios>follow-redirects",
+          "1038495|github-build>axios>follow-redirects",
+          "1038749|github-build>axios",
+          "1039327|github-build>axios",
+          "1040655|github-build>axios",
+        ]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedPathsFound: ["880|axios", "880|github-build>axios"],
-      })
-    );
-  });
-  it("allowlist all vulnerabilities with a allowlisted path", () => {
-    const summary = report(
-      reportNpmAllowlistedPath,
-      config({
-        directory: testDir("npm-allowlisted-path"),
-        levels: { moderate: true },
-        allowlist: new Allowlist(["880|axios", "880|github-build>axios"]),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedPathsFound: ["880|axios", "880|github-build>axios"],
+        allowlistedPathsFound: [
+          "1038749|axios",
+          "1038749|github-build>axios",
+          "1039327|axios",
+          "1039327|github-build>axios",
+          "1040655|axios",
+          "1040655|github-build>axios",
+          "1038442|github-build>axios>follow-redirects",
+          "1038442|axios>follow-redirects",
+          "1038495|github-build>axios>follow-redirects",
+          "1038495|axios>follow-redirects",
+        ],
       })
     );
   });
@@ -231,13 +194,24 @@ describe("npm7-auditer", () => {
       config({
         directory: testDir("npm-allowlisted-path"),
         levels: { moderate: true },
-        allowlist: new Allowlist(["*|axios", "*|github-build>*"]),
+        allowlist: new Allowlist(["*|axios", "*|github-build>*", "*|axios>*"]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedPathsFound: ["880|axios", "880|github-build>axios"],
+        allowlistedPathsFound: [
+          "1038749|axios",
+          "1038749|github-build>axios",
+          "1039327|axios",
+          "1039327|github-build>axios",
+          "1040655|axios",
+          "1040655|github-build>axios",
+          "1038442|github-build>axios>follow-redirects",
+          "1038442|axios>follow-redirects",
+          "1038495|github-build>axios>follow-redirects",
+          "1038495|axios>follow-redirects",
+        ],
       })
     );
   });
@@ -253,7 +227,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [1004319],
+        advisoriesFound: [1038984],
       })
     );
   });

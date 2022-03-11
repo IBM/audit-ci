@@ -32,7 +32,7 @@ function config(additions) {
     registry: undefined,
     "pass-enoaudit": false,
   };
-  const levels = mapVulnerabilityLevelInput(additions.levels);
+  const levels = mapVulnerabilityLevelInput(additions.levels || {});
   const { levels: _unusedLevels, ...rest } = additions;
   return {
     ...defaultConfig,
