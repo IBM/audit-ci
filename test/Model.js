@@ -4,7 +4,7 @@ const Allowlist = require("../lib/allowlist");
 const { summaryWithDefault } = require("./common");
 
 function config(additions) {
-  return { whitelist: [], advisories: [], ...additions };
+  return { ...additions };
 }
 
 describe("Model", () => {
@@ -144,7 +144,7 @@ describe("Model", () => {
     );
   });
 
-  it("ignores whitelisted modules", () => {
+  it("ignores allowlisted modules", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       allowlist: new Allowlist(["M_A", "M_D"]),
@@ -221,7 +221,7 @@ describe("Model", () => {
     );
   });
 
-  it("ignores whitelisted advisory IDs", () => {
+  it("ignores allowlisted advisory IDs", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       allowlist: new Allowlist([2, 3, 6]),
