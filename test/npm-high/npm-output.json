@@ -5,7 +5,7 @@
       "module": "cryo",
       "resolves": [
         {
-          "id": 1039985,
+          "id": 1066151,
           "path": "cryo",
           "dev": false,
           "bundled": false,
@@ -15,7 +15,7 @@
     }
   ],
   "advisories": {
-    "1039985": {
+    "1066151": {
       "findings": [
         {
           "version": "0.0.6",
@@ -40,12 +40,14 @@
       },
       "updated": "2020-08-31T18:32:59.000Z",
       "recommendation": "None",
-      "cwe": "[\"CWE-94\"]",
+      "cwe": [
+        "CWE-94"
+      ],
       "found_by": null,
       "deleted": null,
-      "id": 1039985,
+      "id": 1066151,
       "references": "- https://nvd.nist.gov/vuln/detail/CVE-2018-3784\n- https://hackerone.com/reports/350418\n- https://github.com/advisories/GHSA-38f5-ghc2-fcmv\n- https://www.npmjs.com/advisories/690",
-      "created": "2022-03-07T18:00:45.442Z",
+      "created": "2022-03-11T08:00:43.889Z",
       "reported_by": null,
       "title": "Code Injection in cryo",
       "npm_advisory_id": null,
@@ -67,5 +69,5 @@
     "optionalDependencies": 0,
     "totalDependencies": 1
   },
-  "runId": "1ca937ea-f527-4b76-923c-b9a3ae59273c"
+  "runId": "0711adfe-fc4e-4a94-80fc-e518c13a63d2"
 }

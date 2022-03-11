@@ -5,7 +5,7 @@
       "action": "install",
       "resolves": [
         {
-          "id": 1040620,
+          "id": 1066786,
           "path": "open",
           "dev": false,
           "optional": false,
@@ -17,7 +17,7 @@
     }
   ],
   "advisories": {
-    "1040620": {
+    "1066786": {
       "findings": [
         {
           "version": "0.0.5",
@@ -40,12 +40,14 @@
       },
       "updated": "2019-06-20T15:35:08.000Z",
       "recommendation": "Upgrade to version 6.0.0 or later",
-      "cwe": "[\"CWE-77\"]",
+      "cwe": [
+        "CWE-77"
+      ],
       "found_by": null,
       "deleted": null,
-      "id": 1040620,
+      "id": 1066786,
       "references": "- https://github.com/pwnall/node-open/issues/68\n- https://github.com/pwnall/node-open/issues/69\n- https://hackerone.com/reports/319473\n- https://nodesecurity.io/advisories/663\n- https://www.npmjs.com/advisories/663\n- https://github.com/advisories/GHSA-28xh-wpgr-7fm8",
-      "created": "2022-03-07T18:00:45.492Z",
+      "created": "2022-03-11T08:00:43.923Z",
       "reported_by": null,
       "title": "Command Injection in open",
       "npm_advisory_id": null,
@@ -67,5 +69,5 @@
     "optionalDependencies": 0,
     "totalDependencies": 1
   },
-  "runId": "5a14976d-31b8-49d0-b5aa-68ba103bb2a1"
+  "runId": "f19113b6-7662-4c29-9af6-ca20bcf8d863"
 }
