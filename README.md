@@ -7,9 +7,11 @@ This module is intended to be consumed by your favourite continuous integration 
 halt execution if `npm audit` or `yarn audit` finds vulnerabilities at or above the specified
 threshold while ignoring allowlisted advisories.
 
+> Note: Use our [codemod](#codemod) to update to [`audit-ci` v6.0.0](https://github.com/IBM/audit-ci/releases/tag/v6.0.0)
+
 ## Requirements
 
-- Node >=10 (except Yarn Berry, which requires Node >=12.13.0)
+- Node >=12.x (Yarn Berry requires Node >=12.13.0)
 - _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
 
 ## Set up
@@ -184,6 +186,29 @@ npx audit-ci --report-type summary
 
 ```sh
 npx audit-ci --directory test/npm-config-file --config test/npm-config-file/audit-ci.json
+```
+
+## Codemod
+
+```sh
+npx @quinnturner/audit-ci-codemod
+```
+
+<https://github.com/quinnturner/audit-ci-codemod>
+
+[`audit-ci` v6.0.0](https://github.com/IBM/audit-ci/releases/tag/v6.0.0) changed the identifiers used for auditing from the NPM identifiers to GitHub identifiers.
+NPM identifiers are considered unstable to rely on, as they frequently change.
+Meanwhile, GitHub identifiers are stable.
+To accommodate for a potentially tedious migration, a codemod is available to update your configuration in-place.
+
+```txt
+$ npx @quinnturner/audit-ci-codemod
+Need to install the following packages:
+  @quinnturner/audit-ci-codemod
+Ok to proceed? (y) y
+? What's the path for the audit-ci config? audit-ci.json
+Performed migration from advisories, whitelist, and path-whitelist to allowlist
+Performed migration from NPM advisories to GitHub advisories
 ```
 
 ## Q&A
