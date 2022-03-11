@@ -104,12 +104,6 @@ scripts:
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
 |      | --config          | Path to JSON config file                                                                              |
 |      | --skip-dev        | Skip auditing devDependencies (default `false`)                                                       |
-|      | --advisories      | _[DEPRECATED]_ Vulnerable advisory ids to whitelist from preventing integration (default `none`)      |
-| -w   | --whitelist       | _[DEPRECATED]_ Vulnerable modules to whitelist from preventing integration (default `none`)           |
-|      | --path-whitelist  | _[DEPRECATED]_ Vulnerable module paths to whitelist from preventing integration (default `none`)      |
-
-> The options `--advisories`, `--path-whitelist`, `--whitelist`, and `-w` are deprecated in favour of `-a` (alias `--allowlist`)
-> which merge the functionality of all of the deprecated arguments into one argument.
 
 ### (_Optional_) Config file specification
 
@@ -132,9 +126,6 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "registry": <string>, // [Optional] defaults `undefined`
   "retry-count": <number>, // [Optional] defaults 5
   "skip-dev": <boolean>, // [Optional] defaults `false`
-  "advisories": <number[]>, // [Deprecated, optional] defaults `[]`
-  "path-whitelist": <string[]>, // [Deprecated, optional] defaults `[]`
-  "whitelist": <string[]> // [Deprecated, optional] defaults `[]`
 }
 ```
 
@@ -183,8 +174,8 @@ npx audit-ci --report-type summary
     "example1",
     "example2",
     "52|example3",
-    "880|example4",
-    "880|example5>example4",
+    "1038442|example4",
+    "1038442|example5>example4",
     "*|example6>*"
   ],
   "registry": "https://registry.npmjs.org"

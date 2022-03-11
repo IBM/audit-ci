@@ -4,7 +4,7 @@ const Allowlist = require("../lib/allowlist");
 const { summaryWithDefault } = require("./common");
 
 function config(additions) {
-  return { whitelist: [], advisories: [], ...additions };
+  return { ...additions };
 }
 
 describe("Model", () => {
@@ -48,12 +48,12 @@ describe("Model", () => {
 
     const parsedAuditOutput = {
       advisories: {
-        1004291: {
-          id: 1004291,
+        1040620: {
+          id: 1040620,
           title: "Command Injection",
           module_name: "open",
           severity: "critical",
-          url: "https://npmjs.com/advisories/1004291",
+          url: "https://npmjs.com/advisories/1040620",
           findings: [{ paths: ["open"] }],
         },
       },
@@ -63,7 +63,7 @@ describe("Model", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [1004291],
+        advisoriesFound: [1040620],
       })
     );
   });
@@ -144,7 +144,7 @@ describe("Model", () => {
     );
   });
 
-  it("ignores whitelisted modules", () => {
+  it("ignores allowlisted modules", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       allowlist: new Allowlist(["M_A", "M_D"]),
@@ -221,7 +221,7 @@ describe("Model", () => {
     );
   });
 
-  it("ignores whitelisted advisory IDs", () => {
+  it("ignores allowlisted advisory IDs", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
       allowlist: new Allowlist([2, 3, 6]),
@@ -375,6 +375,71 @@ describe("Model", () => {
           name: "package2",
           severity: "moderate",
           via: ["package1"],
+          effects: ["package1"],
+          range: ">=3.0.2",
+          nodes: ["node_modules/package2"],
+          fixAvailable: {
+            name: "package2",
+            version: "3.0.1",
+            isSemVerMajor: true,
+          },
+        },
+        package3: {
+          name: "package3",
+          severity: "moderate",
+          via: [
+            {
+              source: 123,
+              name: "package3",
+              dependency: "package3",
+              title: "title",
+              url: "https://url",
+              severity: "moderate",
+              range: ">2.1.1 <5.0.1",
+            },
+          ],
+          effects: ["package3"],
+          range: ">2.1.1 <5.0.1",
+          nodes: ["node_modules/package1/node_modules/package3"],
+          fixAvailable: false,
+        },
+      },
+    };
+
+    const summary = model.load(parsedAuditOutput);
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["moderate"],
+        advisoriesFound: [123],
+      })
+    );
+  });
+
+  it("should handle undefined `via`", () => {
+    const model = new Model({
+      levels: { moderate: true },
+      allowlist: new Allowlist(),
+    });
+
+    const parsedAuditOutput = {
+      vulnerabilities: {
+        package1: {
+          name: "package1",
+          severity: "moderate",
+          via: ["package2", "package3"],
+          effects: ["package2"],
+          range: ">=3.0.1",
+          nodes: ["node_modules/package1"],
+          fixAvailable: {
+            name: "package2",
+            version: "3.0.1",
+            isSemVerMajor: true,
+          },
+        },
+        package2: {
+          name: "package2",
+          severity: "moderate",
+          via: [],
           effects: ["package1"],
           range: ">=3.0.2",
           nodes: ["node_modules/package2"],

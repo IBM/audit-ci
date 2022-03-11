@@ -4,15 +4,16 @@
     "cryo": {
       "name": "cryo",
       "severity": "high",
+      "isDirect": true,
       "via": [
         {
-          "source": 1003653,
+          "source": 1039985,
           "name": "cryo",
           "dependency": "cryo",
-          "title": "Code Injection",
-          "url": "https://npmjs.com/advisories/1003653",
+          "title": "Code Injection in cryo",
+          "url": "https://github.com/advisories/GHSA-38f5-ghc2-fcmv",
           "severity": "high",
-          "range": ">=0.0.0"
+          "range": "<=0.0.6"
         }
       ],
       "effects": [],

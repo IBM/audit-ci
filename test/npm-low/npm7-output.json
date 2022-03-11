@@ -1,67 +1,49 @@
 {
   "auditReportVersion": 2,
   "vulnerabilities": {
-    "braces": {
-      "name": "braces",
+    "chownr": {
+      "name": "chownr",
       "severity": "low",
+      "isDirect": true,
       "via": [
         {
-          "source": 1004319,
-          "name": "braces",
-          "dependency": "braces",
-          "title": "Regular Expression Denial of Service",
-          "url": "https://npmjs.com/advisories/1004319",
+          "source": 1038984,
+          "name": "chownr",
+          "dependency": "chownr",
+          "title": "Time-of-check Time-of-use (TOCTOU) Race Condition in chownr",
+          "url": "https://github.com/advisories/GHSA-c6rq-rjc2-86v2",
           "severity": "low",
-          "range": "<2.3.1"
+          "range": "<1.1.0"
         }
       ],
-      "effects": [
-        "micromatch"
-      ],
-      "range": "<2.3.1",
-      "nodes": [
-        "node_modules/braces"
-      ],
-      "fixAvailable": {
-        "name": "micromatch",
-        "version": "4.0.2",
-        "isSemVerMajor": true
-      }
-    },
-    "micromatch": {
-      "name": "micromatch",
-      "severity": "low",
-      "via": [
-        "braces"
-      ],
       "effects": [],
-      "range": "0.2.0 - 2.3.11",
+      "range": "<1.1.0",
       "nodes": [
-        "node_modules/micromatch"
+        "node_modules/chownr"
       ],
       "fixAvailable": {
-        "name": "micromatch",
-        "version": "4.0.2",
-        "isSemVerMajor": true
+        "name": "chownr",
+        "version": "1.1.4",
+        "isSemVerMajor": false
       }
     }
   },
   "metadata": {
     "vulnerabilities": {
       "info": 0,
-      "low": 2,
+      "low": 1,
       "moderate": 0,
       "high": 0,
       "critical": 0,
-      "total": 2
+      "total": 1
     },
     "dependencies": {
-      "prod": 42,
+      "prod": 2,
       "dev": 0,
       "optional": 0,
       "peer": 0,
       "peerOptional": 0,
-      "total": 41
+      "total": 1
     }
   }
 }

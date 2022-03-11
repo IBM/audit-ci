@@ -1,5 +1,6 @@
 const path = require("path");
 const Allowlist = require("../lib/allowlist");
+const { mapVulnerabilityLevelInput } = require("../lib/map-vulnerability");
 
 function summaryWithDefault(additions = {}) {
   const summary = {
@@ -31,7 +32,13 @@ function config(additions) {
     registry: undefined,
     "pass-enoaudit": false,
   };
-  return { ...defaultConfig, ...additions };
+  const levels = mapVulnerabilityLevelInput(additions.levels || {});
+  const { levels: _unusedLevels, ...rest } = additions;
+  return {
+    ...defaultConfig,
+    ...rest,
+    levels: { ...defaultConfig.levels, ...levels },
+  };
 }
 
 function testDir(s) {

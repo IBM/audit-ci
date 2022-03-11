@@ -3,10 +3,8 @@
     "node": true,
     "mocha": true
   },
-  "extends": ["airbnb-base", "plugin:prettier/recommended"],
-  "plugins": ["prettier"],
+  "extends": ["airbnb-base", "prettier"],
   "rules": {
-    "no-console": "off",
-    "prettier/prettier": "error"
+    "no-console": "off"
   }
 }

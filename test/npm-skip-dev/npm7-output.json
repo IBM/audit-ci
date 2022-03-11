@@ -1,14 +1,41 @@
 {
   "auditReportVersion": 2,
-  "vulnerabilities": {},
+  "vulnerabilities": {
+    "open": {
+      "name": "open",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1040620,
+          "name": "open",
+          "dependency": "open",
+          "title": "Command Injection in open",
+          "url": "https://github.com/advisories/GHSA-28xh-wpgr-7fm8",
+          "severity": "critical",
+          "range": "<6.0.0"
+        }
+      ],
+      "effects": [],
+      "range": "<6.0.0",
+      "nodes": [
+        "node_modules/open"
+      ],
+      "fixAvailable": {
+        "name": "open",
+        "version": "8.4.0",
+        "isSemVerMajor": true
+      }
+    }
+  },
   "metadata": {
     "vulnerabilities": {
       "info": 0,
       "low": 0,
       "moderate": 0,
       "high": 0,
-      "critical": 0,
-      "total": 0
+      "critical": 1,
+      "total": 1
     },
     "dependencies": {
       "prod": 2,

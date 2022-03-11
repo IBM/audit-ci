@@ -51,7 +51,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [1004291],
+        advisoriesFound: [1066786],
       })
     );
   });
@@ -77,7 +77,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [1003653],
+        advisoriesFound: [1066151],
       })
     );
   });
@@ -93,7 +93,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
+        advisoriesFound: [1066169],
       })
     );
   });
@@ -107,50 +107,18 @@ describe("yarn-auditer", function testYarnAuditer() {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
-  it("[DEPRECATED - advisories] ignores an advisory if it is whitelisted", async () => {
-    const summary = await audit(
-      config({
-        directory: testDir("yarn-moderate"),
-        levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [1003671] }),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedAdvisoriesFound: [1003671],
-      })
-    );
-  });
   it("ignores an advisory if it is allowlisted", async () => {
     const summary = await audit(
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([1003671]),
+        allowlist: new Allowlist([1066169]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1003671],
-      })
-    );
-  });
-  it("[DEPRECATED - advisories] does not ignore an advisory that is not whitelisted", async () => {
-    const summary = await audit(
-      config({
-        directory: testDir("yarn-moderate"),
-        levels: { moderate: true },
-        allowlist: Allowlist.mapConfigToAllowlist({ advisories: [659] }),
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(
-      summaryWithDefault({
-        allowlistedAdvisoriesNotFound: [659],
-        failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
+        allowlistedAdvisoriesFound: [1066169],
       })
     );
   });
@@ -167,7 +135,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1003671],
+        advisoriesFound: [1066169],
       })
     );
   });
@@ -182,7 +150,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [1004319],
+        advisoriesFound: [1065151],
       })
     );
   });
@@ -196,16 +164,15 @@ describe("yarn-auditer", function testYarnAuditer() {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
-  it("doesn't use the registry flag since it's not supported in Yarn yet", () => {
-    return audit(
+  it("doesn't use the registry flag since it's not supported in Yarn yet", () =>
+    audit(
       config({
         directory: testDir("yarn-low"),
         levels: { low: true },
         registry: "https://example.com",
       }),
       (_summary) => _summary
-    );
-  });
+    ));
   (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] reports important info with moderate severity",
     async () => {
@@ -220,7 +187,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       expect(summary).to.eql(
         summaryWithDefault({
           failedLevelsFound: ["moderate"],
-          advisoriesFound: [1003671],
+          advisoriesFound: [1066169],
         })
       );
     }
@@ -245,13 +212,13 @@ describe("yarn-auditer", function testYarnAuditer() {
         config({
           directory: testDir("yarn-berry-moderate"),
           levels: { moderate: true },
-          allowlist: new Allowlist([1003671]),
+          allowlist: new Allowlist([1066169]),
         }),
         (_summary) => _summary
       );
       expect(summary).to.eql(
         summaryWithDefault({
-          allowlistedAdvisoriesFound: [1003671],
+          allowlistedAdvisoriesFound: [1066169],
         })
       );
     }
