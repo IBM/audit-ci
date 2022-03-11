@@ -5,7 +5,7 @@
       "action": "install",
       "resolves": [
         {
-          "id": 1040003,
+          "id": 1066169,
           "path": "base64url",
           "dev": false,
           "optional": false,
@@ -17,7 +17,7 @@
     }
   ],
   "advisories": {
-    "1040003": {
+    "1066169": {
       "findings": [
         {
           "version": "2.0.0",
@@ -40,12 +40,14 @@
       },
       "updated": "2020-08-31T18:31:39.000Z",
       "recommendation": "Upgrade to version 3.0.0 or later",
-      "cwe": "[\"CWE-125\"]",
+      "cwe": [
+        "CWE-125"
+      ],
       "found_by": null,
       "deleted": null,
-      "id": 1040003,
+      "id": 1066169,
       "references": "- https://hackerone.com/reports/321687\n- https://www.npmjs.com/advisories/658\n- https://github.com/brianloveswords/base64url/pull/25\n- https://github.com/advisories/GHSA-rvg8-pwq2-xj7q",
-      "created": "2022-03-07T18:00:45.443Z",
+      "created": "2022-03-11T08:00:43.890Z",
       "reported_by": null,
       "title": "Out-of-bounds Read in base64url",
       "npm_advisory_id": null,
@@ -67,5 +69,5 @@
     "optionalDependencies": 0,
     "totalDependencies": 1
   },
-  "runId": "3de20c44-f5cf-4f8a-a232-8a859f13c6a3"
+  "runId": "23801c4d-646f-474d-b982-4aadac1b22ef"
 }

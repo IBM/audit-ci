@@ -48,12 +48,12 @@ describe("Model", () => {
 
     const parsedAuditOutput = {
       advisories: {
-        1040620: {
-          id: 1040620,
+        1066786: {
+          id: 1066786,
           title: "Command Injection",
           module_name: "open",
           severity: "critical",
-          url: "https://npmjs.com/advisories/1040620",
+          url: "https://npmjs.com/advisories/1066786",
           findings: [{ paths: ["open"] }],
         },
       },
@@ -63,7 +63,7 @@ describe("Model", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [1040620],
+        advisoriesFound: [1066786],
       })
     );
   });

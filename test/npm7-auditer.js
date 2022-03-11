@@ -25,7 +25,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [1040620],
+        advisoriesFound: [1066786],
       })
     );
   });
@@ -53,7 +53,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [1039985],
+        advisoriesFound: [1066151],
       })
     );
   });
@@ -70,7 +70,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1040003],
+        advisoriesFound: [1066169],
       })
     );
   });
@@ -91,13 +91,13 @@ describe("npm7-auditer", () => {
       config({
         directory: testDir("npm-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([1040003]),
+        allowlist: new Allowlist([1066169]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1040003],
+        allowlistedAdvisoriesFound: [1066169],
       })
     );
   });
@@ -115,7 +115,7 @@ describe("npm7-auditer", () => {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: [659],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1040003],
+        advisoriesFound: [1066169],
       })
     );
   });
@@ -227,7 +227,7 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [1038984],
+        advisoriesFound: [1065151],
       })
     );
   });

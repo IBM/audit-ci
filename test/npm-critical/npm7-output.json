@@ -7,7 +7,7 @@
       "isDirect": true,
       "via": [
         {
-          "source": 1040620,
+          "source": 1066786,
           "name": "open",
           "dependency": "open",
           "title": "Command Injection in open",

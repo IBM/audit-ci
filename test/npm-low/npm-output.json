@@ -5,7 +5,7 @@
       "action": "install",
       "resolves": [
         {
-          "id": 1038984,
+          "id": 1065151,
           "path": "chownr",
           "dev": false,
           "optional": false,
@@ -17,7 +17,7 @@
     }
   ],
   "advisories": {
-    "1038984": {
+    "1065151": {
       "findings": [
         {
           "version": "1.0.0",
@@ -42,12 +42,14 @@
       },
       "updated": "2021-05-12T20:23:30.000Z",
       "recommendation": "Upgrade to version 1.1.0 or later",
-      "cwe": "[\"CWE-367\"]",
+      "cwe": [
+        "CWE-367"
+      ],
       "found_by": null,
       "deleted": null,
-      "id": 1038984,
+      "id": 1065151,
       "references": "- https://nvd.nist.gov/vuln/detail/CVE-2017-18869\n- https://github.com/isaacs/chownr/issues/14\n- https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863985\n- https://bugzilla.redhat.com/show_bug.cgi?id=1611614\n- https://snyk.io/vuln/npm:chownr:20180731\n- https://github.com/advisories/GHSA-c6rq-rjc2-86v2",
-      "created": "2022-03-07T18:00:45.341Z",
+      "created": "2022-03-11T08:00:43.827Z",
       "reported_by": null,
       "title": "Time-of-check Time-of-use (TOCTOU) Race Condition in chownr",
       "npm_advisory_id": null,
@@ -69,5 +71,5 @@
     "optionalDependencies": 0,
     "totalDependencies": 1
   },
-  "runId": "9a93f0a4-81ec-478e-a3f4-6918eb674781"
+  "runId": "551a22cb-de06-40d7-a95b-b50ee8ceb7c3"
 }
