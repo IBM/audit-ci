@@ -142,7 +142,7 @@ Review the examples section for an [example of config file usage](#example-confi
 npx audit-ci -m
 ```
 
-### Prevents build on any vulnerability except advisory 690 and all of lodash and base64url, don't show allowlisted
+### Prevents build on any vulnerability except advisory "GHSA-38f5-ghc2-fcmv" and all of lodash and base64url, don't show allowlisted
 
 ```sh
 npx audit-ci -l -a "GHSA-38f5-ghc2-fcmv" lodash base64url --show-found false
