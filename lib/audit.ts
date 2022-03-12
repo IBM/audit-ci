@@ -1,6 +1,7 @@
-const { yellow } = require("./colors");
-const npmAuditer = require("./npm-auditer");
-const yarnAuditer = require("./yarn-auditer");
+import { yellow } from "./colors";
+import { AuditCiConfig } from "./config";
+import * as npmAuditer from "./npm-auditer";
+import * as yarnAuditer from "./yarn-auditer";
 
 const PARTIAL_RETRY_ERROR_MSG = {
   // The three ENOAUDIT error messages for NPM are:
@@ -12,23 +13,26 @@ const PARTIAL_RETRY_ERROR_MSG = {
   yarn: "503 Service Unavailable",
 };
 
-function audit(pm, config, reporter) {
+function audit(pm: "npm" | "yarn", config: AuditCiConfig, reporter?: any) {
   const auditor = pm === "npm" ? npmAuditer : yarnAuditer;
-  const { "pass-enoaudit": passENoAudit, "retry-count": maxRetryCount } =
-    config;
+  const {
+    "pass-enoaudit": passENoAudit,
+    "retry-count": maxRetryCount,
+    o,
+  } = config;
 
   async function run(attempt = 0) {
     try {
       const result = await auditor.audit(config, reporter);
       return result;
-    } catch (err) {
-      const message = err.message || err;
+    } catch (error: any) {
+      const message = error.message || error;
       const isRetryableMessage =
         typeof message === "string" &&
         message.includes(PARTIAL_RETRY_ERROR_MSG[pm]);
       const shouldRetry = attempt < maxRetryCount && isRetryableMessage;
       if (shouldRetry) {
-        if (config.o === "text") {
+        if (o === "text") {
           console.log("Retrying audit...");
         }
         return run(attempt + 1);
@@ -39,13 +43,13 @@ function audit(pm, config, reporter) {
           yellow,
           `ACTION RECOMMENDED: An audit could not performed due to ${maxRetryCount} audits that resulted in ENOAUDIT. Perform an audit manually and verify that no significant vulnerabilities exist before merging.`
         );
-        return Promise.resolve();
+        return;
       }
-      throw err;
+      throw error;
     }
   }
 
   return run();
 }
 
-module.exports = audit;
+export default audit;

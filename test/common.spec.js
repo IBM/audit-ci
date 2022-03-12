@@ -1,5 +1,8 @@
 const { expect } = require("chai");
-const { matchString, gitHubAdvisoryUrlToAdvisoryId } = require("../lib/common");
+const {
+  matchString,
+  gitHubAdvisoryUrlToAdvisoryId,
+} = require("../dist/common");
 
 describe("matchString", () => {
   it("works for various prefixes and suffixes of wildcards", () => {

@@ -2,8 +2,8 @@ const { expect } = require("chai");
 const childProcess = require("child_process");
 const path = require("path");
 const semver = require("semver");
-const audit = require("../lib/audit").bind(null, "yarn");
-const Allowlist = require("../lib/allowlist");
+const audit = require("../dist/audit").default.bind(undefined, "yarn");
+const { default: Allowlist } = require("../dist/allowlist");
 const { summaryWithDefault } = require("./common");
 
 function config(additions) {
@@ -26,7 +26,7 @@ function config(additions) {
   return { ...defaultConfig, ...additions };
 }
 
-function testDir(s) {
+function testDirectory(s) {
   return path.resolve(__dirname, s);
 }
 
@@ -42,7 +42,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("prints full report with critical severity", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-critical"),
+        directory: testDirectory("yarn-critical"),
         levels: { critical: true },
         "report-type": "full",
       }),
@@ -58,7 +58,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("does not report critical severity if it set to false", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-critical"),
+        directory: testDirectory("yarn-critical"),
         levels: { critical: false },
       }),
       (_summary) => _summary
@@ -68,7 +68,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("reports summary with high severity", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-high"),
+        directory: testDirectory("yarn-high"),
         levels: { high: true },
         "report-type": "summary",
       }),
@@ -84,7 +84,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("reports important info with moderate severity", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-moderate"),
+        directory: testDirectory("yarn-moderate"),
         levels: { moderate: true },
         "report-type": "important",
       }),
@@ -100,7 +100,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("does not report moderate severity if it set to false", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-moderate"),
+        directory: testDirectory("yarn-moderate"),
         levels: { moderate: false },
       }),
       (_summary) => _summary
@@ -110,7 +110,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("ignores an advisory if it is allowlisted", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-moderate"),
+        directory: testDirectory("yarn-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
       }),
@@ -125,7 +125,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("does not ignore an advisory that is not allowlisted", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-moderate"),
+        directory: testDirectory("yarn-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist(["GHSA-cff4-rrq6-h78w"]),
       }),
@@ -142,7 +142,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("reports low severity", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-low"),
+        directory: testDirectory("yarn-low"),
         levels: { low: true },
       }),
       (_summary) => _summary
@@ -157,7 +157,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("passes with no vulnerabilities", async () => {
     const summary = await audit(
       config({
-        directory: testDir("yarn-none"),
+        directory: testDirectory("yarn-none"),
         levels: { low: true },
       }),
       (_summary) => _summary
@@ -167,7 +167,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("doesn't use the registry flag since it's not supported in Yarn yet", () =>
     audit(
       config({
-        directory: testDir("yarn-low"),
+        directory: testDirectory("yarn-low"),
         levels: { low: true },
         registry: "https://example.com",
       }),
@@ -178,7 +178,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     async () => {
       const summary = await audit(
         config({
-          directory: testDir("yarn-berry-moderate"),
+          directory: testDirectory("yarn-berry-moderate"),
           levels: { moderate: true },
           "report-type": "important",
         }),
@@ -197,7 +197,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     async () => {
       const summary = await audit(
         config({
-          directory: testDir("yarn-berry-moderate"),
+          directory: testDirectory("yarn-berry-moderate"),
           levels: { moderate: false },
         }),
         (_summary) => _summary
@@ -210,7 +210,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     async () => {
       const summary = await audit(
         config({
-          directory: testDir("yarn-berry-moderate"),
+          directory: testDirectory("yarn-berry-moderate"),
           levels: { moderate: true },
           allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
         }),
@@ -226,7 +226,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", async () => {
     const summary = await audit(
       config({
-        directory: testDir(
+        directory: testDirectory(
           canRunYarnBerry ? "yarn-berry-skip-dev" : "yarn-skip-dev"
         ),
         "skip-dev": true,
@@ -237,7 +237,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(summaryWithDefault());
   });
   // it('prints unexpected https://registry.yarnpkg.com 503 error message', () => {
-  //   const directory = testDir('yarn-503');
+  //   const directory = testDirectory('yarn-503');
   //   const errorMessagePath = path.resolve(directory, 'error-message');
   //   const errorMessage = require(errorMessagePath); // eslint-disable-line
 
@@ -256,7 +256,7 @@ describe("yarn-auditer", function testYarnAuditer() {
   //     });
   // });
   // it("passes using --pass-enoaudit", () => {
-  //   const directory = testDir("yarn-503");
+  //   const directory = testDirectory("yarn-503");
   //   return audit(
   //     config({
   //       directory,

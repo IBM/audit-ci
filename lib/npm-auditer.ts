@@ -1,31 +1,32 @@
-const { blue } = require("./colors");
-const { runProgram, reportAudit } = require("./common");
-const Model = require("./Model");
+import { blue } from "./colors";
+import { reportAudit, runProgram } from "./common";
+import { AuditCiConfig } from "./config";
+import Model from "./model";
 
 async function runNpmAudit(config) {
   const { directory, registry, _npm } = config;
   const npmExec = _npm || "npm";
 
-  let stdoutBuffer = {};
-  function outListener(data) {
+  let stdoutBuffer: any = {};
+  function outListener(data: any) {
     stdoutBuffer = { ...stdoutBuffer, ...data };
   }
 
-  const stderrBuffer = [];
-  function errListener(line) {
+  const stderrBuffer: any[] = [];
+  function errorListener(line: any) {
     stderrBuffer.push(line);
   }
 
-  const args = ["audit", "--json"];
+  const arguments_ = ["audit", "--json"];
   if (registry) {
-    args.push("--registry", registry);
+    arguments_.push("--registry", registry);
   }
   if (config["skip-dev"]) {
-    args.push("--production");
+    arguments_.push("--production");
   }
   const options = { cwd: directory };
-  await runProgram(npmExec, args, options, outListener, errListener);
-  if (stderrBuffer.length) {
+  await runProgram(npmExec, arguments_, options, outListener, errorListener);
+  if (stderrBuffer.length > 0) {
     throw new Error(
       `Invocation of npm audit failed:\n${stderrBuffer.join("\n")}`
     );
@@ -40,37 +41,40 @@ async function runNpmAudit(config) {
  * @param {"text" | "json"} outputFormat
  */
 function printReport(parsedOutput, levels, reportType, outputFormat) {
-  const printReportObj = (text, obj) => {
+  const printReportObject = (text, object) => {
     if (outputFormat === "text") {
       console.log(blue, text);
     }
-    console.log(JSON.stringify(obj, null, 2));
+    console.log(JSON.stringify(object, undefined, 2));
   };
   switch (reportType) {
     case "full":
-      printReportObj("NPM audit report JSON:", parsedOutput);
+      printReportObject("NPM audit report JSON:", parsedOutput);
       break;
     case "important": {
       const advisories =
         parsedOutput.auditReportVersion === 2
           ? parsedOutput.vulnerabilities
           : parsedOutput.advisories;
-      const relevantAdvisories = Object.keys(advisories).reduce(
-        (acc, advisory) =>
-          levels[advisories[advisory].severity]
-            ? { [advisory]: advisories[advisory], ...acc }
-            : acc,
-        {}
+
+      const relevantAdvisoryLevels = Object.keys(advisories).filter(
+        (advisory) => levels[advisories[advisory].severity]
       );
+
+      const relevantAdvisories = {};
+      for (const advisory of relevantAdvisoryLevels) {
+        relevantAdvisories[advisory] = advisories[advisory];
+      }
+
       const keyFindings = {
         advisories: relevantAdvisories,
         metadata: parsedOutput.metadata,
       };
-      printReportObj("NPM audit report results:", keyFindings);
+      printReportObject("NPM audit report results:", keyFindings);
       break;
     }
     case "summary":
-      printReportObj("NPM audit report summary:", parsedOutput.metadata);
+      printReportObject("NPM audit report summary:", parsedOutput.metadata);
       break;
     default:
       throw new Error(
@@ -79,7 +83,7 @@ function printReport(parsedOutput, levels, reportType, outputFormat) {
   }
 }
 
-function report(parsedOutput, config, reporter) {
+export function report(parsedOutput, config: AuditCiConfig, reporter) {
   printReport(parsedOutput, config.levels, config["report-type"], config.o);
   const model = new Model(config);
   const summary = model.load(parsedOutput);
@@ -100,7 +104,7 @@ function report(parsedOutput, config, reporter) {
  * `_npm`: a path to npm, uses npm from PATH if not specified.
  * @returns {Promise<any>} Returns the audit report summary on resolve, `Error` on rejection.
  */
-async function audit(config, reporter = reportAudit) {
+export async function audit(config, reporter = reportAudit) {
   const parsedOutput = await runNpmAudit(config);
   if (parsedOutput.error) {
     const { code, summary } = parsedOutput.error;
@@ -108,8 +112,3 @@ async function audit(config, reporter = reportAudit) {
   }
   return report(parsedOutput, config, reporter);
 }
-
-module.exports = {
-  audit,
-  report,
-};

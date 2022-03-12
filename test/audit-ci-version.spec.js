@@ -1,5 +1,5 @@
 const semver = require("semver");
-const { auditCiVersion } = require("../lib/audit-ci-version");
+const { auditCiVersion } = require("../dist/audit-ci-version");
 
 describe("audit-ci package", () => {
   it("gets the version of the audit-ci package", () => {
