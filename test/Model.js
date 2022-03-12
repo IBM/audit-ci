@@ -10,8 +10,8 @@ function config(additions) {
 describe("Model", () => {
   it("does not support number parameters for Allowlist", () => {
     expect(() => new Model({ allowlist: new Allowlist([123]) })).to.throw(
-      "Unsupported number parameter - Ref https://github.com/IBM/audit-ci/pull/217"
-    )
+      "Unsupported number as allowlist. Perform codemod to update config to use GitHub advisory as identifiers: https://github.com/quinnturner/audit-ci-codemod with `npx @quinnturner/audit-ci-codemod`. See also: https://github.com/IBM/audit-ci/pull/217"
+    );
   });
 
   it("rejects misspelled severity levels", () => {
@@ -54,8 +54,8 @@ describe("Model", () => {
 
     const parsedAuditOutput = {
       advisories: {
-        1004291: {
-          id: 1004291,
+        1066786: {
+          id: 1066786,
           title: "Command Injection",
           module_name: "open",
           severity: "critical",

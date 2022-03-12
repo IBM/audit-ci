@@ -139,7 +139,11 @@ describe("npm-auditer", () => {
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        advisoriesFound: ["GHSA-74fj-2j2h-c42q", "GHSA-cph5-m8f7-6c5x", "GHSA-4w2v-q235-vp99"],
+        advisoriesFound: [
+          "GHSA-74fj-2j2h-c42q",
+          "GHSA-cph5-m8f7-6c5x",
+          "GHSA-4w2v-q235-vp99",
+        ],
         failedLevelsFound: ["high"],
         allowlistedPathsFound: [
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
