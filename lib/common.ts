@@ -104,9 +104,9 @@ export function reportAudit(summary: Summary, config: AuditCiConfig) {
     throw new Error(
       `Failed security audit due to ${failedLevelsFound.join(
         ", "
-      )} vulnerabilities.\nVulnerable advisories are: ${advisoriesFound.join(
-        ", "
-      )}`
+      )} vulnerabilities.\nVulnerable advisories are:\n${advisoriesFound
+        .map((element) => gitHubAdvisoryIdToUrl(element))
+        .join("\n")}`
     );
   }
   return summary;
@@ -170,4 +170,10 @@ export function matchString(template: string, string_: string) {
 
 export function gitHubAdvisoryUrlToAdvisoryId(url: string) {
   return url.split("/")[4];
+}
+
+export function gitHubAdvisoryIdToUrl<T extends string>(
+  id: T
+): `https://github.com/advisories/${T}` {
+  return `https://github.com/advisories/${id}`;
 }
