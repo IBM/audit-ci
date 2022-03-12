@@ -39,7 +39,7 @@ jobs:
       - run:
           name: run-audit-ci
           # Only have audit-ci checks on pull requests
-          command: if [[ ! -z $CIRCLE_PULL_REQUEST && -f dist/audit-ci.js ]]; then node dist/audit-ci.js --config ./audit-ci.jsonc; fi
+          command: if [[ ! -z $CIRCLE_PULL_REQUEST && ! -f lib/audit-ci.js ]]; then npm run build && node dist/audit-ci.js --config ./audit-ci.jsonc; fi
       - run:
           name: run-lint
           command: npm run lint
