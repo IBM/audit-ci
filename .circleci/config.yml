@@ -30,11 +30,16 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      # Temporarily duplicate for testing typescript
       # Have audit-ci run audit-ci to audit itself :)
       - run:
           name: run-audit-ci
           # Only have audit-ci checks on pull requests
-          command: if [[ ! -z $CIRCLE_PULL_REQUEST ]]; then node lib/audit-ci.js --config ./audit-ci.jsonc; fi
+          command: if [[ ! -z $CIRCLE_PULL_REQUEST && -f lib/audit-ci.js ]]; then node lib/audit-ci.js --config ./audit-ci.jsonc; fi
+      - run:
+          name: run-audit-ci
+          # Only have audit-ci checks on pull requests
+          command: if [[ ! -z $CIRCLE_PULL_REQUEST && -f dist/audit-ci.js ]]; then node dist/audit-ci.js --config ./audit-ci.jsonc; fi
       - run:
           name: run-lint
           command: npm run lint
