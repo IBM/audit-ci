@@ -12,7 +12,13 @@ describe("matchString", () => {
 
 describe("gitHubAdvisoryUrlToAdvisoryId", () => {
   it("converts github-advisory-url to just the advisory-id", () => {
-    expect(gitHubAdvisoryUrlToAdvisoryId("https://github.com/advisories/GHSA-qrpm-p2h7-hrv2")).to.eql("GHSA-qrpm-p2h7-hrv2");
-    expect(gitHubAdvisoryUrlToAdvisoryId("https://github.com/advisories/GHSA-1")).to.eql("GHSA-1");
+    expect(
+      gitHubAdvisoryUrlToAdvisoryId(
+        "https://github.com/advisories/GHSA-qrpm-p2h7-hrv2"
+      )
+    ).to.eql("GHSA-qrpm-p2h7-hrv2");
+    expect(
+      gitHubAdvisoryUrlToAdvisoryId("https://github.com/advisories/GHSA-1")
+    ).to.eql("GHSA-1");
   });
 });
