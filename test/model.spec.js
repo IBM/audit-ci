@@ -1,6 +1,6 @@
 const { expect } = require("chai");
-const Model = require("../lib/Model");
-const Allowlist = require("../lib/allowlist");
+const { default: Model } = require("../dist/model");
+const { default: Allowlist } = require("../dist/allowlist");
 const { summaryWithDefault } = require("./common");
 
 function config(additions) {
@@ -54,8 +54,8 @@ describe("Model", () => {
 
     const parsedAuditOutput = {
       advisories: {
-        1066786: {
-          id: 1066786,
+        1_066_786: {
+          id: 1_066_786,
           title: "Command Injection",
           module_name: "open",
           severity: "critical",

@@ -1,6 +1,6 @@
 const path = require("path");
-const Allowlist = require("../lib/allowlist");
-const { mapVulnerabilityLevelInput } = require("../lib/map-vulnerability");
+const { default: Allowlist } = require("../dist/allowlist");
+const { mapVulnerabilityLevelInput } = require("../dist/map-vulnerability");
 
 function summaryWithDefault(additions = {}) {
   const summary = {
@@ -41,12 +41,12 @@ function config(additions) {
   };
 }
 
-function testDir(s) {
+function testDirectory(s) {
   return path.resolve(__dirname, s);
 }
 
 module.exports = {
   summaryWithDefault,
   config,
-  testDir,
+  testDirectory,
 };

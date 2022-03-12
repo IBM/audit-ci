@@ -1,8 +1,9 @@
-const childProcess = require("child_process");
-const semver = require("semver");
-const { blue, red, yellow } = require("./colors");
-const { reportAudit, runProgram } = require("./common");
-const Model = require("./Model");
+import * as childProcess from "child_process";
+import * as semver from "semver";
+import { blue, red, yellow } from "./colors";
+import { reportAudit, runProgram } from "./common";
+import { AuditCiConfig } from "./config";
+import Model from "./model";
 
 const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
 const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
@@ -13,7 +14,7 @@ const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
  */
 const MINIMUM_YARN_AUDIT_REGISTRY_VERSION = "99.99.99";
 
-function getYarnVersion(cwd) {
+function getYarnVersion(cwd?: string | URL) {
   const version = childProcess
     .execSync("yarn -v", { cwd })
     .toString()
@@ -21,52 +22,51 @@ function getYarnVersion(cwd) {
   return version;
 }
 
-function yarnSupportsClassicAudit(yarnVersion) {
+function yarnSupportsClassicAudit(yarnVersion: string | semver.SemVer) {
   return semver.satisfies(yarnVersion, `^${MINIMUM_YARN_CLASSIC_VERSION}`);
 }
 
-function yarnSupportsBerryAudit(yarnVersion) {
+function yarnSupportsBerryAudit(yarnVersion: string | semver.SemVer) {
   return semver.gte(yarnVersion, MINIMUM_YARN_BERRY_VERSION);
 }
 
-function yarnSupportsAudit(yarnVersion) {
+function yarnSupportsAudit(yarnVersion: string | semver.SemVer) {
   return (
     yarnSupportsClassicAudit(yarnVersion) || yarnSupportsBerryAudit(yarnVersion)
   );
 }
 
-function yarnAuditSupportsRegistry(yarnVersion) {
+function yarnAuditSupportsRegistry(yarnVersion: string | semver.SemVer) {
   return semver.gte(yarnVersion, MINIMUM_YARN_AUDIT_REGISTRY_VERSION);
 }
+
+const printJson = (data: unknown) => {
+  console.log(JSON.stringify(data, undefined, 2));
+};
 
 /**
  * Audit your Yarn project!
  *
- * @param {{directory: string, report: { full?: boolean, summary?: boolean }, allowlist: object, registry: string, levels: { low: boolean, moderate: boolean, high: boolean, critical: boolean }}} config
- * `directory`: the directory containing the package.json to audit.
- * `report-type`: [`important`, `summary`, `full`] how the audit report is displayed.
- * `allowlist`: an object containing a list of modules, advisories, and module paths that should not break the build if their vulnerability is found.
- * `registry`: the registry to resolve packages by name and version.
- * `show-not-found`: show allowlisted advisories that are not found.
- * `levels`: the vulnerability levels to fail on, if `moderate` is set `true`, `high` and `critical` should be as well.
- * `skip-dev`: skip devDependencies, defaults to false
- * `_yarn`: a path to yarn, uses yarn from PATH if not specified.
- * @returns {Promise<any>} Returns the audit report summary on resolve, `Error` on rejection.
+ * @returns Returns the audit report summary on resolve, `Error` on rejection.
  */
-async function audit(config, reporter = reportAudit) {
+export async function audit(
+  config: AuditCiConfig,
+  reporter = reportAudit
+): Promise<any> {
   const {
     levels,
     registry,
     "report-type": reportType,
-    "skip-dev": skipDev,
+    "skip-dev": skipDevelopmentDependencies,
     o: outputFormat,
     _yarn,
+    directory,
   } = config;
   const yarnExec = _yarn || "yarn";
   let missingLockFile = false;
   const model = new Model(config);
 
-  const yarnVersion = getYarnVersion(config.directory);
+  const yarnVersion = getYarnVersion(directory);
   const isYarnVersionSupported = yarnSupportsAudit(yarnVersion);
   if (!isYarnVersionSupported) {
     throw new Error(
@@ -76,7 +76,7 @@ async function audit(config, reporter = reportAudit) {
   const isYarnClassic = yarnSupportsClassicAudit(yarnVersion);
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
 
-  const printHeader = (text) => {
+  const printHeader = (text: string) => {
     if (outputFormat === "text") {
       console.log(blue, text);
     }
@@ -97,45 +97,38 @@ async function audit(config, reporter = reportAudit) {
       );
   }
 
-  const printJson = (data) => {
-    console.log(JSON.stringify(data, null, 2));
-  };
   // Define a function to print based on the report type.
   let printAuditData;
   switch (reportType) {
     case "full":
-      printAuditData = (line) => {
+      printAuditData = (line: unknown) => {
         printJson(line);
       };
       break;
     case "important":
-      if (isYarnClassic) {
-        printAuditData = ({ type, data }) => {
-          if (
-            (type === "auditAdvisory" && levels[data.advisory.severity]) ||
-            type === "auditSummary"
-          ) {
-            printJson(data);
+      printAuditData = isYarnClassic
+        ? ({ type, data }) => {
+            if (
+              (type === "auditAdvisory" && levels[data.advisory.severity]) ||
+              type === "auditSummary"
+            ) {
+              printJson(data);
+            }
           }
-        };
-      } else {
-        printAuditData = ({ metadata }) => {
-          printJson(metadata);
-        };
-      }
+        : ({ metadata }) => {
+            printJson(metadata);
+          };
       break;
     case "summary":
-      if (isYarnClassic) {
-        printAuditData = ({ type, data }) => {
-          if (type === "auditSummary") {
-            printJson(data);
+      printAuditData = isYarnClassic
+        ? ({ type, data }: { type: string; data: any }) => {
+            if (type === "auditSummary") {
+              printJson(data);
+            }
           }
-        };
-      } else {
-        printAuditData = ({ metadata }) => {
-          printJson(metadata);
-        };
-      }
+        : ({ metadata }: { metadata: any }) => {
+            printJson(metadata);
+          };
       break;
     default:
       throw new Error(
@@ -162,35 +155,45 @@ async function audit(config, reporter = reportAudit) {
       } else {
         printAuditData(line);
 
-        Object.values(line.advisories).forEach((advisory) => {
+        for (const advisory of Object.values(line.advisories)) {
           model.process(advisory);
-        });
+        }
       }
-    } catch (err) {
+    } catch (error) {
       console.error(red, `ERROR: Cannot JSONStream.parse response:`);
       console.error(line);
-      throw err;
+      throw error;
     }
   }
 
-  const stderrBuffer = [];
-  function errListener(line) {
+  const stderrBuffer: any[] = [];
+  function errorListener(line) {
     stderrBuffer.push(line);
 
     if (line.type === "error") {
       throw new Error(line.data);
     }
   }
-  const options = { cwd: config.directory };
-  const args = isYarnClassic
-    ? ["audit", "--json"].concat(skipDev ? ["--groups", "dependencies"] : [])
-    : ["npm", "audit", "--recursive", "--json"].concat(
-        skipDev ? ["--environment", "production"] : ["--all"]
-      );
+  const options = { cwd: directory };
+  const arguments_ = isYarnClassic
+    ? [
+        "audit",
+        "--json",
+        ...(skipDevelopmentDependencies ? ["--groups", "dependencies"] : []),
+      ]
+    : [
+        "npm",
+        "audit",
+        "--recursive",
+        "--json",
+        ...(skipDevelopmentDependencies
+          ? ["--environment", "production"]
+          : ["--all"]),
+      ];
   if (registry) {
     const auditRegistrySupported = yarnAuditSupportsRegistry(yarnVersion);
     if (auditRegistrySupported) {
-      args.push("--registry", registry);
+      arguments_.push("--registry", registry);
     } else {
       console.warn(
         yellow,
@@ -198,7 +201,7 @@ async function audit(config, reporter = reportAudit) {
       );
     }
   }
-  await runProgram(yarnExec, args, options, outListener, errListener);
+  await runProgram(yarnExec, arguments_, options, outListener, errorListener);
   if (missingLockFile) {
     console.warn(
       yellow,
@@ -209,5 +212,3 @@ async function audit(config, reporter = reportAudit) {
   const summary = model.getSummary((a) => a.github_advisory_id);
   return reporter(summary, config);
 }
-
-module.exports = { audit };

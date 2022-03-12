@@ -11,7 +11,7 @@ threshold while ignoring allowlisted advisories.
 
 ## Requirements
 
-- Node >=12.x (Yarn Berry requires Node >=12.13.0)
+- Node >=12.9.0 (Yarn Berry requires Node >=12.13.0)
 - _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
 
 ## Set up
@@ -29,8 +29,22 @@ or, using `yarn`:
 > `yarn add -D audit-ci`
 
 The next section gives examples using `audit-ci` in various CI environments.
-It assumes that medium, high, and critical severity vulnerabilities prevent build continuation.
-For simplicity, the examples use `npx` and do not use a config file.
+It assumes that moderate, high, and critical severity vulnerabilities prevent build continuation.
+
+```jsonc
+// audit-ci.jsonc
+{
+  "moderate": true,
+  "allowlist": [
+    // Axios denial of service https://github.com/advisories/GHSA-42xw-2xvc-qx8m
+    "GHSA-42xw-2xvc-qx8m",
+    // The following are for the latest create-react-app
+    //  https://github.com/advisories/GHSA-8h2f-7jc4-7m3m
+    // The following could be simplified to "GHSA-rp65-9cf3-cjxr" as well.
+    "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check"
+  ]
+}
+```
 
 ### GitHub Actions
 

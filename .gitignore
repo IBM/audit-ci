@@ -1,9 +1,10 @@
 node_modules
 .tmp
-.vscode/
 npm-debug.log
 yarn-error.log
 .DS_store*
+
+dist
 
 # Editor files
 *~
