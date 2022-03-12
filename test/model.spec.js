@@ -70,6 +70,7 @@ describe("Model", () => {
       summaryWithDefault({
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
+        advisoryPathsFound: ["GHSA-28xh-wpgr-7fm8|open"],
       })
     );
   });
@@ -146,6 +147,13 @@ describe("Model", () => {
       summaryWithDefault({
         failedLevelsFound: ["critical", "low"],
         advisoriesFound: ["GHSA-1", "GHSA-2", "GHSA-5", "GHSA-6", "GHSA-7"],
+        advisoryPathsFound: [
+          "GHSA-1|M_A",
+          "GHSA-2|M_B",
+          "GHSA-5|M_E",
+          "GHSA-6|M_F",
+          "GHSA-7|M_G",
+        ],
       })
     );
   });
@@ -223,6 +231,13 @@ describe("Model", () => {
         allowlistedModulesFound: ["M_A", "M_D"],
         failedLevelsFound: ["critical", "low", "moderate"],
         advisoriesFound: ["GHSA-2", "GHSA-3", "GHSA-5", "GHSA-6", "GHSA-7"],
+        advisoryPathsFound: [
+          "GHSA-2|M_B",
+          "GHSA-3|M_C",
+          "GHSA-5|M_E",
+          "GHSA-6|M_F",
+          "GHSA-7|M_G",
+        ],
       })
     );
   });
@@ -308,6 +323,12 @@ describe("Model", () => {
         allowlistedAdvisoriesFound: ["GHSA-2", "GHSA-3", "GHSA-6"],
         failedLevelsFound: ["critical", "high", "low"],
         advisoriesFound: ["GHSA-1", "GHSA-4", "GHSA-5", "GHSA-7"],
+        advisoryPathsFound: [
+          "GHSA-1|M_A",
+          "GHSA-4|M_D",
+          "GHSA-5|M_E",
+          "GHSA-7|M_G",
+        ],
       })
     );
   });
@@ -352,6 +373,7 @@ describe("Model", () => {
       summaryWithDefault({
         failedLevelsFound: ["critical", "low"],
         advisoriesFound: ["GHSA-1", "GHSA-2"],
+        advisoryPathsFound: ["GHSA-1|M_A", "GHSA-2|M_B_1", "GHSA-2|M_B_2"],
       })
     );
   });
@@ -417,6 +439,7 @@ describe("Model", () => {
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-123"],
+        advisoryPathsFound: ["GHSA-123|package3>"],
       })
     );
   });
@@ -482,6 +505,7 @@ describe("Model", () => {
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-123"],
+        advisoryPathsFound: ["GHSA-123|package3>"],
       })
     );
   });

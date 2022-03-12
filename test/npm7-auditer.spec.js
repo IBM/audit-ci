@@ -26,6 +26,7 @@ describe("npm7-auditer", () => {
       summaryWithDefault({
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
+        advisoryPathsFound: ["GHSA-28xh-wpgr-7fm8|open"],
       })
     );
   });
@@ -54,6 +55,7 @@ describe("npm7-auditer", () => {
       summaryWithDefault({
         failedLevelsFound: ["high"],
         advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
+        advisoryPathsFound: ["GHSA-38f5-ghc2-fcmv|cryo"],
       })
     );
   });
@@ -71,6 +73,7 @@ describe("npm7-auditer", () => {
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+        advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
       })
     );
   });
@@ -116,6 +119,7 @@ describe("npm7-auditer", () => {
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+        advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
       })
     );
   });
@@ -150,6 +154,12 @@ describe("npm7-auditer", () => {
           "GHSA-42xw-2xvc-qx8m|github-build>axios",
           "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+        ],
+        advisoryPathsFound: [
+          "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
         ],
       })
     );
@@ -232,6 +242,7 @@ describe("npm7-auditer", () => {
       summaryWithDefault({
         failedLevelsFound: ["low"],
         advisoriesFound: ["GHSA-c6rq-rjc2-86v2"],
+        advisoryPathsFound: ["GHSA-c6rq-rjc2-86v2|chownr"],
       })
     );
   });
