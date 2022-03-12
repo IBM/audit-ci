@@ -38,7 +38,7 @@ For simplicity, the examples use `npx` and do not use a config file.
 steps:
   - uses: actions/checkout@v2
   - name: Audit for vulnerabilities
-    run: npx audit-ci --moderate
+    run: npx audit-ci --config ./audit-ci.jsonc
 ```
 
 ### CircleCI
@@ -59,7 +59,7 @@ steps:
   # the risk of executing a script from a compromised NPM package.
   - run:
       name: run-audit-ci
-      command: npx audit-ci --moderate
+      command: npx audit-ci --config ./audit-ci.jsonc
       # If you use a pull-request-only workflow,
       # it's better to not run audit-ci on `main` and only run it on pull requests.
       # For more info: https://github.com/IBM/audit-ci/issues/69
@@ -83,7 +83,7 @@ For `Travis-CI` not using PR builds:
 
 ```yml
 scripts:
-  - npx audit-ci --moderate
+  - npx audit-ci --config ./audit-ci.jsonc
 ```
 
 ## Options
@@ -164,7 +164,7 @@ npx audit-ci --report-type summary
 
 ### Example config file and different directory usage
 
-#### test/npm-config-file/audit-ci.json
+#### test/npm-config-file/audit-ci.jsonc
 
 ```json
 {
@@ -185,7 +185,7 @@ npx audit-ci --report-type summary
 ```
 
 ```sh
-npx audit-ci --directory test/npm-config-file --config test/npm-config-file/audit-ci.json
+npx audit-ci --directory test/npm-config-file --config test/npm-config-file/audit-ci.jsonc
 ```
 
 ## Codemod
@@ -206,7 +206,7 @@ $ npx @quinnturner/audit-ci-codemod
 Need to install the following packages:
   @quinnturner/audit-ci-codemod
 Ok to proceed? (y) y
-? What's the path for the audit-ci config? audit-ci.json
+? What's the path for the audit-ci config? audit-ci.jsonc
 Performed migration from advisories, whitelist, and path-whitelist to allowlist
 Performed migration from NPM advisories to GitHub advisories
 ```
