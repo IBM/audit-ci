@@ -51,7 +51,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
-        advisoriesFound: [1066786],
+        advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
       })
     );
   });
@@ -77,7 +77,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: [1066151],
+        advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
       })
     );
   });
@@ -93,7 +93,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1066169],
+        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       })
     );
   });
@@ -112,13 +112,13 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([1066169]),
+        allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: [1066169],
+        allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       })
     );
   });
@@ -127,15 +127,15 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDir("yarn-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([659]),
+        allowlist: new Allowlist(["GHSA-cff4-rrq6-h78w"]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesNotFound: [659],
+        allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: [1066169],
+        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       })
     );
   });
@@ -150,7 +150,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
-        advisoriesFound: [1065151],
+        advisoriesFound: ["GHSA-c6rq-rjc2-86v2"],
       })
     );
   });
@@ -187,7 +187,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       expect(summary).to.eql(
         summaryWithDefault({
           failedLevelsFound: ["moderate"],
-          advisoriesFound: [1066169],
+          advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         })
       );
     }
@@ -212,13 +212,13 @@ describe("yarn-auditer", function testYarnAuditer() {
         config({
           directory: testDir("yarn-berry-moderate"),
           levels: { moderate: true },
-          allowlist: new Allowlist([1066169]),
+          allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
         }),
         (_summary) => _summary
       );
       expect(summary).to.eql(
         summaryWithDefault({
-          allowlistedAdvisoriesFound: [1066169],
+          allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         })
       );
     }

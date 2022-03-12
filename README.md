@@ -118,7 +118,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
   "moderate": <boolean>, // [Optional] defaults `false`
   "high": <boolean>, // [Optional] defaults `false`
   "critical": <boolean>, // [Optional] defaults `false`
-  "allowlist": <(string | number)[]>, // [Optional] default `[]`
+  "allowlist": <string[]>, // [Optional] default `[]`
   "report-type": <string>, // [Optional] defaults `important`
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "output-format": <string>, // [Optional] defaults `"text"`
@@ -144,10 +144,10 @@ Review the examples section for an [example of config file usage](#example-confi
 npx audit-ci -m
 ```
 
-### Prevents build on any vulnerability except advisory 690 and all of lodash and base64url, don't show allowlisted
+### Prevents build on any vulnerability except advisory "GHSA-38f5-ghc2-fcmv" and all of lodash and base64url, don't show allowlisted
 
 ```sh
-npx audit-ci -l -a 690 lodash base64url --show-found false
+npx audit-ci -l -a "GHSA-38f5-ghc2-fcmv" lodash base64url --show-found false
 ```
 
 ### Prevents build with critical vulnerabilities showing the full report
@@ -171,13 +171,13 @@ npx audit-ci --report-type summary
   "low": true,
   "package-manager": "auto",
   "allowlist": [
-    100,
-    101,
+    "GHSA-333w-rxj3-f55r",
+    "GHSA-vfvf-mqq8-rwqc",
     "example1",
     "example2",
-    "52|example3",
-    "1038442|example4",
-    "1038442|example5>example4",
+    "GHSA-6354-6mhv-mvv5|example3",
+    "GHSA-42xw-2xvc-qx8m|example4",
+    "GHSA-42xw-2xvc-qx8m|example5>example4",
     "*|example6>*"
   ],
   "registry": "https://registry.npmjs.org"
