@@ -3,8 +3,13 @@ import { reportAudit, runProgram } from "./common";
 import { AuditCiConfig } from "./config";
 import Model from "./model";
 
-async function runNpmAudit(config) {
-  const { directory, registry, _npm } = config;
+async function runNpmAudit(config: AuditCiConfig) {
+  const {
+    directory,
+    registry,
+    _npm,
+    "skip-dev": skipDevelopmentDependencies,
+  } = config;
   const npmExec = _npm || "npm";
 
   let stdoutBuffer: any = {};
@@ -21,7 +26,7 @@ async function runNpmAudit(config) {
   if (registry) {
     arguments_.push("--registry", registry);
   }
-  if (config["skip-dev"]) {
+  if (skipDevelopmentDependencies) {
     arguments_.push("--production");
   }
   const options = { cwd: directory };
@@ -34,13 +39,12 @@ async function runNpmAudit(config) {
   return stdoutBuffer;
 }
 
-/**
- * @param {*} parsedOutput
- * @param {*} levels
- * @param {"full" | "important" | "summary"} reportType
- * @param {"text" | "json"} outputFormat
- */
-function printReport(parsedOutput, levels, reportType, outputFormat) {
+function printReport(
+  parsedOutput: any,
+  levels: any,
+  reportType: "full" | "important" | "summary",
+  outputFormat: "text" | "json"
+) {
   const printReportObject = (text, object) => {
     if (outputFormat === "text") {
       console.log(blue, text);
@@ -93,18 +97,9 @@ export function report(parsedOutput, config: AuditCiConfig, reporter) {
 /**
  * Audit your NPM project!
  *
- * @param {{directory: string, report: { full?: boolean, summary?: boolean }, allowlist: object, registry: string, levels: { low: boolean, moderate: boolean, high: boolean, critical: boolean }}} config
- * `directory`: the directory containing the package.json to audit.
- * `report-type`: [`important`, `summary`, `full`] how the audit report is displayed.
- * `allowlist`: an object containing a list of modules, advisories, and module paths that should not break the build if their vulnerability is found.
- * `registry`: the registry to resolve packages by name and version.
- * `show-not-found`: show allowlisted advisories that are not found.
- * `levels`: the vulnerability levels to fail on, if `moderate` is set `true`, `high` and `critical` should be as well.
- * `skip-dev`: skip devDependencies, defaults to false
- * `_npm`: a path to npm, uses npm from PATH if not specified.
- * @returns {Promise<any>} Returns the audit report summary on resolve, `Error` on rejection.
+ * @returns Returns the audit report summary on resolve, `Error` on rejection.
  */
-export async function audit(config, reporter = reportAudit) {
+export async function audit(config: AuditCiConfig, reporter = reportAudit) {
   const parsedOutput = await runNpmAudit(config);
   if (parsedOutput.error) {
     const { code, summary } = parsedOutput.error;

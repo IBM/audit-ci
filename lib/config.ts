@@ -94,6 +94,8 @@ type ComplexConfig = Omit<AuditCiPreprocessedConfig, "allowlist" | "a"> & {
   levels: { [K in keyof VulnerabilityLevels]: VulnerabilityLevels[K] };
   /** A path to yarn, uses yarn from PATH if not specified (internal use only) */
   _yarn?: string;
+  /** A path to npm, uses npm from PATH if not specified (internal use only) */
+  _npm?: string;
 };
 export type AuditCiConfig = { [K in keyof ComplexConfig]: ComplexConfig[K] };
 
@@ -111,7 +113,7 @@ function getPackageManagerType(
     case "yarn":
       return pmArgument;
     case "auto": {
-      const getPath = (file) => path.resolve(directory, file);
+      const getPath = (file: string) => path.resolve(directory, file);
       const packageLockExists = existsSync(getPath("package-lock.json"));
       if (packageLockExists) return "npm";
       const shrinkwrapExists = existsSync(getPath("npm-shrinkwrap.json"));

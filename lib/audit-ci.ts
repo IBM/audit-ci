@@ -4,7 +4,7 @@ import { printAuditCiVersion } from "./audit-ci-version";
 import { green, red } from "./colors";
 import { runYargs } from "./config";
 
-async function main() {
+async function runAuditCi() {
   const argv = await runYargs();
 
   printAuditCiVersion(argv.o);
@@ -26,4 +26,4 @@ async function main() {
   }
 }
 
-main();
+runAuditCi();
