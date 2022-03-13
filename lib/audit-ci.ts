@@ -1,10 +1,9 @@
-#!/usr/bin/env node
 import audit from "./audit";
 import { printAuditCiVersion } from "./audit-ci-version";
 import { green, red } from "./colors";
 import { runYargs } from "./config";
 
-async function runAuditCi() {
+export async function runAuditCi() {
   const argv = await runYargs();
 
   printAuditCiVersion(argv.o);
@@ -25,5 +24,3 @@ async function runAuditCi() {
     process.exitCode = 1;
   }
 }
-
-runAuditCi();

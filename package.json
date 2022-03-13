@@ -22,7 +22,7 @@
     "circleci"
   ],
   "bin": {
-    "audit-ci": "./dist/audit-ci.js"
+    "audit-ci": "./dist/bin.js"
   },
   "files": [
     "dist/*",
