@@ -25,7 +25,7 @@ export function reportAudit(summary: Summary, config: AuditCiConfig) {
     allowlist,
     "show-not-found": showNotFound,
     "show-found": showFound,
-    o,
+    "output-format": outputFormat,
   } = config;
   const {
     allowlistedModulesFound,
@@ -38,7 +38,7 @@ export function reportAudit(summary: Summary, config: AuditCiConfig) {
     advisoryPathsFound,
   } = summary;
 
-  if (o === "text") {
+  if (outputFormat === "text") {
     if (allowlist.modules.length > 0) {
       console.log(
         blue,

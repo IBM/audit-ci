@@ -14,7 +14,8 @@ const SUPPORTED_SEVERITY_LEVELS = new Set([
   "low",
 ]);
 
-const prependPath = (newItem, currentPath) => `${newItem}>${currentPath}`;
+const prependPath = (newItem: string, currentPath: string) =>
+  `${newItem}>${currentPath}`;
 
 export interface Summary {
   advisoriesFound: string[];

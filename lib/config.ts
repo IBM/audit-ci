@@ -81,19 +81,21 @@ export type AuditCiPreprocessedConfig = {
 };
 
 // Rather than exporting a weird union type, we resolve the type to a simple object.
-type ComplexConfig = Omit<AuditCiPreprocessedConfig, "allowlist" | "a"> & {
-  /** Package manager */
-  p: "npm" | "yarn";
+type ComplexConfig = Omit<
+  AuditCiPreprocessedConfig,
+  // Remove single-letter options from the base config to avoid confusion.
+  "allowlist" | "a" | "p" | "o" | "d" | "s" | "r" | "l" | "m" | "h" | "c"
+> & {
   /** Package manager */
   "package-manager": "npm" | "yarn";
   /** An object containing a list of modules, advisories, and module paths that should not break the build if their vulnerability is found. */
   allowlist: Allowlist;
-  /** An object containing a list of modules, advisories, and module paths that should not break the build if their vulnerability is found. */
-  a: Allowlist;
   /** The vulnerability levels to fail on, if `moderate` is set `true`, `high` and `critical` should be as well. */
   levels: { [K in keyof VulnerabilityLevels]: VulnerabilityLevels[K] };
   /** A path to yarn, uses yarn from PATH if not specified (internal use only) */
   _yarn?: string;
+  /** A path to npm, uses npm from PATH if not specified (internal use only) */
+  _npm?: string;
 };
 export type AuditCiConfig = { [K in keyof ComplexConfig]: ComplexConfig[K] };
 
@@ -102,7 +104,7 @@ export type AuditCiConfig = { [K in keyof ComplexConfig]: ComplexConfig[K] };
  * @param directory the directory where the package manager files exist
  * @returns the non-`auto` package manager
  */
-function getPackageManagerType(
+function resolvePackageManagerType(
   pmArgument: "auto" | "npm" | "yarn",
   directory: string
 ): "npm" | "yarn" {
@@ -111,7 +113,7 @@ function getPackageManagerType(
     case "yarn":
       return pmArgument;
     case "auto": {
-      const getPath = (file) => path.resolve(directory, file);
+      const getPath = (file: string) => path.resolve(directory, file);
       const packageLockExists = existsSync(getPath("package-lock.json"));
       if (packageLockExists) return "npm";
       const shrinkwrapExists = existsSync(getPath("npm-shrinkwrap.json"));
@@ -125,6 +127,38 @@ function getPackageManagerType(
     default:
       throw new Error(`Unexpected package manager argument: ${pmArgument}`);
   }
+}
+
+function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
+  const allowlist = Allowlist.mapConfigToAllowlist(argv);
+
+  const {
+    low,
+    moderate,
+    high,
+    critical,
+    "package-manager": packageManager,
+    directory,
+  } = argv;
+
+  const resolvedPackageManager = resolvePackageManagerType(
+    packageManager,
+    directory
+  );
+
+  const result: AuditCiConfig = {
+    ...argv,
+    "package-manager": resolvedPackageManager,
+    levels: mapVulnerabilityLevelInput({
+      low,
+      moderate,
+      high,
+      critical,
+    }),
+    "report-type": mapReportTypeInput(argv),
+    allowlist: allowlist,
+  };
+  return result;
 }
 
 export async function runYargs(): Promise<AuditCiConfig> {
@@ -237,25 +271,6 @@ export async function runYargs(): Promise<AuditCiConfig> {
 
   // yargs doesn't support aliases + TypeScript
   const awaitedArgv = (await argv) as unknown as AuditCiPreprocessedConfig;
-  const allowlist = Allowlist.mapConfigToAllowlist(awaitedArgv);
-
-  const { l, m, h, c, p, d } = awaitedArgv;
-
-  const packageManager = getPackageManagerType(p, d);
-
-  const result: AuditCiConfig = {
-    ...awaitedArgv,
-    p: packageManager,
-    "package-manager": packageManager,
-    levels: mapVulnerabilityLevelInput({
-      l,
-      m,
-      h,
-      c,
-    }),
-    "report-type": mapReportTypeInput(awaitedArgv),
-    a: allowlist,
-    allowlist: allowlist,
-  };
-  return result;
+  const auditCiConfig = mapArgvToAuditCiConfig(awaitedArgv);
+  return auditCiConfig;
 }

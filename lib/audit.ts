@@ -1,5 +1,6 @@
 import { yellow } from "./colors";
 import { AuditCiConfig } from "./config";
+import { Summary } from "./model";
 import * as npmAuditer from "./npm-auditer";
 import * as yarnAuditer from "./yarn-auditer";
 
@@ -13,13 +14,17 @@ const PARTIAL_RETRY_ERROR_MSG = {
   yarn: "503 Service Unavailable",
 };
 
-function audit(pm: "npm" | "yarn", config: AuditCiConfig, reporter?: any) {
-  const auditor = pm === "npm" ? npmAuditer : yarnAuditer;
+function audit(
+  config: AuditCiConfig,
+  reporter?: (summary: Summary, config: AuditCiConfig) => Summary
+) {
   const {
     "pass-enoaudit": passENoAudit,
     "retry-count": maxRetryCount,
-    o,
+    "package-manager": packageManager,
+    "output-format": outputFormat,
   } = config;
+  const auditor = packageManager === "npm" ? npmAuditer : yarnAuditer;
 
   async function run(attempt = 0) {
     try {
@@ -29,10 +34,10 @@ function audit(pm: "npm" | "yarn", config: AuditCiConfig, reporter?: any) {
       const message = error.message || error;
       const isRetryableMessage =
         typeof message === "string" &&
-        message.includes(PARTIAL_RETRY_ERROR_MSG[pm]);
+        message.includes(PARTIAL_RETRY_ERROR_MSG[packageManager]);
       const shouldRetry = attempt < maxRetryCount && isRetryableMessage;
       if (shouldRetry) {
-        if (o === "text") {
+        if (outputFormat === "text") {
           console.log("Retrying audit...");
         }
         return run(attempt + 1);

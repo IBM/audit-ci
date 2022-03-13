@@ -1,18 +1,18 @@
-#!/usr/bin/env node
 import audit from "./audit";
 import { printAuditCiVersion } from "./audit-ci-version";
 import { green, red } from "./colors";
 import { runYargs } from "./config";
 
-async function main() {
-  const argv = await runYargs();
+export async function runAuditCi() {
+  const auditCiConfig = await runYargs();
 
-  printAuditCiVersion(argv.o);
+  const { "package-manager": packageManager, "output-format": outputFormat } =
+    auditCiConfig;
 
-  const { p: packageManager, o: outputFormat } = argv;
+  printAuditCiVersion(outputFormat);
 
   try {
-    await audit(packageManager, argv);
+    await audit(auditCiConfig);
     if (outputFormat === "text") {
       console.log(green, `Passed ${packageManager} security audit.`);
     }
@@ -25,5 +25,3 @@ async function main() {
     process.exitCode = 1;
   }
 }
-
-main();
