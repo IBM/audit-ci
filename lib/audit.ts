@@ -2,6 +2,7 @@ import { yellow } from "./colors";
 import { AuditCiConfig } from "./config";
 import { Summary } from "./model";
 import * as npmAuditer from "./npm-auditer";
+import * as pnpmAuditer from "./pnpm-auditer";
 import * as yarnAuditer from "./yarn-auditer";
 
 const PARTIAL_RETRY_ERROR_MSG = {
@@ -14,6 +15,19 @@ const PARTIAL_RETRY_ERROR_MSG = {
   yarn: "503 Service Unavailable",
 };
 
+function getAuditor(packageManager: "npm" | "yarn" | "pnpm") {
+  switch (packageManager) {
+    case "yarn":
+      return yarnAuditer;
+    case "npm":
+      return npmAuditer;
+    case "pnpm":
+      return pnpmAuditer;
+    default:
+      throw new Error(`Invalid package manager: ${packageManager}`);
+  }
+}
+
 function audit(
   config: AuditCiConfig,
   reporter?: (summary: Summary, config: AuditCiConfig) => Summary
@@ -24,7 +38,7 @@ function audit(
     "package-manager": packageManager,
     "output-format": outputFormat,
   } = config;
-  const auditor = packageManager === "npm" ? npmAuditer : yarnAuditer;
+  const auditor = getAuditor(packageManager);
 
   async function run(attempt = 0) {
     try {

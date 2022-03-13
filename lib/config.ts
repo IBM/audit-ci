@@ -43,7 +43,7 @@ export type AuditCiPreprocessedConfig = {
   /** Exit for critical vulnerabilities */
   critical: boolean;
   /** Package manager */
-  p: "auto" | "npm" | "yarn";
+  p: "auto" | "npm" | "yarn" | "pnpm";
   /** Show a full audit report */
   r: boolean;
   /** Show a full audit report */
@@ -53,7 +53,7 @@ export type AuditCiPreprocessedConfig = {
   /** Show a summary audit report */
   summary: boolean;
   /** Package manager */
-  "package-manager": "auto" | "npm" | "yarn";
+  "package-manager": "auto" | "npm" | "yarn" | "pnpm";
   a: string[];
   allowlist: string[];
   /** The directory containing the package.json to audit */
@@ -87,16 +87,19 @@ type ComplexConfig = Omit<
   "allowlist" | "a" | "p" | "o" | "d" | "s" | "r" | "l" | "m" | "h" | "c"
 > & {
   /** Package manager */
-  "package-manager": "npm" | "yarn";
+  "package-manager": "npm" | "yarn" | "pnpm";
   /** An object containing a list of modules, advisories, and module paths that should not break the build if their vulnerability is found. */
   allowlist: Allowlist;
   /** The vulnerability levels to fail on, if `moderate` is set `true`, `high` and `critical` should be as well. */
   levels: { [K in keyof VulnerabilityLevels]: VulnerabilityLevels[K] };
-  /** A path to yarn, uses yarn from PATH if not specified (internal use only) */
-  _yarn?: string;
   /** A path to npm, uses npm from PATH if not specified (internal use only) */
   _npm?: string;
+  /** A path to pnpm, uses pnpm from PATH if not specified (internal use only) */
+  _pnpm?: string;
+  /** A path to yarn, uses yarn from PATH if not specified (internal use only) */
+  _yarn?: string;
 };
+
 export type AuditCiConfig = { [K in keyof ComplexConfig]: ComplexConfig[K] };
 
 /**
@@ -105,11 +108,12 @@ export type AuditCiConfig = { [K in keyof ComplexConfig]: ComplexConfig[K] };
  * @returns the non-`auto` package manager
  */
 function resolvePackageManagerType(
-  pmArgument: "auto" | "npm" | "yarn",
+  pmArgument: "auto" | "npm" | "yarn" | "pnpm",
   directory: string
-): "npm" | "yarn" {
+): "npm" | "yarn" | "pnpm" {
   switch (pmArgument) {
     case "npm":
+    case "pnpm":
     case "yarn":
       return pmArgument;
     case "auto": {
@@ -120,8 +124,10 @@ function resolvePackageManagerType(
       if (shrinkwrapExists) return "npm";
       const yarnLockExists = existsSync(getPath("yarn.lock"));
       if (yarnLockExists) return "yarn";
+      const pnpmLockExists = existsSync(getPath("pnpm-lock.yaml"));
+      if (pnpmLockExists) return "pnpm";
       throw new Error(
-        "Cannot establish package-manager type, missing package-lock.json and yarn.lock."
+        "Cannot establish package-manager type, missing package-lock.json, yarn.lock, and pnpm-lock.yaml."
       );
     }
     default:
@@ -195,7 +201,7 @@ export async function runYargs(): Promise<AuditCiConfig> {
         alias: "package-manager",
         default: "auto",
         describe: "Choose a package manager",
-        choices: ["auto", "npm", "yarn"],
+        choices: ["auto", "npm", "yarn", "pnpm"],
       },
       r: {
         alias: "report",

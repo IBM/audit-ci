@@ -83,9 +83,13 @@ class Model {
 
     const allowlistedPathsFoundSet = new Set<string>();
 
-    const flattenedPaths: string[] = advisory.findings.flatMap(
-      (finding) => finding.paths
-    );
+    const flattenedPaths: string[] = advisory.findings
+      .flatMap((finding) => finding.paths)
+      // PNPM paths have a leading `.>`
+      // "paths": [
+      //  ".>cryo"
+      //]
+      .map((path) => path.replace(".>", ""));
     const flattenedAllowlist = flattenedPaths.map(
       (path: string) => `${advisory.github_advisory_id}|${path}`
     );
@@ -121,7 +125,7 @@ class Model {
       return this.getSummary();
     }
 
-    /** NPM 7+ */
+    /** NPM 7+ & PNPM */
 
     // This is incomplete. Rather than filling it out, plan on consuming an external dependency to manage.
     type NPM7Vulnerability = {
