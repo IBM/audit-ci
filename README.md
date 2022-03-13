@@ -4,7 +4,7 @@
 # audit-ci
 
 This module is intended to be consumed by your favourite continuous integration tool to
-halt execution if `npm audit` or `yarn audit` finds vulnerabilities at or above the specified
+halt execution if `npm audit`, `yarn audit` or `pnpm audit` finds vulnerabilities at or above the specified
 threshold while ignoring allowlisted advisories.
 
 > Note: Use our [codemod](#codemod) to update to [`audit-ci` v6.0.0](https://github.com/IBM/audit-ci/releases/tag/v6.0.0)
@@ -13,20 +13,24 @@ threshold while ignoring allowlisted advisories.
 
 - Node >=12.9.0 (Yarn Berry requires Node >=12.13.0)
 - _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
+- _(Optional)_ PNPM >=4.3.0
 
 ## Set up
 
 Install `audit-ci` during your CI environment using `npx` or as a devDependency.
 
-> `npx audit-ci --config ./audit-ci.jsonc`
+```sh
+npx audit-ci --config ./audit-ci.jsonc
+```
 
-Alternatively, for the devDependency approach with NPM:
+Alternatively, `audit-ci` can be installed as a devDependency:
 
-> `npm install --save-dev audit-ci`
-
-or, using `yarn`:
-
-> `yarn add -D audit-ci`
+```sh
+# Use the option for your project's package manager
+npm install -D audit-ci
+yarn add -D audit-ci
+pnpm install -D audit-ci
+```
 
 The next section gives examples using `audit-ci` in various CI environments.
 It assumes that moderate, high, and critical severity vulnerabilities prevent build continuation.
@@ -110,7 +114,7 @@ scripts:
 | -m   | --moderate        | Prevents integration with moderate or higher vulnerabilities (default `false`)                        |
 | -h   | --high            | Prevents integration with high or critical vulnerabilities (default `false`)                          |
 | -c   | --critical        | Prevents integration only with critical vulnerabilities (default `false`)                             |
-| -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`] (default `auto`)                          |
+| -p   | --package-manager | Choose a package manager [_choices_: `auto`, `npm`, `yarn`, `pnpm`] (default `auto`)                  |
 | -a   | --allowlist       | Vulnerable modules, advisories, and paths to allowlist from preventing integration (default `none`)   |
 | -o   | --output-format   | The format of the output of audit-ci [_choices_: `text`, `json`] (default `text`)                     |
 | -d   | --directory       | The directory containing the package.json to audit (default `./`)                                     |

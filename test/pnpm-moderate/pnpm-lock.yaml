@@ -1,0 +1,13 @@
+lockfileVersion: 5.3
+
+specifiers:
+  base64url: 2.0.0
+
+dependencies:
+  base64url: 2.0.0
+
+packages:
+
+  /base64url/2.0.0:
+    resolution: {integrity: sha1-6sFuA+oUOO/5Qj1puqNiYu0fcLs=}
+    dev: false

@@ -1,0 +1,72 @@
+{
+  "actions": [
+    {
+      "action": "review",
+      "module": "chownr",
+      "resolves": [
+        {
+          "id": 1065151,
+          "path": ".>chownr",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1065151": {
+      "findings": [
+        {
+          "version": "1.0.0",
+          "paths": [
+            ".>chownr"
+          ]
+        }
+      ],
+      "metadata": null,
+      "vulnerable_versions": "<1.1.0",
+      "module_name": "chownr",
+      "severity": "low",
+      "github_advisory_id": "GHSA-c6rq-rjc2-86v2",
+      "cves": [
+        "CVE-2017-18869"
+      ],
+      "access": "public",
+      "patched_versions": ">=1.1.0",
+      "cvss": {
+        "score": 2.5,
+        "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:N"
+      },
+      "updated": "2021-05-12T20:23:30.000Z",
+      "recommendation": "Upgrade to version 1.1.0 or later",
+      "cwe": [
+        "CWE-367"
+      ],
+      "found_by": null,
+      "deleted": null,
+      "id": 1065151,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2017-18869\n- https://github.com/isaacs/chownr/issues/14\n- https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863985\n- https://bugzilla.redhat.com/show_bug.cgi?id=1611614\n- https://snyk.io/vuln/npm:chownr:20180731\n- https://github.com/advisories/GHSA-c6rq-rjc2-86v2",
+      "created": "2022-03-11T08:00:43.827Z",
+      "reported_by": null,
+      "title": "Time-of-check Time-of-use (TOCTOU) Race Condition in chownr",
+      "npm_advisory_id": null,
+      "overview": "A TOCTOU issue in the chownr package before 1.1.0 for Node.js 10.10 could allow a local attacker to trick it into descending into unintended directories via symlink attacks.",
+      "url": "https://github.com/advisories/GHSA-c6rq-rjc2-86v2"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 1,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "dependencies": 2,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 2
+  }
+}

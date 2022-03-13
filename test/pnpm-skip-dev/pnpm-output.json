@@ -1,0 +1,70 @@
+{
+  "actions": [
+    {
+      "action": "review",
+      "module": "open",
+      "resolves": [
+        {
+          "id": 1066786,
+          "path": ".>open",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1066786": {
+      "findings": [
+        {
+          "version": "0.0.5",
+          "paths": [
+            ".>open"
+          ]
+        }
+      ],
+      "metadata": null,
+      "vulnerable_versions": "<6.0.0",
+      "module_name": "open",
+      "severity": "critical",
+      "github_advisory_id": "GHSA-28xh-wpgr-7fm8",
+      "cves": [],
+      "access": "public",
+      "patched_versions": ">=6.0.0",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "updated": "2019-06-20T15:35:08.000Z",
+      "recommendation": "Upgrade to version 6.0.0 or later",
+      "cwe": [
+        "CWE-77"
+      ],
+      "found_by": null,
+      "deleted": null,
+      "id": 1066786,
+      "references": "- https://github.com/pwnall/node-open/issues/68\n- https://github.com/pwnall/node-open/issues/69\n- https://hackerone.com/reports/319473\n- https://nodesecurity.io/advisories/663\n- https://www.npmjs.com/advisories/663\n- https://github.com/advisories/GHSA-28xh-wpgr-7fm8",
+      "created": "2022-03-11T08:00:43.923Z",
+      "reported_by": null,
+      "title": "Command Injection in open",
+      "npm_advisory_id": null,
+      "overview": "Versions of `open` before 6.0.0 are vulnerable to command injection when unsanitized user input is passed in.\n\nThe package does come with the following warning in the readme:\n\n```\nThe same care should be taken when calling open as if you were calling child_process.exec directly. If it is an executable it will run in a new shell.\n```\n\n\n## Recommendation\n\n`open` is now the deprecated `opn` package. Upgrading to the latest version is likely have unwanted effects since it now has a very different API but will prevent this vulnerability.",
+      "url": "https://github.com/advisories/GHSA-28xh-wpgr-7fm8"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 1
+    },
+    "dependencies": 3,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 3
+  }
+}

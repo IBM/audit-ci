@@ -1,0 +1,14 @@
+lockfileVersion: 5.3
+
+specifiers:
+  open: 0.0.5
+
+dependencies:
+  open: 0.0.5
+
+packages:
+
+  /open/0.0.5:
+    resolution: {integrity: sha1-QsPhjslUZra/DcQvOilFw/DK2Pw=}
+    engines: {node: '>= 0.6.0'}
+    dev: false

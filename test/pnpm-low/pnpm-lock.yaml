@@ -1,0 +1,13 @@
+lockfileVersion: 5.3
+
+specifiers:
+  chownr: 1.0.0
+
+dependencies:
+  chownr: 1.0.0
+
+packages:
+
+  /chownr/1.0.0:
+    resolution: {integrity: sha1-AoVYM9IFFc8mgccX1oa7jB8+qRo=}
+    dev: false
