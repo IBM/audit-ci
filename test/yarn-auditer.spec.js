@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const childProcess = require("child_process");
 const path = require("path");
 const semver = require("semver");
-const audit = require("../dist/audit").default.bind(undefined, "yarn");
+const { default: audit } = require("../dist/audit");
 const { default: Allowlist } = require("../dist/allowlist");
 const { summaryWithDefault } = require("./common");
 

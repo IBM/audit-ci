@@ -4,14 +4,15 @@ import { green, red } from "./colors";
 import { runYargs } from "./config";
 
 export async function runAuditCi() {
-  const argv = await runYargs();
+  const auditCiConfig = await runYargs();
 
-  printAuditCiVersion(argv.o);
+  const { "package-manager": packageManager, "output-format": outputFormat } =
+    auditCiConfig;
 
-  const { p: packageManager, o: outputFormat } = argv;
+  printAuditCiVersion(outputFormat);
 
   try {
-    await audit(packageManager, argv);
+    await audit(auditCiConfig);
     if (outputFormat === "text") {
       console.log(green, `Passed ${packageManager} security audit.`);
     }

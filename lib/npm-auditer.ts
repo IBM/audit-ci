@@ -88,7 +88,12 @@ function printReport(
 }
 
 export function report(parsedOutput, config: AuditCiConfig, reporter) {
-  printReport(parsedOutput, config.levels, config["report-type"], config.o);
+  const {
+    levels,
+    "report-type": reportType,
+    "output-format": outputFormat,
+  } = config;
+  printReport(parsedOutput, levels, reportType, outputFormat);
   const model = new Model(config);
   const summary = model.load(parsedOutput);
   return reporter(summary, config, parsedOutput);

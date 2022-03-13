@@ -58,7 +58,7 @@ export async function audit(
     registry,
     "report-type": reportType,
     "skip-dev": skipDevelopmentDependencies,
-    o: outputFormat,
+    "output-format": outputFormat,
     _yarn,
     directory,
   } = config;
