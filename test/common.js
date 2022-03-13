@@ -12,6 +12,7 @@ function summaryWithDefault(additions = {}) {
     allowlistedPathsNotFound: [],
     failedLevelsFound: [],
     advisoriesFound: [],
+    advisoryPathsFound: [],
   };
   return { ...summary, ...additions };
 }

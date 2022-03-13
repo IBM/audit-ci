@@ -9,7 +9,9 @@ import {
   VulnerabilityLevels,
 } from "./map-vulnerability";
 
-function mapReportTypeInput(config) {
+function mapReportTypeInput(
+  config: Pick<AuditCiPreprocessedConfig, "report-type">
+) {
   const { "report-type": reportType } = config;
   switch (reportType) {
     case "full":
@@ -251,7 +253,7 @@ export async function runYargs(): Promise<AuditCiConfig> {
       h,
       c,
     }),
-    "report-type": mapReportTypeInput(argv),
+    "report-type": mapReportTypeInput(awaitedArgv),
     a: allowlist,
     allowlist: allowlist,
   };

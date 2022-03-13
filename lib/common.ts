@@ -1,13 +1,26 @@
+import { SpawnOptionsWithoutStdio } from "child_process";
 import { spawn } from "cross-spawn";
 import escapeStringRegexp from "escape-string-regexp";
 import * as eventStream from "event-stream";
 import * as JSONStream from "JSONStream";
-import { SpawnOptionsWithoutStdio } from "child_process";
 import ReadlineTransform from "readline-transform";
 import { blue, yellow } from "./colors";
 import { AuditCiConfig } from "./config";
+import { Summary } from "./model";
 
-export function reportAudit(summary, config: AuditCiConfig) {
+export function partition<T>(a: T[], fun: (parameter: T) => boolean) {
+  const returnValue: { truthy: T[]; falsy: T[] } = { truthy: [], falsy: [] };
+  for (const item of a) {
+    if (fun(item)) {
+      returnValue.truthy.push(item);
+    } else {
+      returnValue.falsy.push(item);
+    }
+  }
+  return returnValue;
+}
+
+export function reportAudit(summary: Summary, config: AuditCiConfig) {
   const {
     allowlist,
     "show-not-found": showNotFound,
@@ -22,6 +35,7 @@ export function reportAudit(summary, config: AuditCiConfig) {
     allowlistedPathsNotFound,
     failedLevelsFound,
     advisoriesFound,
+    advisoryPathsFound,
   } = summary;
 
   if (o === "text") {
@@ -48,7 +62,7 @@ export function reportAudit(summary, config: AuditCiConfig) {
     if (showNotFound) {
       if (allowlistedModulesNotFound.length > 0) {
         const found = allowlistedModulesNotFound
-          .sort((a, b) => a - b)
+          .sort((a, b) => a.localeCompare(b))
           .join(", ");
         const allowlistMessage =
           allowlistedModulesNotFound.length === 1
@@ -58,7 +72,7 @@ export function reportAudit(summary, config: AuditCiConfig) {
       }
       if (allowlistedAdvisoriesNotFound.length > 0) {
         const found = allowlistedAdvisoriesNotFound
-          .sort((a, b) => a - b)
+          .sort((a, b) => a.localeCompare(b))
           .join(", ");
         const allowlistMessage =
           allowlistedAdvisoriesNotFound.length === 1
@@ -67,13 +81,21 @@ export function reportAudit(summary, config: AuditCiConfig) {
         console.warn(yellow, allowlistMessage);
       }
       if (allowlistedPathsNotFound.length > 0) {
-        const found = allowlistedPathsNotFound.sort((a, b) => a - b).join(", ");
+        const found = allowlistedPathsNotFound
+          .sort((a, b) => a.localeCompare(b))
+          .join(", ");
         const allowlistMessage =
           allowlistedPathsNotFound.length === 1
             ? `Consider not allowlisting path: ${found}.`
             : `Consider not allowlisting paths: ${found}.`;
         console.warn(yellow, allowlistMessage);
       }
+    }
+
+    if (advisoryPathsFound.length > 0) {
+      const found = advisoryPathsFound.join("\n");
+      console.warn(yellow, `Found vulnerable advisory paths:`);
+      console.log(found);
     }
   }
 
@@ -82,9 +104,9 @@ export function reportAudit(summary, config: AuditCiConfig) {
     throw new Error(
       `Failed security audit due to ${failedLevelsFound.join(
         ", "
-      )} vulnerabilities.\nVulnerable advisories are: ${advisoriesFound.join(
-        ", "
-      )}`
+      )} vulnerabilities.\nVulnerable advisories are:\n${advisoriesFound
+        .map((element) => gitHubAdvisoryIdToUrl(element))
+        .join("\n")}`
     );
   }
   return summary;
@@ -132,8 +154,8 @@ export function runProgram(
   });
 }
 
-function wildcardToRegex(string_: string) {
-  const regexString = string_
+function wildcardToRegex(stringWithWildcard: string) {
+  const regexString = stringWithWildcard
     .split(/\*+/) // split at every wildcard (*) character
     .map((s) => escapeStringRegexp(s)) // escape the substrings to make sure that they aren't evaluated
     .join(".*"); // construct a regex matching anything at each wildcard location
@@ -148,4 +170,10 @@ export function matchString(template: string, string_: string) {
 
 export function gitHubAdvisoryUrlToAdvisoryId(url: string) {
   return url.split("/")[4];
+}
+
+export function gitHubAdvisoryIdToUrl<T extends string>(
+  id: T
+): `https://github.com/advisories/${T}` {
+  return `https://github.com/advisories/${id}`;
 }

@@ -3,15 +3,17 @@ const { audit, report } = require("../dist/npm-auditer");
 const { default: Allowlist } = require("../dist/allowlist");
 const { summaryWithDefault, config, testDirectory } = require("./common");
 
-const reportNpmCritical = require("./npm-critical/npm7-output.json");
-const reportNpmHighSeverity = require("./npm-high/npm7-output.json");
-const reportNpmModerateSeverity = require("./npm-moderate/npm7-output.json");
-const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm7-output.json");
-const reportNpmLow = require("./npm-low/npm7-output.json");
-const reportNpmNone = require("./npm-none/npm7-output.json");
+const reportNpmCritical = require("./npm-critical/npm-output.json");
+const reportNpmHighSeverity = require("./npm-high/npm-output.json");
+const reportNpmModerateSeverity = require("./npm-moderate/npm-output.json");
+const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm-output.json");
+const reportNpmLow = require("./npm-low/npm-output.json");
+const reportNpmNone = require("./npm-none/npm-output.json");
 const reportNpmSkipDevelopment = require("./npm-skip-dev/npm-output.json");
 
-describe("npm7-auditer", () => {
+// To modify what slow times are, need to use
+// function() {} instead of () => {}
+describe("npm-auditer", () => {
   it("prints full report with critical severity", () => {
     const summary = report(
       reportNpmCritical,
@@ -142,24 +144,24 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         advisoriesFound: [
+          "GHSA-74fj-2j2h-c42q",
           "GHSA-cph5-m8f7-6c5x",
           "GHSA-4w2v-q235-vp99",
-          "GHSA-74fj-2j2h-c42q",
         ],
         failedLevelsFound: ["high"],
         allowlistedPathsFound: [
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|github-build>axios",
           "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
           "GHSA-42xw-2xvc-qx8m|github-build>axios",
-          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
         ],
         advisoryPathsFound: [
+          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
           "GHSA-4w2v-q235-vp99|axios",
-          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
-          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
         ],
       })
     );
@@ -188,16 +190,16 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedPathsFound: [
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
           "GHSA-cph5-m8f7-6c5x|github-build>axios",
           "GHSA-4w2v-q235-vp99|axios",
           "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
           "GHSA-42xw-2xvc-qx8m|github-build>axios",
-          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
-          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
-          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
         ],
       })
     );
@@ -215,16 +217,16 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedPathsFound: [
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
           "GHSA-cph5-m8f7-6c5x|github-build>axios",
           "GHSA-4w2v-q235-vp99|axios",
           "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
           "GHSA-42xw-2xvc-qx8m|github-build>axios",
-          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
-          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
-          "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
         ],
       })
     );
@@ -281,4 +283,26 @@ describe("npm7-auditer", () => {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
+  // it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
+  //   audit(
+  //     config({
+  //       directory: testDirectory("npm-low"),
+  //       levels: { low: true },
+  //       registry: "https://example.com",
+  //     })
+  //   ).catch((err) => {
+  //     expect(err.message).to.include("code ENOAUDIT");
+  //     done();
+  //   });
+  // });
+  // it("passes using --pass-enoaudit", () => {
+  //   const directory = testDirectory("npm-500");
+  //   return audit(
+  //     config({
+  //       directory,
+  //       "pass-enoaudit": true,
+  //       _npm: path.join(directory, "npm"),
+  //     })
+  //   );
+  // });
 });

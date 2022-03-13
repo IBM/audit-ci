@@ -1,5 +1,9 @@
 import Allowlist from "./allowlist";
-import { gitHubAdvisoryUrlToAdvisoryId, matchString } from "./common";
+import {
+  gitHubAdvisoryUrlToAdvisoryId,
+  matchString,
+  partition,
+} from "./common";
 import { AuditCiConfig } from "./config";
 import { VulnerabilityLevels } from "./map-vulnerability";
 
@@ -10,19 +14,19 @@ const SUPPORTED_SEVERITY_LEVELS = new Set([
   "low",
 ]);
 
-function partition<T>(a: T[], fun: (parameter: T) => boolean) {
-  const returnValue: { truthy: T[]; falsy: T[] } = { truthy: [], falsy: [] };
-  for (const item of a) {
-    if (fun(item)) {
-      returnValue.truthy.push(item);
-    } else {
-      returnValue.falsy.push(item);
-    }
-  }
-  return returnValue;
-}
-
 const prependPath = (newItem, currentPath) => `${newItem}>${currentPath}`;
+
+export interface Summary {
+  advisoriesFound: string[];
+  failedLevelsFound: string[];
+  allowlistedAdvisoriesNotFound: string[];
+  allowlistedModulesNotFound: string[];
+  allowlistedPathsNotFound: string[];
+  allowlistedAdvisoriesFound: string[];
+  allowlistedModulesFound: string[];
+  allowlistedPathsFound: string[];
+  advisoryPathsFound: string[];
+}
 
 class Model {
   failingSeverities: {
@@ -91,10 +95,9 @@ class Model {
       allowlistedPathsFoundSet.add(path);
     }
 
-    const isAllowListed = falsy.length === 0;
-
     this.allowlistedPathsFound.push(...allowlistedPathsFoundSet);
 
+    const isAllowListed = falsy.length === 0;
     if (isAllowListed) {
       return;
     }
@@ -170,8 +173,7 @@ class Model {
     // Now, all we have to deal with is develop the 'findings' property by traversing
     // the audit tree.
 
-    /** @type {Map<string, string[]>} */
-    const visitedModules = new Map();
+    const visitedModules = new Map<string, string[]>();
 
     for (const vuln of Object.entries<NPM7Vulnerability>(
       parsedOutput.vulnerabilities
@@ -190,9 +192,10 @@ class Model {
       const recursiveMagic = (
         cVuln: NPM7Vulnerability,
         dependencyPath: string
-      ) => {
-        if (visitedModules.has(cVuln.name)) {
-          return visitedModules.get(cVuln.name).map((name) => {
+      ): string[] => {
+        const visitedModule = visitedModules.get(cVuln.name);
+        if (visitedModule) {
+          return visitedModule.map((name) => {
             const resultWithExtraCarat = prependPath(name, dependencyPath);
             return resultWithExtraCarat.slice(
               0,
@@ -210,7 +213,6 @@ class Model {
         if (cVuln.effects.length === 0) {
           return [newPath.slice(0, Math.max(0, newPath.length - 1))];
         }
-        /** @type {string[]} */
         const result = cVuln.effects.flatMap((effect) =>
           recursiveMagic(parsedOutput.vulnerabilities[effect], newPath)
         );
@@ -221,11 +223,17 @@ class Model {
       if (isDirect) {
         result.push(moduleName);
       }
-      for (const advisory of (
+      const advisories = (
         vias.filter((via) => typeof via !== "string") as any[]
-      ).map((via) => via.source)) {
+      )
+        .map((via) => via.source)
+        // Filter boolean makes the next line non-nullable.
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .map((id) => advisoryMap.get(id)!)
+        .filter(Boolean);
+      for (const advisory of advisories) {
         for (const path of result) {
-          advisoryMap.get(advisory)?.findingsSet.add(path);
+          advisory.findingsSet.add(path);
         }
       }
       // Optimization to prevent extra traversals.
@@ -242,7 +250,7 @@ class Model {
   }
 
   getSummary(advisoryMapper = (a) => a.github_advisory_id) {
-    const foundSeverities = new Set();
+    const foundSeverities = new Set<string>();
     for (const { severity } of this.advisoriesFound)
       foundSeverities.add(severity);
     const failedLevelsFound = [...foundSeverities];
@@ -265,7 +273,7 @@ class Model {
         )
     );
 
-    return {
+    const summary: Summary = {
       advisoriesFound,
       failedLevelsFound,
       allowlistedAdvisoriesNotFound,
@@ -274,7 +282,9 @@ class Model {
       allowlistedAdvisoriesFound: this.allowlistedAdvisoriesFound,
       allowlistedModulesFound: this.allowlistedModulesFound,
       allowlistedPathsFound: this.allowlistedPathsFound,
+      advisoryPathsFound: this.advisoryPathsFound,
     };
+    return summary;
   }
 }
 
