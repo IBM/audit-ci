@@ -18,7 +18,7 @@ threshold while ignoring allowlisted advisories.
 
 Install `audit-ci` during your CI environment using `npx` or as a devDependency.
 
-> `npx audit-ci --moderate`
+> `npx audit-ci --config ./audit-ci.jsonc`
 
 Alternatively, for the devDependency approach with NPM:
 
@@ -30,6 +30,7 @@ or, using `yarn`:
 
 The next section gives examples using `audit-ci` in various CI environments.
 It assumes that moderate, high, and critical severity vulnerabilities prevent build continuation.
+Also, it suppresses an advisory of `axios` and a transitive advisory of `react-scripts`.
 
 ```jsonc
 // audit-ci.jsonc
@@ -39,9 +40,10 @@ It assumes that moderate, high, and critical severity vulnerabilities prevent bu
     // Axios denial of service https://github.com/advisories/GHSA-42xw-2xvc-qx8m
     "GHSA-42xw-2xvc-qx8m",
     // The following are for the latest create-react-app
-    //  https://github.com/advisories/GHSA-8h2f-7jc4-7m3m
-    // The following could be simplified to "GHSA-rp65-9cf3-cjxr" as well.
-    "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check"
+    // https://github.com/advisories/GHSA-rp65-9cf3-cjxr
+    // Alternatively, allowlist "GHSA-rp65-9cf3-cjxr" to suppress this nth-check advisory across all paths
+    // or "*|react-scripts>*" to suppress advisories for all transitive dependencies of "react-scripts".
+    "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check"
   ]
 }
 ```
@@ -79,7 +81,7 @@ steps:
       # For more info: https://github.com/IBM/audit-ci/issues/69
       # For a PR-only workflow, use the below command instead of the above command:
       #
-      # command: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then audit-ci --moderate ; fi
+      # command: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then audit-ci --config ./audit-ci.jsonc ; fi
 ```
 
 ### Travis-CI
@@ -90,7 +92,7 @@ Auditing only on PR builds is [recommended](#qa)
 scripts:
   # This script should be the first that runs to reduce the risk of
   # executing a script from a compromised NPM package.
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npx audit-ci --moderate; fi
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npx audit-ci --config ./audit-ci.jsonc; fi
 ```
 
 For `Travis-CI` not using PR builds:
