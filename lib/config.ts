@@ -104,7 +104,7 @@ export type AuditCiConfig = { [K in keyof ComplexConfig]: ComplexConfig[K] };
  * @param directory the directory where the package manager files exist
  * @returns the non-`auto` package manager
  */
-function getPackageManagerType(
+function resolvePackageManagerType(
   pmArgument: "auto" | "npm" | "yarn",
   directory: string
 ): "npm" | "yarn" {
@@ -243,7 +243,7 @@ export async function runYargs(): Promise<AuditCiConfig> {
 
   const { l, m, h, c, p, d } = awaitedArgv;
 
-  const packageManager = getPackageManagerType(p, d);
+  const packageManager = resolvePackageManagerType(p, d);
 
   const result: AuditCiConfig = {
     ...awaitedArgv,
