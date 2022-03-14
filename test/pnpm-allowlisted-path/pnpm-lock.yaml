@@ -1,0 +1,60 @@
+lockfileVersion: 5.3
+
+specifiers:
+  axios: ^0.15.3
+  github-build: ^1.2.0
+
+dependencies:
+  axios: 0.15.3
+  github-build: 1.2.3
+
+packages:
+
+  /axios/0.15.3:
+    resolution: {integrity: sha1-LJ1jiy4ZGgjqHWzJiOrda6W9wFM=}
+    deprecated: Critical security vulnerability fixed in v0.21.1. For more information, see https://github.com/axios/axios/pull/3410
+    dependencies:
+      follow-redirects: 1.0.0
+    dev: false
+
+  /axios/0.21.3:
+    resolution: {integrity: sha512-JtoZ3Ndke/+Iwt5n+BgSli/3idTvpt5OjKyoCmz4LX5+lPiY5l7C1colYezhlxThjNa/NhngCUWZSZFypIFuaA==}
+    dependencies:
+      follow-redirects: 1.14.9
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /debug/2.6.9:
+    resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
+    dependencies:
+      ms: 2.0.0
+    dev: false
+
+  /follow-redirects/1.0.0:
+    resolution: {integrity: sha1-jjQpjL0uF28lTv/sdaHHjMhJ/Tc=}
+    dependencies:
+      debug: 2.6.9
+    dev: false
+
+  /follow-redirects/1.14.9:
+    resolution: {integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
+  /github-build/1.2.3:
+    resolution: {integrity: sha512-57zUA9ZbaKQHxoUATq3dkr+gUeaOWGGC/3Vw/AJNIUkiUmd7DnYM9TMTmUknbkuvx6+SeSqWpLBunZZzCPLUMg==}
+    dependencies:
+      axios: 0.21.3
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /ms/2.0.0:
+    resolution: {integrity: sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=}
+    dev: false

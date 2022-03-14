@@ -1,0 +1,14 @@
+lockfileVersion: 5.3
+
+specifiers:
+  cryo: 0.0.6
+
+dependencies:
+  cryo: 0.0.6
+
+packages:
+
+  /cryo/0.0.6:
+    resolution: {integrity: sha1-FoMyldLuFv85cR24QGF7euSvC6Q=}
+    engines: {node: '>= 0.4.x'}
+    dev: false

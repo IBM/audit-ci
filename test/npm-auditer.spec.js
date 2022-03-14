@@ -1,7 +1,11 @@
 const { expect } = require("chai");
 const { audit, report } = require("../dist/npm-auditer");
 const { default: Allowlist } = require("../dist/allowlist");
-const { summaryWithDefault, config, testDirectory } = require("./common");
+const {
+  summaryWithDefault,
+  config: baseConfig,
+  testDirectory,
+} = require("./common");
 
 const reportNpmCritical = require("./npm-critical/npm-output.json");
 const reportNpmHighSeverity = require("./npm-high/npm-output.json");
@@ -10,6 +14,10 @@ const reportNpmAllowlistedPath = require("./npm-allowlisted-path/npm-output.json
 const reportNpmLow = require("./npm-low/npm-output.json");
 const reportNpmNone = require("./npm-none/npm-output.json");
 const reportNpmSkipDevelopment = require("./npm-skip-dev/npm-output.json");
+
+function config(additions) {
+  return baseConfig({ ...additions, "package-manager": "npm" });
+}
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}

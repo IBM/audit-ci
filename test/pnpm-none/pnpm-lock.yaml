@@ -1,0 +1,13 @@
+lockfileVersion: 5.3
+
+specifiers:
+  node-noop: 1.0.0
+
+dependencies:
+  node-noop: 1.0.0
+
+packages:
+
+  /node-noop/1.0.0:
+    resolution: {integrity: sha1-R6Pn2Az/qmRYNkvSLthcqzMHvnk=}
+    dev: false

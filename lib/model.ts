@@ -112,16 +112,27 @@ class Model {
 
     if (parsedOutput.advisories) {
       for (const advisory of Object.values(parsedOutput.advisories)) {
+        const advisoryAny = advisory as any;
         // eslint-disable-next-line no-param-reassign, prefer-destructuring
-        (advisory as any).github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(
-          (advisory as any).url
+        advisoryAny.github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(
+          advisoryAny.url
         );
+        // PNPM paths have a leading `.>`
+        // "paths": [
+        //  ".>module-name"
+        //]
+        for (const finding of advisoryAny.findings) {
+          const findingAny = finding as any;
+          findingAny.paths = findingAny.paths.map((path) =>
+            path.replace(".>", "")
+          );
+        }
         this.process(advisory);
       }
       return this.getSummary();
     }
 
-    /** NPM 7+ */
+    /** NPM 7+ & PNPM */
 
     // This is incomplete. Rather than filling it out, plan on consuming an external dependency to manage.
     type NPM7Vulnerability = {

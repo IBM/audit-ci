@@ -1,0 +1,7 @@
+{
+  "name": "audit-ci-npm-critical-vulnerability",
+  "description": "Test package.json with critical vulnerability",
+  "dependencies": {
+    "open": "0.0.5"
+  }
+}

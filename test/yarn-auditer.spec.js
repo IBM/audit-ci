@@ -22,6 +22,7 @@ function config(additions) {
     registry: undefined,
     "pass-enoaudit": false,
     "skip-dev": false,
+    "package-manager": "yarn",
   };
   return { ...defaultConfig, ...additions };
 }
