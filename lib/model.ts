@@ -83,13 +83,9 @@ class Model {
 
     const allowlistedPathsFoundSet = new Set<string>();
 
-    const flattenedPaths: string[] = advisory.findings
-      .flatMap((finding) => finding.paths)
-      // PNPM paths have a leading `.>`
-      // "paths": [
-      //  ".>cryo"
-      //]
-      .map((path) => path.replace(".>", ""));
+    const flattenedPaths: string[] = advisory.findings.flatMap(
+      (finding) => finding.paths
+    );
     const flattenedAllowlist = flattenedPaths.map(
       (path: string) => `${advisory.github_advisory_id}|${path}`
     );
@@ -116,10 +112,21 @@ class Model {
 
     if (parsedOutput.advisories) {
       for (const advisory of Object.values(parsedOutput.advisories)) {
+        const advisoryAny = advisory as any;
         // eslint-disable-next-line no-param-reassign, prefer-destructuring
-        (advisory as any).github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(
-          (advisory as any).url
+        advisoryAny.github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(
+          advisoryAny.url
         );
+        // PNPM paths have a leading `.>`
+        // "paths": [
+        //  ".>module-name"
+        //]
+        for (const finding of advisoryAny.findings) {
+          const findingAny = finding as any;
+          findingAny.paths = findingAny.paths.map((path) =>
+            path.replace(".>", "")
+          );
+        }
         this.process(advisory);
       }
       return this.getSummary();
