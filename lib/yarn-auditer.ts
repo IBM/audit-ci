@@ -14,7 +14,7 @@ const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
  */
 const MINIMUM_YARN_AUDIT_REGISTRY_VERSION = "99.99.99";
 
-function getYarnVersion(cwd?: string | URL) {
+function getYarnVersion(cwd?: string) {
   const version = childProcess
     .execSync("yarn -v", { cwd })
     .toString()
