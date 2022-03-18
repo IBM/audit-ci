@@ -39,6 +39,7 @@ Also, it suppresses an advisory of `axios` and a transitive advisory of `react-s
 ```jsonc
 // audit-ci.jsonc
 {
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   "moderate": true,
   "allowlist": [
     // Axios denial of service https://github.com/advisories/GHSA-42xw-2xvc-qx8m
@@ -121,10 +122,10 @@ scripts:
 |      | --pass-enoaudit   | Pass if no audit is performed due to the registry returning ENOAUDIT (default `false`)                |
 |      | --show-found      | Show allowlisted advisories that are found (default `true`)                                           |
 |      | --show-not-found  | Show allowlisted advisories that are not found (default `true`)                                       |
-|      | --registry        | The registry to resolve packages by name and version (default to unspecified)                         |
+|      | --registry        | The registry to resolve packages by name and version for auditing (default to unspecified)            |
 |      | --report-type     | Format for the audit report results [_choices_: `important`, `summary`, `full`] (default `important`) |
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
-|      | --config          | Path to JSON config file                                                                              |
+|      | --config          | Path to the audit-ci configuration file                                                               |
 |      | --skip-dev        | Skip auditing devDependencies (default `false`)                                                       |
 
 ### (_Optional_) Config file specification
@@ -133,6 +134,7 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
 
 ```txt
 {
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
   "low": <boolean>, // [Optional] defaults `false`
   "moderate": <boolean>, // [Optional] defaults `false`
@@ -186,8 +188,9 @@ npx audit-ci --report-type summary
 
 #### test/npm-config-file/audit-ci.jsonc
 
-```json
+```jsonc
 {
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   "low": true,
   "package-manager": "auto",
   "allowlist": [
