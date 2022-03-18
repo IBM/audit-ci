@@ -1,0 +1,111 @@
+{
+  "$ref": "#/definitions/Schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Schema": {
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "default": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+          "type": "string"
+        },
+        "allowlist": {
+          "default": [],
+          "description": "Vulnerable modules, advisories, and paths to allowlist from preventing integration.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "critical": {
+          "default": false,
+          "description": "Prevent integration with critical vulnerabilities.",
+          "type": "boolean"
+        },
+        "directory": {
+          "default": "./",
+          "description": "The directory containing the package.json to audit.",
+          "type": "string"
+        },
+        "high": {
+          "default": false,
+          "description": "Prevent integration with high or higher vulnerabilities.",
+          "type": "boolean"
+        },
+        "low": {
+          "default": false,
+          "description": "Prevent integration with low or higher vulnerabilities.",
+          "type": "boolean"
+        },
+        "moderate": {
+          "default": false,
+          "description": "Prevent integration with moderate or higher vulnerabilities.",
+          "type": "boolean"
+        },
+        "output-format": {
+          "default": "text",
+          "description": "Output format for audit-ci.",
+          "enum": [
+            "json",
+            "text"
+          ],
+          "type": "string"
+        },
+        "package-manager": {
+          "default": "auto",
+          "description": "Package manager to use for auditing.",
+          "enum": [
+            "npm",
+            "yarn",
+            "pnpm",
+            "auto"
+          ],
+          "type": "string"
+        },
+        "pass-enoaudit": {
+          "default": false,
+          "description": "Pass if no audit is performed due to the registry returning ENOAUDIT.",
+          "type": "boolean"
+        },
+        "registry": {
+          "default": "undefined",
+          "description": "The registry to resolve packages by name and version for auditing.",
+          "type": "string"
+        },
+        "report-type": {
+          "default": "important",
+          "description": "Format for the audit report results.",
+          "enum": [
+            "full",
+            "important",
+            "summary"
+          ],
+          "type": "string"
+        },
+        "retry-count": {
+          "default": 5,
+          "description": "The number of attempts audit-ci calls an unavailable registry before failing.",
+          "maximum": 50,
+          "minimum": 0,
+          "type": "number"
+        },
+        "show-found": {
+          "default": true,
+          "description": "Show allowlisted advisories that are found.",
+          "type": "boolean"
+        },
+        "show-not-found": {
+          "default": true,
+          "description": "Show allowlisted advisories that are not found.",
+          "type": "boolean"
+        },
+        "skip-dev": {
+          "default": false,
+          "description": "Skip auditing devDependencies.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

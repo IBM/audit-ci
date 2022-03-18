@@ -1,4 +1,5 @@
 {
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   // audit-ci supports reading JSON, JSONC, and JSON5 config files.
   "low": true,
   "allowlist": []
