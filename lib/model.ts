@@ -258,6 +258,7 @@ class Model {
       delete advisory.findingsSet;
       this.process(advisory);
     }
+    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)];
     return this.getSummary();
   }
 
