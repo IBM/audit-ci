@@ -62,6 +62,8 @@ steps:
     run: npx audit-ci --config ./audit-ci.jsonc
 ```
 
+Running right after checkout is recommended to reduce the risk of executing a postinstall script from a compromised NPM package.
+
 ### CircleCI
 
 ```yml
