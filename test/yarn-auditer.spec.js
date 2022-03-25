@@ -243,6 +243,20 @@ describe("yarn-auditer", function testYarnAuditer() {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
+  it("does not report duplicate paths", async () => {
+    const summary = await audit(
+      config({
+        directory: testDirectory("yarn-duplicate-paths"),
+        levels: { high: true },
+        "report-type": "summary",
+      }),
+      (_summary) => _summary
+    );
+
+    expect(summary.advisoryPathsFound).to.eql([
+      ...new Set(summary.advisoryPathsFound),
+    ]);
+  });
   // it('prints unexpected https://registry.yarnpkg.com 503 error message', () => {
   //   const directory = testDirectory('yarn-503');
   //   const errorMessagePath = path.resolve(directory, 'error-message');
