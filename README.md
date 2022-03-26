@@ -1,7 +1,10 @@
+# audit-ci
+
+[![npm version](https://badge.fury.io/js/audit-ci.svg)](https://badge.fury.io/js/audit-ci)
 [![Build Status](https://app.travis-ci.com/IBM/audit-ci.svg?branch=main)](https://app.travis-ci.com/github/IBM/audit-ci)
 [![CircleCI](https://circleci.com/gh/IBM/audit-ci/tree/main.svg?style=svg)](https://circleci.com/gh/IBM/audit-ci/tree/main)
-
-# audit-ci
+[![GitHub CI](https://github.com/IBM/audit-ci/actions/workflows/build.yml/badge.svg)](https://github.com/IBM/audit-ci/actions/workflows/build.yml)
+[![CodeQL](https://github.com/IBM/audit-ci/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/IBM/audit-ci/actions/workflows/codeql-analysis.yml)
 
 This module is intended to be consumed by your favourite continuous integration tool to
 halt execution if `npm audit`, `yarn audit` or `pnpm audit` finds vulnerabilities at or above the specified
@@ -17,13 +20,17 @@ threshold while ignoring allowlisted advisories.
 
 ## Set up
 
-Install `audit-ci` during your CI environment using `npx` or as a devDependency.
+_(Recommended)_ Install `audit-ci` during your CI environment using `npx`, `yarn dlx`, or `pnpm dlx` immediately after checking out the project's repository.
 
 ```sh
-npx audit-ci --config ./audit-ci.jsonc
+# Use the option for your project's package manager, pinning to a major version to avoid breaking changes
+npx audit-ci@^6 --config ./audit-ci.jsonc
+yarn dlx audit-ci@^6 --config ./audit-ci.jsonc
+pnpm dlx audit-ci@^6 --config ./audit-ci.jsonc
 ```
 
-Alternatively, `audit-ci` can be installed as a devDependency:
+Alternatively, `audit-ci` can be installed as a devDependency.
+The downside of this approach is that the CI may run a `postinstall` script of a compromised package before running `audit-ci`.
 
 ```sh
 # Use the option for your project's package manager
@@ -39,6 +46,7 @@ Also, it suppresses an advisory of `axios` and a transitive advisory of `react-s
 ```jsonc
 // audit-ci.jsonc
 {
+  // $schema provides code completion hints to IDEs.
   "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   "moderate": true,
   "allowlist": [
@@ -62,7 +70,7 @@ steps:
     run: npx audit-ci --config ./audit-ci.jsonc
 ```
 
-Running right after checkout is recommended to reduce the risk of executing a postinstall script from a compromised NPM package.
+_(Recommended)_ Run `audit-ci` immediately after checking out the git repository to reduce the risk of executing a `postinstall` script from a compromised NPM package.
 
 ### CircleCI
 
@@ -111,6 +119,10 @@ scripts:
 
 ## Options
 
+> _(Recommended)_ Prefer to use a JSONC or JSON5 config file for `audit-ci` over managing your config with CLI arguments.
+> Using a config file supports workflows such as documenting your allowlist, centralized and easier config management,
+> and code completion when using the `$schema` field.
+
 | Args | Alias             | Description                                                                                           |
 | ---- | ----------------- | ----------------------------------------------------------------------------------------------------- |
 | -l   | --low             | Prevents integration with low or higher vulnerabilities (default `false`)                             |
@@ -130,9 +142,9 @@ scripts:
 |      | --config          | Path to the audit-ci configuration file                                                               |
 |      | --skip-dev        | Skip auditing devDependencies (default `false`)                                                       |
 
-### (_Optional_) Config file specification
+### Config file specification
 
-A config file can manage auditing preferences `audit-ci`. The config file's keys match the CLI arguments.
+A config file can manage auditing preferences for `audit-ci`. The config file's keys match the CLI arguments.
 
 ```txt
 {
@@ -155,32 +167,89 @@ A config file can manage auditing preferences `audit-ci`. The config file's keys
 }
 ```
 
-Review the examples section for an [example of config file usage](#example-config-file-and-different-directory-usage).
-
 > Refrain from using `"directory"` within the config file because `directory`
 > is relative to where the command is run, rather than the directory where the config file exists.
 
 ## Examples
 
-### Prevents build on moderate, high, or critical vulnerabilities; ignores low
+### Prevents build on moderate, high, or critical vulnerabilities with allowlist; ignores low
+
+With a `JSONC` config file, execute with `npx audit-ci --config ./audit-ci.jsonc`.
+
+```jsonc
+// audit-ci.jsonc
+{
+  // $schema provides code completion hints to IDEs.
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "moderate": true,
+  "allowlist": [
+    // Axios denial of service https://github.com/advisories/GHSA-42xw-2xvc-qx8m
+    "GHSA-42xw-2xvc-qx8m",
+    // The following are for the latest create-react-app
+    // https://github.com/advisories/GHSA-rp65-9cf3-cjxr
+    // Alternatively, allowlist "GHSA-rp65-9cf3-cjxr" to suppress this nth-check advisory across all paths
+    // or "*|react-scripts>*" to suppress advisories for all transitive dependencies of "react-scripts".
+    "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check"
+  ]
+}
+```
+
+Or, with the CLI:
 
 ```sh
-npx audit-ci -m
+npx audit-ci -m -a "GHSA-42xw-2xvc-qx8m" "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check"
 ```
 
 ### Prevents build on any vulnerability except advisory "GHSA-38f5-ghc2-fcmv" and all of lodash and base64url, don't show allowlisted
 
+With a `JSON5` config file:
+
+```json5
+// JSON5 files support trailing commas and more succinct syntax than JSONC files.
+{
+  $schema: "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  low: true,
+  allowlist: ["GHSA-38f5-ghc2-fcmv", "lodash", "base64url"],
+  "show-found": false,
+}
+```
+
+Or, with the CLI with `yarn dlx`:
+
 ```sh
-npx audit-ci -l -a "GHSA-38f5-ghc2-fcmv" lodash base64url --show-found false
+yarn dlx audit-ci -l -a "GHSA-38f5-ghc2-fcmv" lodash base64url --show-found false
 ```
 
 ### Prevents build with critical vulnerabilities showing the full report
 
+With a `JSONC` config file:
+
+```jsonc
+{
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "critical": true,
+  "report-type": "full"
+}
+```
+
+Or, with the CLI with `pnpm dlx`:
+
 ```sh
-audit-ci --critical --report-type full
+pnpm dlx audit-ci --critical --report-type full
 ```
 
 ### Continues build regardless of vulnerabilities, but show the summary report
+
+With a `JSONC` config file:
+
+```jsonc
+{
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "report-type": "summary"
+}
+```
+
+Or, with the CLI:
 
 ```sh
 npx audit-ci --report-type summary
@@ -213,6 +282,27 @@ npx audit-ci --report-type summary
 npx audit-ci --directory test/npm-config-file --config test/npm-config-file/audit-ci.jsonc
 ```
 
+#### test/pnpm-config-file/audit-ci.json5
+
+```json5
+{
+  $schema: "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  moderate: true,
+  "package-manager": "pnpm",
+  allowlist: [
+    "GHSA-vfvf-mqq8-rwqc",
+    "example2",
+    "GHSA-6354-6mhv-mvv5|example3",
+    "GHSA-42xw-2xvc-qx8m|example5>example4",
+    "*|example6>*",
+  ],
+}
+```
+
+```sh
+npx audit-ci --directory test/pnpm-config-file --config test/pnpm-config-file/audit-ci.json5
+```
+
 ## Codemod
 
 ```sh
@@ -242,6 +332,6 @@ Performed migration from NPM advisories to GitHub advisories
 
 If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix. However, they can't be merged until the fix is implemented. Since `audit-ci` performs the audit on the PR build, it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `main` before passing the audit.
 
-### NPM/Yarn is returning ENOAUDIT and is breaking my build, what do I do?
+### NPM/Yarn is returning ENOAUDIT and is breaking my build; what do I do?
 
 The config option `--pass-enoaudit` allows passing if no audit is performed due to the registry returning ENOAUDIT. It is `false` by default to reduce the risk of merging in a vulnerable package. However, if the convenience of passing is more important for your project then you can add `--pass-enoaudit` into the CLI or add it to the config.
