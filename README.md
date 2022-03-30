@@ -83,20 +83,20 @@ steps:
       command: "sudo npm install -g npm"
   - restore_cache:
       key: dependency-cache-{{ checksum "package.json" }}
-  - run:
-      name: install-npm
-      command: "npm install --no-audit"
-  # This should run immediately after installation to reduce
+  # This should run immediately after cloning
   # the risk of executing a script from a compromised NPM package.
+  # If you use a pull-request-only workflow,
+  # it's better to not run audit-ci on `main` and only run it on pull requests.
+  # For more info: https://github.com/IBM/audit-ci/issues/69
+  # For a PR-only workflow, use the below command instead of the above command:
+  #
+  # command: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then npx audit-ci --config ./audit-ci.jsonc ; fi
   - run:
       name: run-audit-ci
       command: npx audit-ci --config ./audit-ci.jsonc
-      # If you use a pull-request-only workflow,
-      # it's better to not run audit-ci on `main` and only run it on pull requests.
-      # For more info: https://github.com/IBM/audit-ci/issues/69
-      # For a PR-only workflow, use the below command instead of the above command:
-      #
-      # command: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then audit-ci --config ./audit-ci.jsonc ; fi
+  - run:
+      name: install-npm
+      command: "npm install --no-audit"
 ```
 
 ### Travis-CI
@@ -330,8 +330,13 @@ Performed migration from NPM advisories to GitHub advisories
 
 ### Why run `audit-ci` on PR builds for `Travis-CI` and not the push builds?
 
-If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix. However, they can't be merged until the fix is implemented. Since `audit-ci` performs the audit on the PR build, it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `main` before passing the audit.
+If `audit-ci` is run on the PR build and not on the push build, you can continue to push new code and create PRs parallel to the actual vulnerability fix.
+However, they can't be merged until the fix is implemented.
+Since `audit-ci` performs the audit on the PR build,
+it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `main` before passing the audit.
 
 ### NPM/Yarn is returning ENOAUDIT and is breaking my build; what do I do?
 
-The config option `--pass-enoaudit` allows passing if no audit is performed due to the registry returning ENOAUDIT. It is `false` by default to reduce the risk of merging in a vulnerable package. However, if the convenience of passing is more important for your project then you can add `--pass-enoaudit` into the CLI or add it to the config.
+The config option `--pass-enoaudit` allows passing if no audit is performed due to the registry returning ENOAUDIT.
+It is `false` by default to reduce the risk of merging in a vulnerable package.
+However, if the convenience of passing is more important for your project then you can add `--pass-enoaudit` into the CLI or add it to the config.
