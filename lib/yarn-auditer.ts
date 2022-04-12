@@ -186,9 +186,8 @@ export async function audit(
         "audit",
         "--recursive",
         "--json",
-        ...(skipDevelopmentDependencies
-          ? ["--environment", "production"]
-          : ["--all"]),
+        "--all",
+        ...(skipDevelopmentDependencies ? ["--environment", "production"] : []),
       ];
   if (registry) {
     const auditRegistrySupported = yarnAuditSupportsRegistry(yarnVersion);
