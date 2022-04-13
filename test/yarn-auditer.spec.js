@@ -1,34 +1,16 @@
 const { expect } = require("chai");
 const childProcess = require("child_process");
-const path = require("path");
 const semver = require("semver");
 const { default: audit } = require("../dist/audit");
 const { default: Allowlist } = require("../dist/allowlist");
-const { summaryWithDefault } = require("./common");
+const {
+  summaryWithDefault,
+  config: baseConfig,
+  testDirectory,
+} = require("./common");
 
 function config(additions) {
-  const defaultConfig = {
-    levels: {
-      low: false,
-      moderate: false,
-      high: false,
-      critical: false,
-    },
-    "report-type": "important",
-    allowlist: new Allowlist(),
-    "show-not-found": false,
-    "retry-count": 5,
-    directory: "./",
-    registry: undefined,
-    "pass-enoaudit": false,
-    "skip-dev": false,
-    "package-manager": "yarn",
-  };
-  return { ...defaultConfig, ...additions };
-}
-
-function testDirectory(s) {
-  return path.resolve(__dirname, s);
+  return baseConfig({ ...additions, "package-manager": "yarn" });
 }
 
 const canRunYarnBerry = semver.gte(
@@ -247,7 +229,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     const summary = await audit(
       config({
         directory: testDirectory("yarn-workspace-empty"),
-        levels: { moderate: true, high: true, critical: true },
+        levels: { moderate: true },
         "report-type": "important",
       }),
       (_summary) => _summary
@@ -263,7 +245,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     const summary = await audit(
       config({
         directory: testDirectory("yarn-workspace"),
-        levels: { moderate: true, high: true, critical: true },
+        levels: { moderate: true },
         "report-type": "important",
       }),
       (_summary) => _summary
@@ -285,8 +267,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       const summary = await audit(
         config({
           directory: testDirectory("yarn-berry-workspace-empty"),
-          levels: { moderate: true, high: true, critical: true },
-          // "skip-dev": true,
+          levels: { moderate: true },
           "report-type": "important",
         }),
         (_summary) => _summary
@@ -300,8 +281,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       const summary = await audit(
         config({
           directory: testDirectory("yarn-berry-workspace"),
-          levels: { moderate: true, high: true, critical: true },
-          // "skip-dev": true,
+          levels: { moderate: true },
           "report-type": "important",
         }),
         (_summary) => _summary
@@ -329,7 +309,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       const summary = await audit(
         config({
           directory: testDirectory("yarn-berry-workspace"),
-          levels: { moderate: true, high: true, critical: true },
+          levels: { moderate: true },
           "skip-dev": true,
           "report-type": "important",
         }),
