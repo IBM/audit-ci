@@ -1,6 +1,6 @@
 {
   "name": "audit-ci",
-  "version": "6.1.2",
+  "version": "6.2.0",
   "description": "Audits NPM, Yarn, and PNPM projects in CI environments",
   "license": "Apache-2.0",
   "main": "./dist/audit-ci.js",
