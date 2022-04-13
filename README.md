@@ -20,9 +20,7 @@ threshold while ignoring allowlisted advisories.
 
 ## Limitations
 
-- There is a bug with Yarn Classic that is causing audit to skip `devDependencies`
-  when auditing workspaces.
-  See [this issue](https://github.com/yarnpkg/yarn/issues/7047) for more information.
+- Yarn Classic workspaces does not audit `devDependencies`. See [this issue](https://github.com/yarnpkg/yarn/issues/7047) for more information.
 
 ## Set up
 
