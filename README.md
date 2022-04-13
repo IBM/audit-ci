@@ -18,9 +18,10 @@ threshold while ignoring allowlisted advisories.
 - _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
 - _(Optional)_ PNPM >=4.3.0
 
-## Known issues
+## Limitations
 
-- There is a bug with Yarn Classic that is causing audit to skip `devDependencies`.
+- There is a bug with Yarn Classic that is causing audit to skip `devDependencies`
+  when auditing workspaces.
   See [this issue](https://github.com/yarnpkg/yarn/issues/7047) for more information.
 
 ## Set up
