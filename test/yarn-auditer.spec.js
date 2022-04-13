@@ -1,34 +1,16 @@
 const { expect } = require("chai");
 const childProcess = require("child_process");
-const path = require("path");
 const semver = require("semver");
 const { default: audit } = require("../dist/audit");
 const { default: Allowlist } = require("../dist/allowlist");
-const { summaryWithDefault } = require("./common");
+const {
+  summaryWithDefault,
+  config: baseConfig,
+  testDirectory,
+} = require("./common");
 
 function config(additions) {
-  const defaultConfig = {
-    levels: {
-      low: false,
-      moderate: false,
-      high: false,
-      critical: false,
-    },
-    "report-type": "important",
-    allowlist: new Allowlist(),
-    "show-not-found": false,
-    "retry-count": 5,
-    directory: "./",
-    registry: undefined,
-    "pass-enoaudit": false,
-    "skip-dev": false,
-    "package-manager": "yarn",
-  };
-  return { ...defaultConfig, ...additions };
-}
-
-function testDirectory(s) {
-  return path.resolve(__dirname, s);
+  return baseConfig({ ...additions, "package-manager": "yarn" });
 }
 
 const canRunYarnBerry = semver.gte(
@@ -243,6 +225,108 @@ describe("yarn-auditer", function testYarnAuditer() {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
+  it("reports summary with no vulnerabilities in yarn v1 workspace", async () => {
+    const summary = await audit(
+      config({
+        directory: testDirectory("yarn-workspace-empty"),
+        levels: { moderate: true },
+        "report-type": "important",
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(summaryWithDefault());
+  });
+  it("reports summary with vulnerabilities in yarn v1 workspaces", async () => {
+    // TODO: There's a bug with yarn classic workspaces and failing to audit
+    // devDependencies:
+    // https://github.com/yarnpkg/yarn/issues/7047
+    // It doesn't report any vulnerabilities at all. The following directory should
+    // contain a critical vulnerability in devDependencies.
+    const summary = await audit(
+      config({
+        directory: testDirectory("yarn-workspace"),
+        levels: { moderate: true },
+        "report-type": "important",
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(
+      summaryWithDefault({
+        failedLevelsFound: ["high", "moderate"],
+        advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+        advisoryPathsFound: [
+          "GHSA-38f5-ghc2-fcmv|audit-ci-yarn-workspace-high-vulnerability>cryo",
+          "GHSA-rvg8-pwq2-xj7q|audit-ci-yarn-workspace-moderate-vulnerability>base64url",
+        ],
+      })
+    );
+  });
+  (canRunYarnBerry ? it : it.skip)(
+    "reports summary with no vulnerabilities in yarn berry workspace",
+    async () => {
+      const summary = await audit(
+        config({
+          directory: testDirectory("yarn-berry-workspace-empty"),
+          levels: { moderate: true },
+          "report-type": "important",
+        }),
+        (_summary) => _summary
+      );
+      expect(summary).to.eql(summaryWithDefault());
+    }
+  );
+  (canRunYarnBerry ? it : it.skip)(
+    "reports summary with vulnerabilities in yarn berry workspaces",
+    async () => {
+      const summary = await audit(
+        config({
+          directory: testDirectory("yarn-berry-workspace"),
+          levels: { moderate: true },
+          "report-type": "important",
+        }),
+        (_summary) => _summary
+      );
+      expect(summary).to.eql(
+        summaryWithDefault({
+          failedLevelsFound: ["critical", "high", "moderate"],
+          advisoriesFound: [
+            "GHSA-38f5-ghc2-fcmv",
+            "GHSA-rvg8-pwq2-xj7q",
+            "GHSA-28xh-wpgr-7fm8",
+          ],
+          advisoryPathsFound: [
+            "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-rvg8-pwq2-xj7q|base64url",
+            "GHSA-28xh-wpgr-7fm8|open",
+          ],
+        })
+      );
+    }
+  );
+  (canRunYarnBerry ? it : it.skip)(
+    "reports summary with vulnerabilities in yarn berry workspaces with skip-dev=true",
+    async () => {
+      const summary = await audit(
+        config({
+          directory: testDirectory("yarn-berry-workspace"),
+          levels: { moderate: true },
+          "skip-dev": true,
+          "report-type": "important",
+        }),
+        (_summary) => _summary
+      );
+      expect(summary).to.eql(
+        summaryWithDefault({
+          failedLevelsFound: ["high", "moderate"],
+          advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+          advisoryPathsFound: [
+            "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-rvg8-pwq2-xj7q|base64url",
+          ],
+        })
+      );
+    }
+  );
   it("does not report duplicate paths", async () => {
     const summary = await audit(
       config({

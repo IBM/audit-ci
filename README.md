@@ -18,6 +18,10 @@ threshold while ignoring allowlisted advisories.
 - _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
 - _(Optional)_ PNPM >=4.3.0
 
+## Limitations
+
+- Yarn Classic workspaces does not audit `devDependencies`. See [this issue](https://github.com/yarnpkg/yarn/issues/7047) for more information.
+
 ## Set up
 
 _(Recommended)_ Install `audit-ci` during your CI environment using `npx`, `yarn dlx`, or `pnpm dlx` immediately after checking out the project's repository.

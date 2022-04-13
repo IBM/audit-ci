@@ -1,0 +1,8 @@
+{
+  "version": "0.1.0",
+  "name": "audit-ci-yarn-workspace-critical-vulnerability-dev",
+  "description": "Test package.json with critical vulnerability",
+  "devDependencies": {
+    "open": "0.0.5"
+  }
+}

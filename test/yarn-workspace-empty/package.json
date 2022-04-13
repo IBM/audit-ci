@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "audit-ci-yarn-workspace-empty",
+  "description": "Test yarn workspace",
+  "workspaces": [
+    "packages/*"
+  ]
+}
