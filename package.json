@@ -32,7 +32,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint . --ext .ts,.js,.cjs",
-    "lint:fix": "eslint . --ext .ts,.ts,.cjs --fix",
+    "lint:fix": "eslint . --ext .ts,.js,.cjs --fix",
     "format": "prettier --write lib test",
     "test": "mocha --exit --timeout 40000 --recursive --reporter spec test/*.spec.js",
     "schema": "ts-json-schema-generator -p ./docs/schema.d.ts -o ./docs/schema.json -t Schema"
