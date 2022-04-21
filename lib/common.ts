@@ -1,3 +1,4 @@
+import { GitHubAdvisoryId } from "audit-types";
 import { SpawnOptionsWithoutStdio } from "child_process";
 import { spawn } from "cross-spawn";
 import escapeStringRegexp from "escape-string-regexp";
@@ -168,8 +169,12 @@ export function matchString(template: string, string_: string) {
     : template === string_;
 }
 
-export function gitHubAdvisoryUrlToAdvisoryId(url: string) {
-  return url.split("/")[4];
+export function isGitHubAdvisoryId(id: string): id is GitHubAdvisoryId {
+  return id.startsWith("GHSA");
+}
+
+export function gitHubAdvisoryUrlToAdvisoryId(url: string): GitHubAdvisoryId {
+  return url.split("/")[4] as GitHubAdvisoryId;
 }
 
 export function gitHubAdvisoryIdToUrl<T extends string>(

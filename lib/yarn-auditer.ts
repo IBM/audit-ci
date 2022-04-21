@@ -1,9 +1,10 @@
+import type { YarnAudit, YarnBerryAuditReport } from "audit-types";
 import * as childProcess from "child_process";
 import * as semver from "semver";
 import { blue, red, yellow } from "./colors";
 import { reportAudit, runProgram } from "./common";
 import { AuditCiConfig } from "./config";
-import Model from "./model";
+import Model, { Summary } from "./model";
 
 const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
 const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
@@ -52,7 +53,7 @@ const printJson = (data: unknown) => {
 export async function audit(
   config: AuditCiConfig,
   reporter = reportAudit
-): Promise<any> {
+): Promise<Summary> {
   const {
     levels,
     registry,
@@ -75,6 +76,12 @@ export async function audit(
   }
   const isYarnClassic = yarnSupportsClassicAudit(yarnVersion);
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
+
+  function isClassicGuard(
+    response: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse
+  ): response is YarnAudit.AuditResponse {
+    return isYarnClassic;
+  }
 
   const printHeader = (text: string) => {
     if (outputFormat === "text") {
@@ -136,9 +143,11 @@ export async function audit(
       );
   }
 
-  function outListener(line) {
+  function outListener(
+    line: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse
+  ) {
     try {
-      if (isYarnClassic) {
+      if (isClassicGuard(line)) {
         const { type, data } = line;
         printAuditData(line);
 
@@ -155,8 +164,12 @@ export async function audit(
       } else {
         printAuditData(line);
 
-        for (const advisory of Object.values(line.advisories)) {
-          model.process(advisory);
+        if ("advisories" in line) {
+          for (const advisory of Object.values<YarnBerryAuditReport.Advisory>(
+            line.advisories
+          )) {
+            model.process(advisory);
+          }
         }
       }
     } catch (error) {

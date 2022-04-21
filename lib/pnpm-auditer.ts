@@ -1,9 +1,12 @@
+import type { PNPMAuditReport } from "audit-types";
 import { blue, yellow } from "./colors";
 import { reportAudit, runProgram } from "./common";
 import { AuditCiConfig } from "./config";
-import Model from "./model";
+import Model, { Summary } from "./model";
 
-async function runPnpmAudit(config: AuditCiConfig) {
+async function runPnpmAudit(
+  config: AuditCiConfig
+): Promise<PNPMAuditReport.AuditResponse> {
   const {
     directory,
     registry,
@@ -40,8 +43,8 @@ async function runPnpmAudit(config: AuditCiConfig) {
 }
 
 function printReport(
-  parsedOutput: any,
-  levels: any,
+  parsedOutput: PNPMAuditReport.Audit,
+  levels: AuditCiConfig["levels"],
   reportType: "full" | "important" | "summary",
   outputFormat: "text" | "json"
 ) {
@@ -84,7 +87,15 @@ function printReport(
   }
 }
 
-export function report(parsedOutput, config: AuditCiConfig, reporter) {
+export function report(
+  parsedOutput: PNPMAuditReport.Audit,
+  config: AuditCiConfig,
+  reporter: (
+    summary: Summary,
+    config: AuditCiConfig,
+    audit?: PNPMAuditReport.Audit
+  ) => Summary
+) {
   const {
     levels,
     "report-type": reportType,
@@ -103,7 +114,7 @@ export function report(parsedOutput, config: AuditCiConfig, reporter) {
  */
 export async function audit(config: AuditCiConfig, reporter = reportAudit) {
   const parsedOutput = await runPnpmAudit(config);
-  if (parsedOutput.error) {
+  if ("error" in parsedOutput) {
     const { code, summary } = parsedOutput.error;
     throw new Error(`code ${code}: ${summary}`);
   }
