@@ -1,9 +1,12 @@
+import type { NPMAuditReportV1, NPMAuditReportV2 } from "audit-types";
 import { blue } from "./colors";
 import { reportAudit, runProgram } from "./common";
 import { AuditCiConfig } from "./config";
 import Model from "./model";
 
-async function runNpmAudit(config: AuditCiConfig) {
+async function runNpmAudit(
+  config: AuditCiConfig
+): Promise<NPMAuditReportV1.AuditResponse | NPMAuditReportV2.AuditResponse> {
   const {
     directory,
     registry,
@@ -38,10 +41,18 @@ async function runNpmAudit(config: AuditCiConfig) {
   }
   return stdoutBuffer;
 }
+export function isV2Audit(
+  parsedOutput: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit
+): parsedOutput is NPMAuditReportV2.Audit {
+  return (
+    "auditReportVersion" in parsedOutput &&
+    parsedOutput.auditReportVersion === 2
+  );
+}
 
 function printReport(
-  parsedOutput: any,
-  levels: any,
+  parsedOutput: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit,
+  levels: AuditCiConfig["levels"],
   reportType: "full" | "important" | "summary",
   outputFormat: "text" | "json"
 ) {
@@ -56,10 +67,9 @@ function printReport(
       printReportObject("NPM audit report JSON:", parsedOutput);
       break;
     case "important": {
-      const advisories =
-        parsedOutput.auditReportVersion === 2
-          ? parsedOutput.vulnerabilities
-          : parsedOutput.advisories;
+      const advisories = isV2Audit(parsedOutput)
+        ? parsedOutput.vulnerabilities
+        : parsedOutput.advisories;
 
       const relevantAdvisoryLevels = Object.keys(advisories).filter(
         (advisory) => levels[advisories[advisory].severity]
@@ -106,7 +116,7 @@ export function report(parsedOutput, config: AuditCiConfig, reporter) {
  */
 export async function audit(config: AuditCiConfig, reporter = reportAudit) {
   const parsedOutput = await runNpmAudit(config);
-  if (parsedOutput.error) {
+  if ("error" in parsedOutput) {
     const { code, summary } = parsedOutput.error;
     throw new Error(`code ${code}: ${summary}`);
   }

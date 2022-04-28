@@ -1,8 +1,10 @@
+import type { GitHubAdvisoryId } from "audit-types";
+import { isGitHubAdvisoryId } from "./common";
 import { AuditCiPreprocessedConfig } from "./config";
 
 class Allowlist {
   modules: string[];
-  advisories: string[];
+  advisories: GitHubAdvisoryId[];
   paths: string[];
   /**
    * @param input the allowlisted module names, advisories, and module paths
@@ -23,7 +25,7 @@ class Allowlist {
 
       if (allowlist.includes(">") || allowlist.includes("|")) {
         this.paths.push(allowlist);
-      } else if (allowlist.startsWith("GHSA")) {
+      } else if (isGitHubAdvisoryId(allowlist)) {
         this.advisories.push(allowlist);
       } else {
         this.modules.push(allowlist);
