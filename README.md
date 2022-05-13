@@ -65,6 +65,33 @@ Also, it suppresses an advisory of `axios` and a transitive advisory of `react-s
 }
 ```
 
+### Allowlist formats
+
+To suppress the vulnerability associated with the an advisory. You can simply add the advisory ID to the allowlist.
+- For example, Axios denial of service (https://github.com/advisories/GHSA-42xw-2xvc-qx8m)
+```jsonc
+"allowlist": [
+  "GHSA-42xw-2xvc-qx8m",
+]
+```
+
+To suppress advisories for all transitive dependencies of a given package, use this format: `"*|PACKAGE_NAME>*"`
+*Note: This may allow legitimate advisories may slip through.*
+- For example, `react-scripts`
+```jsonc
+"allowlist": [
+  "*|react-scripts>*"
+]
+```
+
+To suppress an advisory related to a transitive dependency of a given package, use the following format: `"ADVISORY_ID|PACKAGE_NAME>PACKAGE_A>PACKAGE_B"`
+- For example, `nth-check` in `react-scripts`
+```jsonc
+"allowlist": [
+  "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check"
+]
+```
+
 ### GitHub Actions
 
 ```yml
