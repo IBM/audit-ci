@@ -65,6 +65,85 @@ Also, it suppresses an advisory of `axios` and a transitive advisory of `react-s
 }
 ```
 
+### Allowlisting
+
+Allowlists are a mechanism to suppress an advisory warning from the audit. A team may want to suppress an advisory when:
+
+- A fix has already been started
+- There is no bandwidth to fix the advisory
+- The risk is tolerable for the project
+- The advisory is inaccurate or incorrect
+- The vulnerable code is not actually used
+
+An allowlist may contain multiple allowlist records. There are three categories of allowlist record formats:
+
+- `module` allowlist record (example: `axios`, suppresses all advisories _directly_ caused by `axios`, **not transitive advisories**)
+- `advisory` allowlist record (example: `GHSA-42xw-2xvc-qx8m`, suppresses all instances of advisory based on the GitHub advisory identifier)
+- `path` allowlist record (example: `GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check`, the specific and full advisory path **with wildcard support**)
+
+When `audit-ci` identifies new advisories at or above the configured level, the CI pipeline will fail.
+
+```txt
+Found vulnerable advisory paths:
+GHSA-pw2r-vq6v-hr8c|axios>follow-redirects
+GHSA-74fj-2j2h-c42q|axios>follow-redirects
+GHSA-4w2v-q235-vp99|axios
+GHSA-42xw-2xvc-qx8m|axios
+GHSA-cph5-m8f7-6c5x|axios
+Failed security audit due to high, moderate vulnerabilities.
+Vulnerable advisories are:
+https://github.com/advisories/GHSA-pw2r-vq6v-hr8c
+https://github.com/advisories/GHSA-74fj-2j2h-c42q
+https://github.com/advisories/GHSA-4w2v-q235-vp99
+https://github.com/advisories/GHSA-42xw-2xvc-qx8m
+https://github.com/advisories/GHSA-cph5-m8f7-6c5x
+Exiting...
+```
+
+Advisories can be suppressed using several approaches. Each approach is useful in unique scenarios.
+
+First, the most granular and secure approach, using paths. If in the future the same advisory arises with a different path, the pipeline will fail.
+
+```jsonc
+"allowlist": [
+  "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+  "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+  "GHSA-4w2v-q235-vp99|axios",
+  "GHSA-42xw-2xvc-qx8m|axios",
+  "GHSA-cph5-m8f7-6c5x|axios"
+]
+```
+
+The next best approach is suppressing the advisories using advisory IDs. This approach may be useful if your team knows that the application is not (and will not be) affected by the advisory regardless of the path. Often, the same advisory can be present in many paths. Allowlisting by advisory ID is terser than the alternative of listing all paths.
+
+```jsonc
+"allowlist": [
+  "GHSA-pw2r-vq6v-hr8c",
+  "GHSA-74fj-2j2h-c42q",
+  "GHSA-4w2v-q235-vp99",
+  "GHSA-42xw-2xvc-qx8m",
+  "GHSA-cph5-m8f7-6c5x"
+]
+```
+
+The next approach is to allowlist the modules themselves. All current and future advisories are automatically suppressed when using module allowlist records. Compared to other suppression approaches, there's an increased risk of a new advisory impacting your application due to the broad suppression. Suppressing via a module allowlist record is often less useful than using path allowlist records + wildcards, as noted in the final approach.
+
+```jsonc
+"allowlist": [
+  "axios",
+  "follow-redirects"
+]
+```
+
+Finally, wildcards can be used within path allowlist records. Wildcards are useful for trusted development-only dependencies such as `react-scripts`. Unlike the module allowlist record of `react-scripts`, the path allowlist of `*|react-scripts>*` suppresses transitive dependency advisories (dependencies of dependencies).
+
+Wildcard matching works by:
+
+1. splitting the allowlist record at every wildcard
+1. constructing a regex matching anything at each wildcard location
+
+An allowlist record may include any number of wildcards such as `*|react-scripts>*>*>example>*`.
+
 ### GitHub Actions
 
 ```yml
@@ -339,7 +418,7 @@ However, they can't be merged until the fix is implemented.
 Since `audit-ci` performs the audit on the PR build,
 it will always have the most up-to-date dependencies vs. the push build, which would require a manual merge with `main` before passing the audit.
 
-### NPM/Yarn is returning ENOAUDIT and is breaking my build; what do I do?
+### What do I do when NPM/Yarn is breaking my build while returning ENOAUDIT?
 
 The config option `--pass-enoaudit` allows passing if no audit is performed due to the registry returning ENOAUDIT.
 It is `false` by default to reduce the risk of merging in a vulnerable package.
