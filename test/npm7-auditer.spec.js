@@ -277,6 +277,20 @@ describe("npm7-auditer", () => {
       done();
     });
   });
+  it("fails with error code ECONNREFUSED on a live site with no registry", (done) => {
+    audit(
+      config({
+        directory: testDirectory("npm-low"),
+        levels: { low: true },
+        registry: "http://localhost",
+      })
+    )
+      .catch((error) => {
+        expect(error.message).to.include("ECONNREFUSED");
+        done();
+      })
+      .catch((error) => done(error));
+  });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(
       reportNpmSkipDevelopment,

@@ -119,6 +119,8 @@ export async function audit(config: AuditCiConfig, reporter = reportAudit) {
   if ("error" in parsedOutput) {
     const { code, summary } = parsedOutput.error;
     throw new Error(`code ${code}: ${summary}`);
+  } else if ("message" in parsedOutput) {
+    throw new Error(parsedOutput.message);
   }
   return report(parsedOutput, config, reporter);
 }
