@@ -27,7 +27,7 @@ async function runPnpmAudit(
 
   const arguments_ = ["audit", "--json"];
   if (registry) {
-    console.warn(yellow, "Yarn audit does not support the registry flag yet.");
+    console.warn(yellow, "PNPM audit does not support the registry flag yet.");
   }
   if (skipDevelopmentDependencies) {
     arguments_.push("--prod");
