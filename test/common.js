@@ -34,10 +34,9 @@ function config(additions) {
     "pass-enoaudit": false,
   };
   const levels = mapVulnerabilityLevelInput(additions.levels || {});
-  const { levels: _unusedLevels, ...rest } = additions;
   return {
     ...defaultConfig,
-    ...rest,
+    ...additions,
     levels: { ...defaultConfig.levels, ...levels },
   };
 }
