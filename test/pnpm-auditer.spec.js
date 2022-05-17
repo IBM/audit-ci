@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { audit, report } = require("../dist/pnpm-auditer");
+const { report } = require("../dist/pnpm-auditer");
 const { default: Allowlist } = require("../dist/allowlist");
 const {
   summaryWithDefault,
