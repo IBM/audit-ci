@@ -1,3 +1,4 @@
+// @ts-check
 const semver = require("semver");
 const { auditCiVersion } = require("../dist/audit-ci-version");
 
