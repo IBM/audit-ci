@@ -11,8 +11,8 @@ import {
   matchString,
   partition,
 } from "./common";
-import { AuditCiConfig } from "./config";
-import { VulnerabilityLevels } from "./map-vulnerability";
+import type { AuditCiConfig } from "./config";
+import type { VulnerabilityLevels } from "./map-vulnerability";
 import type { DeepWriteable } from "./types";
 
 const SUPPORTED_SEVERITY_LEVELS = new Set([
@@ -22,8 +22,10 @@ const SUPPORTED_SEVERITY_LEVELS = new Set([
   "low",
 ]);
 
-const prependPath = (newItem: string, currentPath: string) =>
-  `${newItem}>${currentPath}`;
+const prependPath = <N extends string, C extends string>(
+  newItem: N,
+  currentPath: C
+): `${N}>${C}` => `${newItem}>${currentPath}`;
 
 export interface Summary {
   advisoriesFound: GitHubAdvisoryId[];
@@ -57,7 +59,7 @@ class Model {
   advisoriesFound: ProcessedAdvisory[];
   advisoryPathsFound: string[];
 
-  constructor(config: AuditCiConfig) {
+  constructor(config: Pick<AuditCiConfig, "allowlist" | "levels">) {
     const unsupported = Object.keys(config.levels).filter(
       (level) => !SUPPORTED_SEVERITY_LEVELS.has(level)
     );

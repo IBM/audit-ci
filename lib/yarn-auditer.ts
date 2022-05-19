@@ -1,10 +1,10 @@
 import type { YarnAudit, YarnBerryAuditReport } from "audit-types";
-import * as childProcess from "child_process";
+import { execSync } from "child_process";
 import * as semver from "semver";
 import { blue, red, yellow } from "./colors";
 import { reportAudit, runProgram } from "./common";
-import { AuditCiConfig } from "./config";
-import Model, { Summary } from "./model";
+import type { AuditCiConfig } from "./config";
+import Model, { type Summary } from "./model";
 
 const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
 const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
@@ -16,10 +16,7 @@ const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
 const MINIMUM_YARN_AUDIT_REGISTRY_VERSION = "99.99.99";
 
 function getYarnVersion(cwd?: string) {
-  const version = childProcess
-    .execSync("yarn -v", { cwd })
-    .toString()
-    .replace("\n", "");
+  const version = execSync("yarn -v", { cwd }).toString().replace("\n", "");
   return version;
 }
 

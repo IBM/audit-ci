@@ -1,8 +1,8 @@
 import type { PNPMAuditReport } from "audit-types";
 import { blue, yellow } from "./colors";
 import { reportAudit, runProgram } from "./common";
-import { AuditCiConfig } from "./config";
-import Model, { Summary } from "./model";
+import type { AuditCiConfig } from "./config";
+import Model, { type Summary } from "./model";
 
 async function runPnpmAudit(
   config: AuditCiConfig

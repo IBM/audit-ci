@@ -1,3 +1,4 @@
+// @ts-check
 const { expect } = require("chai");
 const childProcess = require("child_process");
 const semver = require("semver");

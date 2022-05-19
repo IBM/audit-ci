@@ -1,6 +1,6 @@
 import type { GitHubAdvisoryId } from "audit-types";
 import { isGitHubAdvisoryId } from "./common";
-import { AuditCiPreprocessedConfig } from "./config";
+import type { AuditCiPreprocessedConfig } from "./config";
 
 class Allowlist {
   modules: string[];
@@ -9,7 +9,7 @@ class Allowlist {
   /**
    * @param input the allowlisted module names, advisories, and module paths
    */
-  constructor(input: string[]) {
+  constructor(input?: string[]) {
     this.modules = [];
     this.advisories = [];
     this.paths = [];

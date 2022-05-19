@@ -1,3 +1,4 @@
+// @ts-check
 const path = require("path");
 const { default: Allowlist } = require("../dist/allowlist");
 const { mapVulnerabilityLevelInput } = require("../dist/map-vulnerability");

@@ -1,7 +1,7 @@
 import type { NPMAuditReportV1, NPMAuditReportV2 } from "audit-types";
 import { blue } from "./colors";
 import { reportAudit, runProgram } from "./common";
-import { AuditCiConfig } from "./config";
+import type { AuditCiConfig } from "./config";
 import Model from "./model";
 
 async function runNpmAudit(
