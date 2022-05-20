@@ -1,5 +1,5 @@
 import type { GitHubAdvisoryId } from "audit-types";
-import { isGitHubAdvisoryId } from "./common";
+import { deduplicate, isGitHubAdvisoryId } from "./common";
 import type { AuditCiPreprocessedConfig } from "./config";
 
 class Allowlist {
@@ -37,12 +37,8 @@ class Allowlist {
     config: Pick<AuditCiPreprocessedConfig, "allowlist">
   ) {
     const { allowlist } = config;
-    // It's possible someone duplicated the inputs.
-    // The solution is to merge into one array, change to set, and back to array.
-    // This will remove duplicates.
-    const set = new Set(allowlist || []);
-    const input = [...set];
-    const allowlistObject = new Allowlist(input);
+    const deduplicatedAllowlist = deduplicate(allowlist || []);
+    const allowlistObject = new Allowlist(deduplicatedAllowlist);
     return allowlistObject;
   }
 }
