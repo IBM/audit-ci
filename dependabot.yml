@@ -1,6 +1,14 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/dependabot-2.0.json
 version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "mocha"
+        # Drops support for Node 12
+        versions: ["10.x"]
+      - dependency-name: "sinon"
+        # Drops support for Node 12
+        versions: ["14.x"]
