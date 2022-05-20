@@ -1,4 +1,4 @@
-import { AuditCiConfig } from "./config";
+import type { AuditCiConfig } from "./config";
 // Ignoring importing package.json because that changes the package's build
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { bugs, version } = require("../package.json");

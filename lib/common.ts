@@ -113,6 +113,18 @@ export function reportAudit(summary: Summary, config: AuditCiConfig) {
   return summary;
 }
 
+function hasMessage(value: unknown): value is { message: unknown } {
+  return typeof value === "object" && value != undefined && "message" in value;
+}
+
+function hasStatusCode(
+  value: unknown
+): value is { statusCode: unknown; message: unknown } {
+  return (
+    typeof value === "object" && value != undefined && "statusCode" in value
+  );
+}
+
 export function runProgram(
   command: string,
   arguments_: readonly string[],
@@ -130,15 +142,20 @@ export function runProgram(
     // @ts-ignore
     .pipe(JSONStream.parse())
     .pipe(
-      eventStream.mapSync((data) => {
+      eventStream.mapSync((data: unknown) => {
         if (!data) return;
         try {
           // due to response without error
-          if (data.message && data.message.includes("ENOTFOUND")) {
+          if (
+            hasMessage(data) &&
+            typeof data.message === "string" &&
+            data.message.includes("ENOTFOUND")
+          ) {
             stderrListener(data.message);
             return;
           }
-          if (data.statusCode === 404) {
+          // TODO: There are no tests that cover this case, not sure when this happens.
+          if (hasStatusCode(data) && data.statusCode === 404) {
             stderrListener(data.message);
             return;
           }

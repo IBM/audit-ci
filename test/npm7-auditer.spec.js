@@ -1,3 +1,4 @@
+// @ts-check
 const { expect } = require("chai");
 const { audit, report } = require("../dist/npm-auditer");
 const { default: Allowlist } = require("../dist/allowlist");

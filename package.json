@@ -63,7 +63,7 @@
     "@types/yargs": "^17.0.9",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
-    "audit-types": "^0.5.2",
+    "audit-types": "^0.5.3",
     "c8": "^7.11.3",
     "chai": "^4.3.6",
     "eslint": "^8.11.0",

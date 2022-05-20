@@ -1,6 +1,6 @@
 import { yellow } from "./colors";
-import { AuditCiConfig } from "./config";
-import { Summary } from "./model";
+import type { AuditCiConfig } from "./config";
+import type { Summary } from "./model";
 import * as npmAuditer from "./npm-auditer";
 import * as pnpmAuditer from "./pnpm-auditer";
 import * as yarnAuditer from "./yarn-auditer";
