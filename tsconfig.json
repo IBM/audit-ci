@@ -9,7 +9,9 @@
     "noEmit": true,
     // TODO: Remove noImplicitAny: false
     "noImplicitAny": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    // Only needed for tests, disabled in build
+    "resolveJsonModule": true
   },
   "include": ["lib", "test"]
 }

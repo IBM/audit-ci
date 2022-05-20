@@ -186,8 +186,8 @@ export function matchString(template: string, string_: string) {
     : template === string_;
 }
 
-export function isGitHubAdvisoryId(id: string): id is GitHubAdvisoryId {
-  return id.startsWith("GHSA");
+export function isGitHubAdvisoryId(id: unknown): id is GitHubAdvisoryId {
+  return typeof id === "string" && id.startsWith("GHSA");
 }
 
 export function gitHubAdvisoryUrlToAdvisoryId(url: string): GitHubAdvisoryId {
@@ -198,4 +198,8 @@ export function gitHubAdvisoryIdToUrl<T extends string>(
   id: T
 ): `https://github.com/advisories/${T}` {
   return `https://github.com/advisories/${id}`;
+}
+
+export function deduplicate(array: readonly string[]) {
+  return [...new Set(array)];
 }

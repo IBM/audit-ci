@@ -15,7 +15,9 @@ const PARTIAL_RETRY_ERROR_MSG = {
   yarn: "503 Service Unavailable",
 };
 
-function getAuditor(packageManager: "npm" | "yarn" | "pnpm") {
+function getAuditor(
+  packageManager: "npm" | "yarn" | "pnpm"
+): typeof yarnAuditer | typeof npmAuditer | typeof pnpmAuditer {
   switch (packageManager) {
     case "yarn":
       return yarnAuditer;
