@@ -3,7 +3,8 @@
   "version": "6.2.1",
   "description": "Audits NPM, Yarn, and PNPM projects in CI environments",
   "license": "Apache-2.0",
-  "main": "./dist/audit-ci.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "homepage": "https://github.com/IBM/audit-ci",
   "bugs": "https://github.com/IBM/audit-ci/issues",
   "repository": {
