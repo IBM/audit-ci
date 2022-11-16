@@ -254,10 +254,10 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high", "moderate"],
-        advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-38f5-ghc2-fcmv"],
         advisoryPathsFound: [
-          "GHSA-38f5-ghc2-fcmv|audit-ci-yarn-workspace-high-vulnerability>cryo",
           "GHSA-rvg8-pwq2-xj7q|audit-ci-yarn-workspace-moderate-vulnerability>base64url",
+          "GHSA-38f5-ghc2-fcmv|audit-ci-yarn-workspace-high-vulnerability>cryo",
         ],
       })
     );
@@ -291,14 +291,14 @@ describe("yarn-auditer", function testYarnAuditer() {
         summaryWithDefault({
           failedLevelsFound: ["critical", "high", "moderate"],
           advisoriesFound: [
-            "GHSA-38f5-ghc2-fcmv",
             "GHSA-rvg8-pwq2-xj7q",
             "GHSA-28xh-wpgr-7fm8",
+            "GHSA-38f5-ghc2-fcmv",
           ],
           advisoryPathsFound: [
-            "GHSA-38f5-ghc2-fcmv|cryo",
             "GHSA-rvg8-pwq2-xj7q|base64url",
             "GHSA-28xh-wpgr-7fm8|open",
+            "GHSA-38f5-ghc2-fcmv|cryo",
           ],
         })
       );
@@ -319,10 +319,10 @@ describe("yarn-auditer", function testYarnAuditer() {
       expect(summary).to.eql(
         summaryWithDefault({
           failedLevelsFound: ["high", "moderate"],
-          advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+          advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-38f5-ghc2-fcmv"],
           advisoryPathsFound: [
-            "GHSA-38f5-ghc2-fcmv|cryo",
             "GHSA-rvg8-pwq2-xj7q|base64url",
+            "GHSA-38f5-ghc2-fcmv|cryo",
           ],
         })
       );
