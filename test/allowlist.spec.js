@@ -1,6 +1,10 @@
 // @ts-check
 const { expect } = require("chai");
-const { default: Allowlist } = require("../dist/allowlist");
+const {
+  default: Allowlist,
+  normalizeAllowlistRecord,
+  dedupeAllowlistRecords,
+} = require("../dist/allowlist");
 
 describe("Allowlist", () => {
   it("can map config to empty Allowlist", () => {
@@ -71,5 +75,130 @@ describe("Allowlist", () => {
     expect(advisories).to.deep.equal([]);
     expect(modules).to.deep.equal([]);
     expect(paths).to.deep.equal(["GHSA-74fj-2j2h-c42q|axios>follow-redirects"]);
+  });
+});
+
+describe("normalizeAllowlistRecord", () => {
+  it("should normalize a string allowlist id into a NSPRecord", () => {
+    const record = normalizeAllowlistRecord("myid");
+    expect(record).to.eql({
+      myid: {
+        active: true,
+        expiry: undefined,
+        notes: undefined,
+      },
+    });
+  });
+
+  it("should normalize NSPRecord by making no modifications", () => {
+    const record = normalizeAllowlistRecord({
+      myid: {
+        active: true,
+        expiry: undefined,
+        notes: undefined,
+      },
+    });
+    expect(record).to.eql({
+      myid: {
+        active: true,
+        expiry: undefined,
+        notes: undefined,
+      },
+    });
+  });
+});
+
+describe("dedupeAllowlistRecords", () => {
+  it("should dedupe string allowlist ids", () => {
+    const records = dedupeAllowlistRecords(["abc", "abc", "xyz"]);
+    expect(records.length).to.eql(2);
+  });
+
+  it("should dedupe NSPRecord objects", () => {
+    const records = dedupeAllowlistRecords([
+      {
+        abc: {
+          active: true,
+        },
+      },
+      {
+        abc: {
+          active: true,
+        },
+      },
+      {
+        xyz: {
+          active: true,
+        },
+      },
+    ]);
+
+    expect(records.length).to.eql(2);
+  });
+
+  it("should dedupe mixed NSPRecord objects and string allowlist ids", () => {
+    const records = dedupeAllowlistRecords([
+      {
+        abc: {
+          active: true,
+        },
+      },
+      "abc",
+      {
+        xyz: {
+          active: true,
+        },
+      },
+    ]);
+
+    expect(records.length).to.eql(2);
+  });
+
+  it("should keep the first duped entry when deduping", () => {
+    const records = dedupeAllowlistRecords([
+      {
+        abc: {
+          active: true,
+          notes: "I AM FIRST",
+        },
+      },
+      {
+        abc: {
+          active: true,
+          notes: "I AM SECOND",
+        },
+      },
+    ]);
+
+    expect(records).to.eql([
+      {
+        abc: {
+          active: true,
+          notes: "I AM FIRST",
+        },
+      },
+    ]);
+  });
+
+  it("should keep the first duped entry when deduping mixed string ids and objects", () => {
+    const records = dedupeAllowlistRecords([
+      "abc",
+      {
+        abc: {
+          active: true,
+          notes: "I AM SECOND",
+        },
+      },
+    ]);
+
+    expect(records).to.eql([
+      {
+        abc: {
+          active: true,
+          notes: undefined,
+          expiry: undefined,
+        },
+      },
+    ]);
   });
 });

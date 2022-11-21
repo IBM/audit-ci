@@ -3,10 +3,10 @@ import { parse } from "jju";
 // eslint-disable-next-line unicorn/import-style
 import * as path from "path";
 import { config } from "yargs";
-import Allowlist from "./allowlist";
+import Allowlist, { type AllowlistRecord } from "./allowlist";
 import {
   mapVulnerabilityLevelInput,
-  VulnerabilityLevels,
+  type VulnerabilityLevels,
 } from "./map-vulnerability";
 
 function mapReportTypeInput(
@@ -55,7 +55,7 @@ export type AuditCiPreprocessedConfig = {
   /** Package manager */
   "package-manager": "auto" | "npm" | "yarn" | "pnpm";
   a: string[];
-  allowlist: string[];
+  allowlist: AllowlistRecord[];
   /** The directory containing the package.json to audit */
   d: string;
   /** The directory containing the package.json to audit */
