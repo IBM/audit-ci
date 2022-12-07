@@ -144,6 +144,53 @@ Wildcard matching works by:
 
 An allowlist record may include any number of wildcards such as `*|react-scripts>*>*>example>*`.
 
+#### Allowlist Formats
+
+The simplest way to add an advisory to the allowlist is using a string:
+
+```jsonc
+"allowlist": [
+  "axios"
+]
+```
+
+You can also use an object notation ([NSPRecord](#nsprecord-fields)) in which you can add notes and control the expiration of this exception:
+
+```jsonc
+"allowlist": [
+  {
+    "axios": {
+      "active": true,
+      "notes": "Ignore this until November 20th",
+      "expiry": "20 November 2022 11:00"
+    }
+  }
+]
+```
+
+`allowlist` supports both formats at the same time, so feel free to mix and match:
+
+```jsonc
+"allowlist": [
+  {
+    "axios": {
+      "active": true,
+      "notes": "Ignore this until November 20th",
+      "expiry": "20 November 2022 11:00"
+    }
+  },
+  "base64url"
+]
+```
+
+#### NSPRecord Fields
+
+| Attribute | Type             | Description                                               | Example                                                                                                                                                                                                                                                                                                                      |
+| --------- | ---------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `active`  | boolean          | Whether the exception is active or not                    | `true`                                                                                                                                                                                                                                                                                                                       |
+| `expiry`  | string \| number | Human-readable date, or milliseconds since the UNIX Epoch | - `'2020-01-31'` <br> - `'2020/01/31'` <br> - `'01/31/2021, 11:03:58'` <br> - `'1 March 2016 15:00'` <br> - `'1 March 2016 3:00 pm'` <br> - `'2012-01-26T13:51:50.417-07:00'` <br> - `'Sun, 11 Jul 2021 03:03:13 GMT'` <br> - `'Thu Jan 26 2017 11:00:00 GMT+1100 (Australian Eastern Daylight Time)'` <br> - `327611110417` |
+| `notes`   | string           | Notes related to the vulnerability.                       |
+
 ### GitHub Actions
 
 ```yml
@@ -237,7 +284,7 @@ A config file can manage auditing preferences for `audit-ci`. The config file's 
   "moderate": <boolean>, // [Optional] defaults `false`
   "high": <boolean>, // [Optional] defaults `false`
   "critical": <boolean>, // [Optional] defaults `false`
-  "allowlist": <string[]>, // [Optional] default `[]`
+  "allowlist": <(string | [NSPRecord](#nsprecord-fields))[]>, // [Optional] default `[]`
   "report-type": <string>, // [Optional] defaults `important`
   "package-manager": <string>, // [Optional] defaults `"auto"`
   "output-format": <string>, // [Optional] defaults `"text"`
