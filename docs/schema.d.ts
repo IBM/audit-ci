@@ -1,5 +1,7 @@
 /* This file generates the `schema.json` file. */
 
+import { type NSPRecord } from "../lib/nsp-record";
+
 export interface Schema {
   /** @default https://github.com/IBM/audit-ci/raw/main/docs/schema.json */
   $schema?: string;
@@ -44,7 +46,7 @@ export interface Schema {
    *
    * @default []
    */
-  allowlist?: string[];
+  allowlist?: (string | NSPRecord)[];
 
   /**
    * Output format for audit-ci.

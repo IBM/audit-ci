@@ -2,6 +2,30 @@
   "$ref": "#/definitions/Schema",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
+    "NSPContent": {
+      "additionalProperties": false,
+      "properties": {
+        "active": {
+          "type": "boolean"
+        },
+        "expiry": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "NSPRecord": {
+      "additionalProperties": {
+        "$ref": "#/definitions/NSPContent"
+      },
+      "type": "object"
+    },
     "Schema": {
       "additionalProperties": false,
       "properties": {
@@ -13,7 +37,14 @@
           "default": [],
           "description": "Vulnerable modules, advisories, and paths to allowlist from preventing integration.",
           "items": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/NSPRecord"
+              }
+            ]
           },
           "type": "array"
         },
