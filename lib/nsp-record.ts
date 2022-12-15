@@ -27,7 +27,7 @@ export function getAllowlistId(nspRecord: NSPRecord | GitHubNSPRecord): string {
  */
 export function getNSPContent(
   nspRecord: NSPRecord | GitHubNSPRecord
-): NSPContent | undefined {
+): NSPContent {
   const values = Object.values(nspRecord);
   if (values.length > 0) {
     return values[0];
