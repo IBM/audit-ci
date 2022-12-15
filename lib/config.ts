@@ -170,7 +170,11 @@ function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
 export async function runYargs(): Promise<AuditCiConfig> {
   const { argv } = config("config", (configPath) =>
     // Supports JSON, JSONC, & JSON5
-    parse(readFileSync(configPath, "utf8"))
+    parse(readFileSync(configPath, "utf8"), {
+      // When passing an allowlist using NSRecord syntax, yargs will throw an error
+      // "Invalid JSON config file". We need to add this flag to prevent that.
+      null_prototype: false,
+    })
   )
     .options({
       l: {
