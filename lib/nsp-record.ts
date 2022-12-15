@@ -61,9 +61,6 @@ export function isNSPRecordActive(
   now = new Date()
 ): boolean {
   const content = getNSPContent(nspRecord);
-  if (!content) {
-    return false;
-  }
   if (!content.active) {
     return false;
   }
