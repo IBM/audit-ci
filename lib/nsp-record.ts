@@ -28,7 +28,25 @@ export function getAllowlistId(nspRecord: NSPRecord | GitHubNSPRecord): string {
 export function getNSPContent(
   nspRecord: NSPRecord | GitHubNSPRecord
 ): NSPContent {
-  return Object.values(nspRecord)[0];
+  const values = Object.values(nspRecord);
+  if (values.length > 0) {
+    return values[0];
+  }
+  throw new Error(
+    `Empty NSPRecord is invalid. Here's an example of a valid NSPRecord:
+{
+  "allowlist": [
+    {
+      "vulnerable-module": {
+        "active": true,
+        "notes": "This is a note",
+        "expiry": "2022-01-01"
+      }
+    }
+  ]
+}
+    `
+  );
 }
 
 /**
