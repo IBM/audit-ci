@@ -1,12 +1,12 @@
-import type {PNPMAuditReport} from "audit-types";
-import {blue, yellow} from "./colors";
-import {reportAudit, runProgram} from "./common";
-import type {AuditCiConfig} from "./config";
-import Model, {type Summary} from "./model";
+import type { PNPMAuditReport } from "audit-types";
+import { blue, yellow } from "./colors";
+import { reportAudit, runProgram } from "./common";
+import type { AuditCiConfig } from "./config";
+import Model, { type Summary } from "./model";
 import * as semver from "semver";
-import {execSync} from "child_process";
+import { execSync } from "child_process";
 
-const MINIMUM_PNPM_AUDIT_REGISTRY_VERSION = "5.4.0"
+const MINIMUM_PNPM_AUDIT_REGISTRY_VERSION = "5.4.0";
 
 async function runPnpmAudit(
   config: AuditCiConfig
@@ -24,7 +24,7 @@ async function runPnpmAudit(
   let stdoutBuffer: any = {};
 
   function outListener(data: any) {
-    stdoutBuffer = {...stdoutBuffer, ...data};
+    stdoutBuffer = { ...stdoutBuffer, ...data };
   }
 
   const stderrBuffer: any[] = [];
@@ -35,10 +35,15 @@ async function runPnpmAudit(
 
   const arguments_ = ["audit", "--json"];
 
-  if (registry && pnpmAuditSupportsRegistry(pnpmVersion)) {
-    arguments_.push("--registry", registry);
-  } else {
-    console.warn(yellow, `PNPM audit does not support the registry flag yet. (update to pnpm to version >=${MINIMUM_PNPM_AUDIT_REGISTRY_VERSION})`);
+  if (registry) {
+    if (pnpmAuditSupportsRegistry(pnpmVersion)) {
+      arguments_.push("--registry", registry);
+    } else {
+      console.warn(
+        yellow,
+        `PNPM audit does not support the registry flag yet. (update to pnpm to version >=${MINIMUM_PNPM_AUDIT_REGISTRY_VERSION})`
+      );
+    }
   }
   if (skipDevelopmentDependencies) {
     arguments_.push("--prod");
@@ -132,10 +137,12 @@ export async function audit(config: AuditCiConfig, reporter = reportAudit) {
   return report(parsedOutput, config, reporter);
 }
 
-function pnpmAuditSupportsRegistry(pnpmVersion: string | semver.SemVer): boolean {
+function pnpmAuditSupportsRegistry(
+  pnpmVersion: string | semver.SemVer
+): boolean {
   return semver.gte(pnpmVersion, MINIMUM_PNPM_AUDIT_REGISTRY_VERSION);
 }
 
 function getPnpmVersion(cwd?: string): string {
-  return execSync("pnpm -v", {cwd}).toString().replace("\n", "");
+  return execSync("pnpm -v", { cwd }).toString().replace("\n", "");
 }
