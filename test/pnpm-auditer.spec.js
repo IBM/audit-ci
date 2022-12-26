@@ -1,6 +1,6 @@
 // @ts-check
 const { expect } = require("chai");
-const { report, audit } = require("../dist/pnpm-auditer");
+const { report } = require("../dist/pnpm-auditer");
 const { default: Allowlist } = require("../dist/allowlist");
 const {
   summaryWithDefault,
@@ -350,17 +350,6 @@ describe("pnpm-auditer", () => {
         directory: testDirectory("pnpm-skip-dev"),
         "skip-dev": true,
         "report-type": "important",
-      }),
-      (_summary) => _summary
-    );
-    expect(summary).to.eql(summaryWithDefault());
-  });
-  it("should work when passing a valid registry", async () => {
-    const summary = await audit(
-      config({
-        directory: testDirectory("pnpm-skip-dev"),
-        levels: { moderate: false },
-        registry: "https://registry.npmjs.org",
       }),
       (_summary) => _summary
     );

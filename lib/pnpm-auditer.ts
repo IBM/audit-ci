@@ -19,23 +19,20 @@ async function runPnpmAudit(
   } = config;
   const pnpmExec = _pnpm || "pnpm";
 
-  const pnpmVersion = getPnpmVersion(directory);
-
   let stdoutBuffer: any = {};
-
   function outListener(data: any) {
     stdoutBuffer = { ...stdoutBuffer, ...data };
   }
 
   const stderrBuffer: any[] = [];
-
   function errorListener(line: any) {
     stderrBuffer.push(line);
   }
 
   const arguments_ = ["audit", "--json"];
-
   if (registry) {
+    const pnpmVersion = getPnpmVersion(directory);
+
     if (pnpmAuditSupportsRegistry(pnpmVersion)) {
       arguments_.push("--registry", registry);
     } else {
