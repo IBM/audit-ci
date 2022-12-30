@@ -38,7 +38,7 @@ async function runPnpmAudit(
     } else {
       console.warn(
         yellow,
-        `PNPM audit does not support the registry flag yet. (update PNPM to version >=${MINIMUM_PNPM_AUDIT_REGISTRY_VERSION})`
+        `Update PNPM to version >=${MINIMUM_PNPM_AUDIT_REGISTRY_VERSION} to use the --registry flag`
       );
     }
   }
