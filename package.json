@@ -1,6 +1,6 @@
 {
   "name": "audit-ci",
-  "version": "6.4.1",
+  "version": "6.5.0",
   "description": "Audits NPM, Yarn, and PNPM projects in CI environments",
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -76,7 +76,7 @@
     "mocha": "^9.2.2",
     "prettier": "^2.8.1",
     "sinon": "^13.0.2",
-    "ts-json-schema-generator": "^1.1.2",
+    "ts-json-schema-generator": "^1.2.0",
     "typescript": "^4.9.3"
   }
 }
