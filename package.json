@@ -23,9 +23,7 @@
     "github-actions",
     "circleci"
   ],
-  "bin": {
-    "audit-ci": "./dist/bin.js"
-  },
+  "bin": "./dist/bin.js",
   "files": [
     "dist/*.js",
     "dist/*.d.ts",
