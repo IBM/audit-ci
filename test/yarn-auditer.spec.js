@@ -279,7 +279,6 @@ describe("yarn-auditer", function testYarnAuditer() {
           directory: testDirectory("yarn-berry-moderate"),
           levels: { moderate: true },
           "report-type": "important",
-          _yarn: path.resolve(__dirname, "yarn-berry.cjs"),
         }),
         (_summary) => _summary
       );
@@ -299,7 +298,6 @@ describe("yarn-auditer", function testYarnAuditer() {
         berryConfig({
           directory: testDirectory("yarn-berry-moderate"),
           levels: { moderate: false },
-          _yarn: path.resolve(__dirname, "yarn-berry.cjs"),
         }),
         (_summary) => _summary
       );
@@ -339,7 +337,6 @@ describe("yarn-auditer", function testYarnAuditer() {
               },
             },
           ]),
-          _yarn: path.resolve(__dirname, "yarn-berry.cjs"),
         }),
         (_summary) => _summary
       );
@@ -409,7 +406,6 @@ describe("yarn-auditer", function testYarnAuditer() {
           directory: testDirectory("yarn-berry-workspace-empty"),
           levels: { moderate: true },
           "report-type": "important",
-          _yarn: path.resolve(__dirname, "yarn-berry.cjs"),
         }),
         (_summary) => _summary
       );
@@ -490,7 +486,6 @@ describe("yarn-auditer", function testYarnAuditer() {
   //   return audit(
   //     classicConfig({
   //       directory,
-  //       _yarn: path.join(directory, 'yarn'),
   //     })
   //   )
   //     .then(() => {
@@ -507,7 +502,6 @@ describe("yarn-auditer", function testYarnAuditer() {
   //     classicConfig({
   //       directory,
   //       "pass-enoaudit": true,
-  //       _yarn: path.join(directory, "yarn"),
   //     })
   //   );
   // });
