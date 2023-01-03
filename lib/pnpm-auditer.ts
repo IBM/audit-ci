@@ -61,7 +61,7 @@ function printReport(
   reportType: "full" | "important" | "summary",
   outputFormat: "text" | "json"
 ) {
-  const printReportObject = (text, object) => {
+  const printReportObject = (text: string, object: unknown) => {
     if (outputFormat === "text") {
       console.log(blue, text);
     }
@@ -78,7 +78,7 @@ function printReport(
         (advisory) => levels[advisories[advisory].severity]
       );
 
-      const relevantAdvisories = {};
+      const relevantAdvisories: Record<string, PNPMAuditReport.Advisory> = {};
       for (const advisory of relevantAdvisoryLevels) {
         relevantAdvisories[advisory] = advisories[advisory];
       }

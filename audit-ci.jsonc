@@ -1,6 +1,16 @@
 {
-  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   // audit-ci supports reading JSON, JSONC, and JSON5 config files.
+  // Add a $schema property to enable JSON schema validation.
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  // You only need one of ["low", "moderate", "high", "critical"].
   "low": true,
-  "allowlist": []
+  "allowlist": [
+    {
+      "GHSA-9c47-m6qq-7p4h|eslint-plugin-import>tsconfig-paths>json5": {
+        "active": true, // This field is optional and defaults to true.
+        "expiry": "", // There's no need to set an expiry date because we are unaffected.
+        "notes": "Transitive development-only dependency for linting doesn't impact the security of this application in production or for developers."
+      }
+    }
+  ]
 }
