@@ -59,6 +59,7 @@ export async function audit(
     "output-format": outputFormat,
     _yarn,
     directory,
+    "extra-args": extraArguments,
   } = config;
   const yarnExec = _yarn || "yarn";
   let missingLockFile = false;
@@ -209,6 +210,9 @@ export async function audit(
         "Yarn audit does not support the registry flag yet."
       );
     }
+  }
+  if (extraArguments) {
+    arguments_.push(...extraArguments);
   }
   await runProgram(yarnExec, arguments_, options, outListener, errorListener);
   if (missingLockFile) {
