@@ -271,6 +271,7 @@ scripts:
 |      | --retry-count     | The number of attempts audit-ci calls an unavailable registry before failing (default `5`)            |
 |      | --config          | Path to the audit-ci configuration file                                                               |
 |      | --skip-dev        | Skip auditing devDependencies (default `false`)                                                       |
+|      | --extra-args      | Extra arguments to pass to the underlying audit command (default: `[]`)                               |
 
 ### Config file specification
 
@@ -383,6 +384,23 @@ Or, with the CLI:
 
 ```sh
 npx audit-ci@^6 --report-type summary
+```
+
+### Pass additional args to Yarn to exclude a certain package from audit
+
+With a `JSONC` config file, in a project on Yarn v3.3.0 or later:
+
+```jsonc
+{
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "extra-args": ["--exclude", "example"]
+}
+```
+
+Or, with the CLI:
+
+```sh
+npx audit-ci@^6 --extra-args '\--exclude' example
 ```
 
 ### Example config file and different directory usage
