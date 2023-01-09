@@ -16,6 +16,7 @@ async function runPnpmAudit(
     registry,
     _pnpm,
     "skip-dev": skipDevelopmentDependencies,
+    "extra-args": extraArguments,
   } = config;
   const pnpmExec = _pnpm || "pnpm";
 
@@ -44,6 +45,9 @@ async function runPnpmAudit(
   }
   if (skipDevelopmentDependencies) {
     arguments_.push("--prod");
+  }
+  if (extraArguments) {
+    arguments_.push(...extraArguments);
   }
   const options = { cwd: directory };
   await runProgram(pnpmExec, arguments_, options, outListener, errorListener);

@@ -112,4 +112,11 @@ export interface Schema {
    * @default false
    */
   "skip-dev"?: boolean;
+
+  /**
+   * Extra arguments to pass to the underlying audit command.
+   *
+   * @default []
+   */
+  "extra-args"?: string[];
 }

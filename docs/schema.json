@@ -58,6 +58,14 @@
           "description": "The directory containing the package.json to audit.",
           "type": "string"
         },
+        "extra-args": {
+          "default": [],
+          "description": "Extra arguments to pass to the underlying audit command.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
         "high": {
           "default": false,
           "description": "Prevent integration with high or higher vulnerabilities.",

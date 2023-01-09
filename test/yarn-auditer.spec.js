@@ -372,10 +372,10 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high", "moderate"],
-        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-38f5-ghc2-fcmv"],
+        advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: [
-          "GHSA-rvg8-pwq2-xj7q|audit-ci-yarn-workspace-moderate-vulnerability>base64url",
           "GHSA-38f5-ghc2-fcmv|audit-ci-yarn-workspace-high-vulnerability>cryo",
+          "GHSA-rvg8-pwq2-xj7q|audit-ci-yarn-workspace-moderate-vulnerability>base64url",
         ],
       })
     );
@@ -409,14 +409,14 @@ describe("yarn-auditer", function testYarnAuditer() {
         summaryWithDefault({
           failedLevelsFound: ["critical", "high", "moderate"],
           advisoriesFound: [
-            "GHSA-rvg8-pwq2-xj7q",
             "GHSA-28xh-wpgr-7fm8",
             "GHSA-38f5-ghc2-fcmv",
+            "GHSA-rvg8-pwq2-xj7q",
           ],
           advisoryPathsFound: [
-            "GHSA-rvg8-pwq2-xj7q|base64url",
             "GHSA-28xh-wpgr-7fm8|open",
             "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-rvg8-pwq2-xj7q|base64url",
           ],
         })
       );
@@ -437,10 +437,34 @@ describe("yarn-auditer", function testYarnAuditer() {
       expect(summary).to.eql(
         summaryWithDefault({
           failedLevelsFound: ["high", "moderate"],
-          advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-38f5-ghc2-fcmv"],
+          advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
           advisoryPathsFound: [
-            "GHSA-rvg8-pwq2-xj7q|base64url",
             "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-rvg8-pwq2-xj7q|base64url",
+          ],
+        })
+      );
+    }
+  );
+  (canRunYarnBerry ? it : it.skip)(
+    "reports summary with vulnerabilities in yarn berry workspaces with extra-args: --environment production",
+    async () => {
+      const summary = await audit(
+        config({
+          directory: testDirectory("yarn-berry-workspace"),
+          levels: { moderate: true },
+          "extra-args": ["--environment", "production"],
+          "report-type": "important",
+        }),
+        (_summary) => _summary
+      );
+      expect(summary).to.eql(
+        summaryWithDefault({
+          failedLevelsFound: ["high", "moderate"],
+          advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+          advisoryPathsFound: [
+            "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-rvg8-pwq2-xj7q|base64url",
           ],
         })
       );

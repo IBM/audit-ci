@@ -12,6 +12,7 @@ async function runNpmAudit(
     registry,
     _npm,
     "skip-dev": skipDevelopmentDependencies,
+    "extra-args": extraArguments,
   } = config;
   const npmExec = _npm || "npm";
 
@@ -31,6 +32,9 @@ async function runNpmAudit(
   }
   if (skipDevelopmentDependencies) {
     arguments_.push("--production");
+  }
+  if (extraArguments) {
+    arguments_.push(...extraArguments);
   }
   const options = { cwd: directory };
   await runProgram(npmExec, arguments_, options, outListener, errorListener);

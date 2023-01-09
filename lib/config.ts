@@ -25,6 +25,15 @@ function mapReportTypeInput(
   }
 }
 
+function mapExtraArgumentsInput(
+  config: Pick<AuditCiPreprocessedConfig, "extra-args">
+) {
+  // These args will often be flags for another command, so we
+  // want to have some way of escaping args that start with a -.
+  // We'll look for and remove a single backslash at the start, if present.
+  return config["extra-args"].map((a) => a.replace(/^\\/, ""));
+}
+
 export type AuditCiPreprocessedConfig = {
   /** Exit for low or above vulnerabilities */
   l: boolean;
@@ -78,6 +87,8 @@ export type AuditCiPreprocessedConfig = {
   "pass-enoaudit": boolean;
   /** skip devDependencies */
   "skip-dev": boolean;
+  /** extra positional args for underlying audit command */
+  "extra-args": string[];
 };
 
 // Rather than exporting a weird union type, we resolve the type to a simple object.
@@ -163,6 +174,7 @@ function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
     }),
     "report-type": mapReportTypeInput(argv),
     allowlist: allowlist,
+    "extra-args": mapExtraArgumentsInput(argv),
   };
   return result;
 }
@@ -275,6 +287,11 @@ export async function runYargs(): Promise<AuditCiConfig> {
         default: false,
         describe: "Skip devDependencies",
         type: "boolean",
+      },
+      "extra-args": {
+        default: [],
+        describe: "Pass additional arguments to the underlying audit command",
+        type: "array",
       },
     })
     .help("help");
