@@ -446,6 +446,30 @@ describe("yarn-auditer", function testYarnAuditer() {
       );
     }
   );
+  (canRunYarnBerry ? it : it.skip)(
+    "reports summary with vulnerabilities in yarn berry workspaces with extra-args: --environment production",
+    async () => {
+      const summary = await audit(
+        config({
+          directory: testDirectory("yarn-berry-workspace"),
+          levels: { moderate: true },
+          "extra-args": ["--environment", "production"],
+          "report-type": "important",
+        }),
+        (_summary) => _summary
+      );
+      expect(summary).to.eql(
+        summaryWithDefault({
+          failedLevelsFound: ["high", "moderate"],
+          advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+          advisoryPathsFound: [
+            "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-rvg8-pwq2-xj7q|base64url",
+          ],
+        })
+      );
+    }
+  );
   it("does not report duplicate paths", async () => {
     const summary = await audit(
       config({
