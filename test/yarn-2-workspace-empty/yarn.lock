@@ -2,7 +2,13 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 6
+  version: 4
+
+"audit-ci-yarn-2-workspace-empty@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "audit-ci-yarn-2-workspace-empty@workspace:."
+  languageName: unknown
+  linkType: soft
 
 "audit-ci-yarn-workspace-empty-package-a@workspace:packages/package-a":
   version: 0.0.0-use.local
@@ -13,11 +19,5 @@ __metadata:
 "audit-ci-yarn-workspace-empty-package-b@workspace:packages/package-b":
   version: 0.0.0-use.local
   resolution: "audit-ci-yarn-workspace-empty-package-b@workspace:packages/package-b"
-  languageName: unknown
-  linkType: soft
-
-"audit-ci-yarn-workspace-empty@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "audit-ci-yarn-workspace-empty@workspace:."
   languageName: unknown
   linkType: soft
