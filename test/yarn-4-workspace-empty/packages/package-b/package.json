@@ -1,0 +1,5 @@
+{
+  "version": "0.1.0",
+  "name": "audit-ci-yarn-4-workspace-empty-package-b",
+  "description": "Test package.json with no deps"
+}

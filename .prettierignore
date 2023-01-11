@@ -1,5 +1,5 @@
-test/yarn-berry.cjs
 coverage
+test/yarn-*.cjs
 **/pnpm-lock.yaml
 **/*-output.json
 **/.pnp.cjs

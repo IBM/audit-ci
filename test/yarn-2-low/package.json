@@ -1,0 +1,7 @@
+{
+  "name": "audit-ci-yarn-2-low-vulnerability",
+  "description": "Test package.json with low vulnerability",
+  "dependencies": {
+    "micromatch": "2.3.0"
+  }
+}

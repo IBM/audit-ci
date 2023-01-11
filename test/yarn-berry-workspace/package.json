@@ -1,7 +1,0 @@
-{
-  "name": "audit-ci-yarn-berry-workspace",
-  "description": "Test yarn workspace",
-  "workspaces": [
-    "packages/*"
-  ]
-}

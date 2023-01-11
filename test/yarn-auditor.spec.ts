@@ -29,7 +29,7 @@ describe(
     it("prints full report with critical severity", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-critical"),
+          directory: testDirectory("yarn-2-critical"),
           levels: { critical: true },
           "report-type": "full",
         }),
@@ -46,7 +46,7 @@ describe(
     it("does not report critical severity if it set to false", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-critical"),
+          directory: testDirectory("yarn-2-critical"),
           levels: { critical: false },
         }),
         (_summary) => _summary
@@ -56,7 +56,7 @@ describe(
     it("reports summary with high severity", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-high"),
+          directory: testDirectory("yarn-2-high"),
           levels: { high: true },
           "report-type": "summary",
         }),
@@ -73,7 +73,7 @@ describe(
     it("reports important info with moderate severity", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-moderate"),
+          directory: testDirectory("yarn-2-moderate"),
           allowlist: new Allowlist([
             "GHSA-9wf9-qvvp-2929",
             "GHSA-hm7f-rq7q-j9xp",
@@ -98,7 +98,7 @@ describe(
     it("does not report moderate severity if it set to false", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-moderate"),
+          directory: testDirectory("yarn-2-moderate"),
           levels: { moderate: false },
         }),
         (_summary) => _summary
@@ -108,7 +108,7 @@ describe(
     it("ignores an advisory if it is allowlisted", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-moderate"),
+          directory: testDirectory("yarn-2-moderate"),
           levels: { moderate: true },
           allowlist: new Allowlist([
             "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
@@ -131,7 +131,7 @@ describe(
     it("ignores an advisory if it is allowlisted using a NSPRecord", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-moderate"),
+          directory: testDirectory("yarn-2-moderate"),
           levels: { moderate: true },
           allowlist: new Allowlist([
             {
@@ -166,7 +166,7 @@ describe(
     it("does not ignore an advisory that is not allowlisted", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-moderate"),
+          directory: testDirectory("yarn-2-moderate"),
           levels: { moderate: true },
           allowlist: new Allowlist([
             "GHSA-cff4-rrq6-h78w",
@@ -193,7 +193,7 @@ describe(
     it("does not ignore an advisory that is not allowlisted using a NSPRecord", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-moderate"),
+          directory: testDirectory("yarn-2-moderate"),
           levels: { moderate: true },
           allowlist: new Allowlist([
             "GHSA-9wf9-qvvp-2929",
@@ -223,7 +223,7 @@ describe(
     it("ignores an advisory that has not expired", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-moderate"),
+          directory: testDirectory("yarn-2-moderate"),
           levels: { moderate: true },
           allowlist: new Allowlist([
             {
@@ -261,7 +261,7 @@ describe(
     it("does not ignore an advisory that has expired", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-moderate"),
+          directory: testDirectory("yarn-2-moderate"),
           levels: { moderate: true },
           allowlist: new Allowlist([
             "GHSA-cff4-rrq6-h78w",
@@ -301,7 +301,7 @@ describe(
     it("reports low severity", async () => {
       const summary = await audit(
         config({
-          directory: testDirectory("yarn-low"),
+          directory: testDirectory("yarn-2-low"),
           levels: { low: true },
         }),
         (_summary) => _summary
@@ -327,7 +327,7 @@ describe(
     it("doesn't use the registry flag since it's not supported in Yarn yet", () =>
       audit(
         config({
-          directory: testDirectory("yarn-low"),
+          directory: testDirectory("yarn-2-low"),
           levels: { low: true },
           registry: "https://example.com",
         }),
@@ -338,7 +338,7 @@ describe(
       async () => {
         const summary = await audit(
           config({
-            directory: testDirectory("yarn-berry-moderate"),
+            directory: testDirectory("yarn-3-moderate"),
             levels: { moderate: true },
             "report-type": "important",
           }),
@@ -358,7 +358,7 @@ describe(
       async () => {
         const summary = await audit(
           config({
-            directory: testDirectory("yarn-berry-moderate"),
+            directory: testDirectory("yarn-3-moderate"),
             levels: { moderate: false },
           }),
           (_summary) => _summary
@@ -371,7 +371,7 @@ describe(
       async () => {
         const summary = await audit(
           config({
-            directory: testDirectory("yarn-berry-moderate"),
+            directory: testDirectory("yarn-3-moderate"),
             levels: { moderate: true },
             allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
           }),
@@ -389,7 +389,7 @@ describe(
       async () => {
         const summary = await audit(
           config({
-            directory: testDirectory("yarn-berry-moderate"),
+            directory: testDirectory("yarn-3-moderate"),
             levels: { moderate: true },
             allowlist: new Allowlist([
               {
@@ -412,7 +412,7 @@ describe(
       const summary = await audit(
         config({
           directory: testDirectory(
-            canRunYarnBerry ? "yarn-berry-skip-dev" : "yarn-skip-dev"
+            canRunYarnBerry ? "yarn-3-skip-dev" : "yarn-skip-dev"
           ),
           "skip-dev": true,
           "report-type": "important",
@@ -462,7 +462,7 @@ describe(
       async () => {
         const summary = await audit(
           config({
-            directory: testDirectory("yarn-berry-workspace-empty"),
+            directory: testDirectory("yarn-3-workspace-empty"),
             levels: { moderate: true },
             "report-type": "important",
           }),
@@ -476,7 +476,7 @@ describe(
       async () => {
         const summary = await audit(
           config({
-            directory: testDirectory("yarn-berry-workspace"),
+            directory: testDirectory("yarn-3-workspace"),
             levels: { moderate: true },
             "report-type": "important",
           }),
@@ -504,7 +504,7 @@ describe(
       async () => {
         const summary = await audit(
           config({
-            directory: testDirectory("yarn-berry-workspace"),
+            directory: testDirectory("yarn-3-workspace"),
             levels: { moderate: true },
             "skip-dev": true,
             "report-type": "important",
@@ -528,7 +528,7 @@ describe(
       async () => {
         const summary = await audit(
           config({
-            directory: testDirectory("yarn-berry-workspace"),
+            directory: testDirectory("yarn-3-workspace"),
             levels: { moderate: true },
             "extra-args": ["--environment", "production"],
             "report-type": "important",
