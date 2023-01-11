@@ -4,5 +4,6 @@
   "description": "Test yarn workspace",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "packageManager": "yarn@4.0.0-rc.35"
 }

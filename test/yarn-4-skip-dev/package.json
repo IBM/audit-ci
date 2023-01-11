@@ -6,5 +6,6 @@
   },
   "devDependencies": {
     "open": "0.0.5"
-  }
+  },
+  "packageManager": "yarn@4.0.0-rc.35"
 }
