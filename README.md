@@ -294,7 +294,7 @@ A config file can manage auditing preferences for `audit-ci`. The config file's 
   "show-not-found": <boolean>, // [Optional] defaults `true`
   "registry": <string>, // [Optional] defaults `undefined`
   "retry-count": <number>, // [Optional] defaults 5
-  "skip-dev": <boolean>, // [Optional] defaults `false`,
+  "skip-dev": <boolean>, // [Optional] defaults `false`
   "extra-args": <string>[] // [Optional] defaults `[]`
 }
 ```
