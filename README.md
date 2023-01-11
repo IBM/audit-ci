@@ -295,6 +295,7 @@ A config file can manage auditing preferences for `audit-ci`. The config file's 
   "registry": <string>, // [Optional] defaults `undefined`
   "retry-count": <number>, // [Optional] defaults 5
   "skip-dev": <boolean>, // [Optional] defaults `false`
+  "extra-args": <string>[] // [Optional] defaults `[]`
 }
 ```
 
@@ -386,9 +387,9 @@ Or, with the CLI:
 npx audit-ci@^6 --report-type summary
 ```
 
-### Pass additional args to Yarn to exclude a certain package from audit
+### Pass additional args to Yarn Berry to exclude a certain package from audit
 
-With a `JSONC` config file, in a project on Yarn v3.3.0 or later:
+With a `JSONC` config file, in a project on Yarn Berry v3.3.0 or later:
 
 ```jsonc
 {
