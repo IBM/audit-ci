@@ -134,13 +134,29 @@ export function runProgram(
 ) {
   const transform = new ReadlineTransform({ skipEmpty: true });
   const proc = spawn(command, arguments_, options);
+  let recentMessage: string;
+  let errorMessage: string;
   proc.stdout.setEncoding("utf8");
   proc.stdout
-    .pipe(transform)
-    // TODO: Review this JSONStream.parse()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    .pipe(JSONStream.parse())
+    .pipe(
+      transform.on("error", (error) => {
+        throw error;
+      })
+    )
+    .pipe(
+      eventStream.mapSync((data: string) => {
+        recentMessage = data;
+        return data;
+      })
+    )
+    .pipe(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore -- JSONStream.parse() accepts (pattern: any) when it should accept (pattern?: any)
+      JSONStream.parse().on("error", () => {
+        errorMessage = recentMessage;
+        throw new Error(errorMessage);
+      })
+    )
     .pipe(
       eventStream.mapSync((data: unknown) => {
         if (!data) return;
@@ -167,8 +183,15 @@ export function runProgram(
       })
     );
   return new Promise<void>((resolve, reject) => {
-    proc.on("close", () => resolve());
-    proc.on("error", (error) => reject(error));
+    proc.on("close", () => {
+      if (errorMessage) {
+        return reject(new Error(errorMessage));
+      }
+      return resolve();
+    });
+    proc.on("error", (error) =>
+      reject(errorMessage ? new Error(errorMessage) : error)
+    );
   });
 }
 
