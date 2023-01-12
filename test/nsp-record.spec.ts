@@ -1,9 +1,9 @@
-const { expect } = require("chai");
-const {
+import { expect } from "chai";
+import {
   getAllowlistId,
   getNSPContent,
   isNSPRecordActive,
-} = require("../dist/nsp-record");
+} from "../lib/nsp-record";
 
 describe("getAllowlistId", () => {
   it("should get the allowlist id", () => {

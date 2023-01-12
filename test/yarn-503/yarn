@@ -1,8 +1,9 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 
 const errorMessagePath = path.resolve(__dirname, "error-message");
-const errorMessage = require(errorMessagePath); //eslint-disable-line
+const errorMessage = require(errorMessagePath);
 
 console.error(errorMessage);
 process.exitCode = 1;

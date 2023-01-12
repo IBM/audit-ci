@@ -1,10 +1,9 @@
-// @ts-check
-const { expect } = require("chai");
-const {
-  default: Allowlist,
+import { expect } from "chai";
+import {
+  default as Allowlist,
   normalizeAllowlistRecord,
   dedupeAllowlistRecords,
-} = require("../dist/allowlist");
+} from "../lib/allowlist";
 
 describe("Allowlist", () => {
   it("can map config to empty Allowlist", () => {

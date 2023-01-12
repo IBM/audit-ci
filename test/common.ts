@@ -1,9 +1,10 @@
-// @ts-check
-const path = require("path");
-const { default: Allowlist } = require("../dist/allowlist");
-const { mapVulnerabilityLevelInput } = require("../dist/map-vulnerability");
+import path from "path";
+import Allowlist from "../lib/allowlist";
+import { AuditCiFullConfig } from "../lib/config";
+import { mapVulnerabilityLevelInput } from "../lib/map-vulnerability";
+import { Summary } from "../lib/model";
 
-function summaryWithDefault(additions = {}) {
+export function summaryWithDefault(additions: Partial<Summary> = {}) {
   const summary = {
     allowlistedModulesFound: [],
     allowlistedAdvisoriesFound: [],
@@ -18,7 +19,11 @@ function summaryWithDefault(additions = {}) {
   return { ...summary, ...additions };
 }
 
-function config(additions) {
+export function config(
+  additions: Omit<Partial<AuditCiFullConfig>, "levels"> & {
+    levels?: Partial<AuditCiFullConfig["levels"]>;
+  } & Required<Pick<AuditCiFullConfig, "package-manager">>
+): AuditCiFullConfig {
   const defaultConfig = {
     levels: {
       low: false,
@@ -33,7 +38,13 @@ function config(additions) {
     directory: "./",
     registry: undefined,
     "pass-enoaudit": false,
-  };
+    report: false,
+    summary: false,
+    "show-found": false,
+    "output-format": "text",
+    "skip-dev": false,
+    "extra-args": [],
+  } satisfies Partial<AuditCiFullConfig>;
   const levels = mapVulnerabilityLevelInput(additions.levels || {});
   return {
     ...defaultConfig,
@@ -42,12 +53,6 @@ function config(additions) {
   };
 }
 
-function testDirectory(s) {
+export function testDirectory(s: string) {
   return path.resolve(__dirname, s);
 }
-
-module.exports = {
-  summaryWithDefault,
-  config,
-  testDirectory,
-};

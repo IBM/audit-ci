@@ -3,7 +3,11 @@ import { execSync } from "child_process";
 import * as semver from "semver";
 import { blue, red, yellow } from "./colors";
 import { reportAudit, runProgram } from "./common";
-import type { AuditCiConfig } from "./config";
+import {
+  mapAuditCiConfigToAuditCiFullConfig,
+  type AuditCiConfig,
+  type AuditCiFullConfig,
+} from "./config";
 import Model, { type Summary } from "./model";
 
 const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
@@ -42,13 +46,27 @@ const printJson = (data: unknown) => {
   console.log(JSON.stringify(data, undefined, 2));
 };
 
+const isClassicAuditAdvisory = (
+  data: unknown,
+  type: unknown
+): data is YarnAudit.AuditAdvisoryResponse => {
+  return type === "auditAdvisory";
+};
+
+const isClassicAuditSummary = (
+  data: unknown,
+  type: unknown
+): data is YarnAudit.AuditSummary => {
+  return type === "auditSummary";
+};
+
 /**
  * Audit your Yarn project!
  *
  * @returns Returns the audit report summary on resolve, `Error` on rejection.
  */
-export async function audit(
-  config: AuditCiConfig,
+export async function auditWithFullConfig(
+  config: AuditCiFullConfig,
   reporter = reportAudit
 ): Promise<Summary> {
   const {
@@ -103,7 +121,7 @@ export async function audit(
   }
 
   // Define a function to print based on the report type.
-  let printAuditData;
+  let printAuditData: any;
   switch (reportType) {
     case "full":
       printAuditData = (line: unknown) => {
@@ -112,26 +130,28 @@ export async function audit(
       break;
     case "important":
       printAuditData = isYarnClassic
-        ? ({ type, data }) => {
-            if (
-              (type === "auditAdvisory" && levels[data.advisory.severity]) ||
-              type === "auditSummary"
-            ) {
+        ? ({ type, data }: any) => {
+            if (isClassicAuditAdvisory(data, type)) {
+              const severity = data.advisory.severity;
+              if (severity !== "info" && levels[severity]) {
+                printJson(data);
+              }
+            } else if (isClassicAuditSummary(data, type)) {
               printJson(data);
             }
           }
-        : ({ metadata }) => {
+        : ({ metadata }: { metadata: YarnBerryAuditReport.AuditMetadata }) => {
             printJson(metadata);
           };
       break;
     case "summary":
       printAuditData = isYarnClassic
-        ? ({ type, data }: { type: string; data: any }) => {
-            if (type === "auditSummary") {
+        ? ({ type, data }: { type: unknown; data: unknown }) => {
+            if (isClassicAuditAdvisory(data, type)) {
               printJson(data);
             }
           }
-        : ({ metadata }: { metadata: any }) => {
+        : ({ metadata }: { metadata: YarnBerryAuditReport.AuditMetadata }) => {
             printJson(metadata);
           };
       break;
@@ -178,7 +198,7 @@ export async function audit(
   }
 
   const stderrBuffer: any[] = [];
-  function errorListener(line) {
+  function errorListener(line: any) {
     stderrBuffer.push(line);
 
     if (line.type === "error") {
@@ -224,4 +244,12 @@ export async function audit(
 
   const summary = model.getSummary((a) => a.github_advisory_id);
   return reporter(summary, config);
+}
+
+/**
+ * Run audit-ci with Yarn Classic or Yarn Berry.
+ */
+export async function audit(config: AuditCiConfig, reporter = reportAudit) {
+  const fullConfig = mapAuditCiConfigToAuditCiFullConfig(config);
+  return await auditWithFullConfig(fullConfig, reporter);
 }

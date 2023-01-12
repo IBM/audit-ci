@@ -1,16 +1,18 @@
-// @ts-check
-const { expect } = require("chai");
-const childProcess = require("child_process");
-const semver = require("semver");
-const { default: audit } = require("../dist/audit");
-const { default: Allowlist } = require("../dist/allowlist");
-const {
+import { ok } from "assert";
+import { expect } from "chai";
+import childProcess from "child_process";
+import semver from "semver";
+import Allowlist from "../lib/allowlist";
+import audit from "../lib/audit";
+import {
+  config as baseConfig,
   summaryWithDefault,
-  config: baseConfig,
   testDirectory,
-} = require("./common");
+} from "./common";
 
-function config(additions) {
+function config(
+  additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">
+) {
   return baseConfig({ ...additions, "package-manager": "yarn" });
 }
 
@@ -479,7 +481,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary
     );
-
+    ok(summary);
     expect(summary.advisoryPathsFound).to.eql([
       ...new Set(summary.advisoryPathsFound),
     ]);

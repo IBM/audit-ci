@@ -1,19 +1,13 @@
-import type {
-  GitHubAdvisoryId,
-  NPMAuditReportV1,
-  NPMAuditReportV2,
-  PNPMAuditReport,
-  YarnAudit,
-} from "audit-types";
+import type { GitHubAdvisoryId, NPMAuditReportV2 } from "audit-types";
 import Allowlist from "./allowlist";
 import {
   gitHubAdvisoryUrlToAdvisoryId,
   matchString,
   partition,
 } from "./common";
-import type { AuditCiConfig } from "./config";
+import type { AuditCiFullConfig } from "./config";
 import type { VulnerabilityLevels } from "./map-vulnerability";
-import type { DeepWriteable } from "./types";
+import type { DeepReadonly, DeepWriteable } from "./types";
 
 const SUPPORTED_SEVERITY_LEVELS = new Set([
   "critical",
@@ -27,9 +21,13 @@ const prependPath = <N extends string, C extends string>(
   currentPath: C
 ): `${N}>${C}` => `${newItem}>${currentPath}`;
 
+const isVia = <T>(via: T | string): via is T => {
+  return typeof via !== "string";
+};
+
 export interface Summary {
   advisoriesFound: GitHubAdvisoryId[];
-  failedLevelsFound: string[];
+  failedLevelsFound: ("low" | "moderate" | "high" | "critical")[];
   allowlistedAdvisoriesNotFound: string[];
   allowlistedModulesNotFound: string[];
   allowlistedPathsNotFound: string[];
@@ -42,10 +40,28 @@ export interface Summary {
 interface ProcessedAdvisory {
   id: number;
   github_advisory_id: GitHubAdvisoryId;
-  severity: string;
+  severity: "critical" | "high" | "moderate" | "low" | "info";
   module_name: string;
-  url: string;
+  url: `https://github.com/advisories/${GitHubAdvisoryId}`;
   findings: { paths: string[] }[];
+}
+
+// These are hre to simplify testing by requiring only the relevant parts of the
+// audit report.
+interface PartialNPMAuditReportV1Audit {
+  advisories: Readonly<Record<GitHubAdvisoryId, ProcessedAdvisory>>;
+}
+interface PartialPNPMAuditReportAudit {
+  advisories: Readonly<Record<GitHubAdvisoryId, ProcessedAdvisory>>;
+}
+interface PartialNPMAuditReportV2Audit {
+  vulnerabilities: Readonly<
+    Record<
+      string,
+      Pick<NPMAuditReportV2.Advisory, "name" | "isDirect" | "via" | "effects"> &
+        Partial<NPMAuditReportV2.Advisory>
+    >
+  >;
 }
 
 class Model {
@@ -55,11 +71,11 @@ class Model {
   allowlist: Allowlist;
   allowlistedModulesFound: string[];
   allowlistedAdvisoriesFound: GitHubAdvisoryId[];
-  allowlistedPathsFound: string[];
+  allowlistedPathsFound: `${GitHubAdvisoryId}|${string}`[];
   advisoriesFound: ProcessedAdvisory[];
   advisoryPathsFound: string[];
 
-  constructor(config: Pick<AuditCiConfig, "allowlist" | "levels">) {
+  constructor(config: Pick<AuditCiFullConfig, "allowlist" | "levels">) {
     const unsupported = Object.keys(config.levels).filter(
       (level) => !SUPPORTED_SEVERITY_LEVELS.has(level)
     );
@@ -80,33 +96,35 @@ class Model {
   }
 
   process(advisory: ProcessedAdvisory) {
-    if (!this.failingSeverities[advisory.severity]) {
+    const {
+      severity,
+      module_name: moduleName,
+      github_advisory_id: githubAdvisoryId,
+      findings,
+    } = advisory;
+    if (severity !== "info" && !this.failingSeverities[severity]) {
       return;
     }
 
-    if (this.allowlist.modules.includes(advisory.module_name)) {
-      if (!this.allowlistedModulesFound.includes(advisory.module_name)) {
-        this.allowlistedModulesFound.push(advisory.module_name);
+    if (this.allowlist.modules.includes(moduleName)) {
+      if (!this.allowlistedModulesFound.includes(moduleName)) {
+        this.allowlistedModulesFound.push(moduleName);
       }
       return;
     }
 
-    if (this.allowlist.advisories.includes(advisory.github_advisory_id)) {
-      if (
-        !this.allowlistedAdvisoriesFound.includes(advisory.github_advisory_id)
-      ) {
-        this.allowlistedAdvisoriesFound.push(advisory.github_advisory_id);
+    if (this.allowlist.advisories.includes(githubAdvisoryId)) {
+      if (!this.allowlistedAdvisoriesFound.includes(githubAdvisoryId)) {
+        this.allowlistedAdvisoriesFound.push(githubAdvisoryId);
       }
       return;
     }
 
-    const allowlistedPathsFoundSet = new Set<string>();
+    const allowlistedPathsFoundSet = new Set<`${GitHubAdvisoryId}|${string}`>();
 
-    const flattenedPaths: string[] = advisory.findings.flatMap(
-      (finding) => finding.paths
-    );
+    const flattenedPaths = findings.flatMap((finding) => finding.paths);
     const flattenedAllowlist = flattenedPaths.map(
-      (path: string) => `${advisory.github_advisory_id}|${path}`
+      (path) => `${githubAdvisoryId}|${path}` as const
     );
     const { truthy, falsy } = partition(flattenedAllowlist, (path) =>
       this.allowlist.paths.some((allowedPath) => matchString(allowedPath, path))
@@ -128,16 +146,18 @@ class Model {
 
   load(
     parsedOutput:
-      | NPMAuditReportV2.Audit
-      | NPMAuditReportV1.Audit
-      | YarnAudit.AuditAdvisory
-      | PNPMAuditReport.Audit
+      | PartialNPMAuditReportV2Audit
+      | PartialNPMAuditReportV1Audit
+      | PartialPNPMAuditReportAudit
   ) {
     /** NPM 6 & PNPM */
 
     if ("advisories" in parsedOutput && parsedOutput.advisories) {
       for (const advisory of Object.values<
-        DeepWriteable<NPMAuditReportV1.Advisory | PNPMAuditReport.Advisory>
+        DeepWriteable<
+          | PartialNPMAuditReportV1Audit["advisories"][GitHubAdvisoryId]
+          | PartialPNPMAuditReportAudit["advisories"][GitHubAdvisoryId]
+        >
       >(parsedOutput.advisories)) {
         advisory.github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(
           advisory.url
@@ -164,22 +184,27 @@ class Model {
       >();
       // First, let's deal with building a structure that's as close to NPM 6 as we can
       // without dealing with the findings.
-      for (const vulnerability of Object.values<NPMAuditReportV2.Advisory>(
-        parsedOutput.vulnerabilities
-      )) {
+      for (const vulnerability of Object.values<
+        PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]
+      >(parsedOutput.vulnerabilities)) {
         const { via: vias, isDirect } = vulnerability;
-        for (const via of vias.filter((via) => typeof via !== "string")) {
-          if (!advisoryMap.has(via.source)) {
-            advisoryMap.set(via.source, {
-              id: via.source,
-              github_advisory_id: gitHubAdvisoryUrlToAdvisoryId(via.url),
-              module_name: via.name,
-              severity: via.severity,
-              url: via.url,
+        // https://github.com/microsoft/TypeScript/issues/33591
+        for (const via of vias as Array<string | NPMAuditReportV2.Via>) {
+          if (!isVia(via)) {
+            continue;
+          }
+          const { source, url, name, severity } = via;
+          if (!advisoryMap.has(source)) {
+            advisoryMap.set(source, {
+              id: source,
+              github_advisory_id: gitHubAdvisoryUrlToAdvisoryId(url),
+              module_name: name,
+              severity: severity,
+              url: url,
               // This will eventually be an array.
               // However, to improve the performance of deduplication,
               // start with a set.
-              findingsSet: new Set(isDirect ? [via.name] : []),
+              findingsSet: new Set(isDirect ? [name] : []),
               findings: [],
             });
           }
@@ -191,9 +216,11 @@ class Model {
 
       const visitedModules = new Map<string, string[]>();
 
-      for (const vuln of Object.entries<NPMAuditReportV2.Advisory>(
-        parsedOutput.vulnerabilities
-      )) {
+      for (const vuln of Object.entries<
+        DeepReadonly<
+          PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]
+        >
+      >(parsedOutput.vulnerabilities)) {
         // Did this approach rather than destructuring within the forEach to type vulnerability
         const moduleName = vuln[0];
         const vulnerability = vuln[1];
@@ -206,7 +233,9 @@ class Model {
         const visited = new Set<string>();
 
         const recursiveMagic = (
-          cVuln: NPMAuditReportV2.Advisory,
+          cVuln: DeepReadonly<
+            PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]
+          >,
           dependencyPath: string
         ): string[] => {
           const visitedModule = visitedModules.get(cVuln.name);
@@ -240,7 +269,9 @@ class Model {
           result.push(moduleName);
         }
         const advisories = (
-          vias.filter((via) => typeof via !== "string") as any[]
+          (vias as Array<string | NPMAuditReportV2.Via>).filter(
+            (via) => typeof via !== "string"
+          ) as NPMAuditReportV2.Via[]
         )
           .map((via) => via.source)
           // Filter boolean makes the next line non-nullable.
@@ -267,11 +298,15 @@ class Model {
   }
 
   getSummary(
-    advisoryMapper: (advisory) => GitHubAdvisoryId = (a) => a.github_advisory_id
+    advisoryMapper: (advisory: any) => GitHubAdvisoryId = (a) =>
+      a.github_advisory_id
   ) {
-    const foundSeverities = new Set<string>();
-    for (const { severity } of this.advisoriesFound)
-      foundSeverities.add(severity);
+    const foundSeverities = new Set<"low" | "moderate" | "high" | "critical">();
+    for (const { severity } of this.advisoriesFound) {
+      if (severity !== "info") {
+        foundSeverities.add(severity);
+      }
+    }
     const failedLevelsFound = [...foundSeverities];
     failedLevelsFound.sort();
 

@@ -3,6 +3,9 @@ import { printAuditCiVersion } from "./audit-ci-version";
 import { green, red } from "./colors";
 import { runYargs } from "./config";
 
+/**
+ * Runs the audit-ci CLI.
+ */
 export async function runAuditCi() {
   const auditCiConfig = await runYargs();
 
@@ -16,9 +19,9 @@ export async function runAuditCi() {
     if (outputFormat === "text") {
       console.log(green, `Passed ${packageManager} security audit.`);
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (outputFormat === "text") {
-      const message = error.message || error;
+      const message = error instanceof Error ? error.message : error;
       console.error(red, message);
       console.error(red, "Exiting...");
     }
