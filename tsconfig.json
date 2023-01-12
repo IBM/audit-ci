@@ -3,6 +3,7 @@
     // Node 12.9.0
     "lib": ["es2020"],
     "module": "commonjs",
+    "typeRoots": ["node_modules/@types", "types"],
     "target": "es2019",
     "allowJs": true,
     "strict": true,
