@@ -30,7 +30,7 @@ function getAuditor(
   }
 }
 
-function audit(
+async function audit(
   config: AuditCiConfig,
   reporter?: (summary: Summary, config: AuditCiConfig) => Summary
 ) {
@@ -70,7 +70,7 @@ function audit(
     }
   }
 
-  return run();
+  return await run();
 }
 
 export default audit;
