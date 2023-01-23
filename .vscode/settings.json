@@ -4,5 +4,11 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "search.exclude": {
+    "**/node_modules": true,
+    "test/yarn-*.cjs": true,
+    "dist": true,
+    "coverage": true
+  }
 }

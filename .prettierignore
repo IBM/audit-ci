@@ -1,1 +1,4 @@
 test/yarn-berry.cjs
+**/pnpm-lock.yaml
+**/*-output.json
+**/.pnp.cjs
