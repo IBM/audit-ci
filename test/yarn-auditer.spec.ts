@@ -73,6 +73,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     const summary = await audit(
       config({
         directory: testDirectory("yarn-moderate"),
+        allowlist: new Allowlist(["GHSA-hm7f-rq7q-j9xp"]),
         levels: { moderate: true },
         "report-type": "important",
       }),
@@ -81,6 +82,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
+        allowlistedAdvisoriesFound: ["GHSA-hm7f-rq7q-j9xp"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
       })
@@ -101,13 +103,17 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDirectory("yarn-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
+        allowlist: new Allowlist([
+          "GHSA-rvg8-pwq2-xj7q",
+          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+        ]),
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+        allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
       })
     );
   });
@@ -122,6 +128,11 @@ describe("yarn-auditer", function testYarnAuditer() {
               active: true,
             },
           },
+          {
+            "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik": {
+              active: true,
+            },
+          },
         ]),
       }),
       (_summary) => _summary
@@ -129,6 +140,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+        allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
       })
     );
   });
@@ -145,8 +157,11 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-        advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
+        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-hm7f-rq7q-j9xp"],
+        advisoryPathsFound: [
+          "GHSA-rvg8-pwq2-xj7q|base64url",
+          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+        ],
       })
     );
   });
@@ -170,8 +185,11 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-        advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
+        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-hm7f-rq7q-j9xp"],
+        advisoryPathsFound: [
+          "GHSA-rvg8-pwq2-xj7q|base64url",
+          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+        ],
       })
     );
   });
@@ -187,6 +205,12 @@ describe("yarn-auditer", function testYarnAuditer() {
               expiry: new Date(Date.now() + 9000).toISOString(),
             },
           },
+          {
+            "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik": {
+              active: true,
+              expiry: new Date(Date.now() + 9000).toISOString(),
+            },
+          },
         ]),
       }),
       (_summary) => _summary
@@ -194,6 +218,7 @@ describe("yarn-auditer", function testYarnAuditer() {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+        allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
       })
     );
   });
@@ -210,6 +235,12 @@ describe("yarn-auditer", function testYarnAuditer() {
               expiry: new Date(Date.now() - 9000).toISOString(),
             },
           },
+          {
+            "*|@builder.io/qwik": {
+              active: true,
+              expiry: new Date(Date.now() - 9000).toISOString(),
+            },
+          },
         ]),
       }),
       (_summary) => _summary
@@ -218,8 +249,11 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-        advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
+        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-hm7f-rq7q-j9xp"],
+        advisoryPathsFound: [
+          "GHSA-rvg8-pwq2-xj7q|base64url",
+          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+        ],
       })
     );
   });
