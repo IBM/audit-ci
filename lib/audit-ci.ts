@@ -1,5 +1,4 @@
 import audit from "./audit";
-import { printAuditCiVersion } from "./audit-ci-version";
 import { green, red } from "./colors";
 import { runYargs } from "./config";
 
@@ -11,8 +10,6 @@ export async function runAuditCi() {
 
   const { "package-manager": packageManager, "output-format": outputFormat } =
     auditCiConfig;
-
-  printAuditCiVersion(outputFormat);
 
   try {
     await audit(auditCiConfig);
