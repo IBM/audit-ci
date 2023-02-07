@@ -1,7 +1,11 @@
-import type { PNPMAuditReport } from "audit-types";
+import type { GitHubAdvisoryId, PNPMAuditReport } from "audit-types";
 import { blue, yellow } from "./colors";
-import { reportAudit, runProgram } from "./common";
-import type { AuditCiConfig } from "./config";
+import { reportAudit, ReportConfig, runProgram } from "./common";
+import {
+  AuditCiConfig,
+  AuditCiFullConfig,
+  mapAuditCiConfigToAuditCiFullConfig,
+} from "./config";
 import Model, { type Summary } from "./model";
 import * as semver from "semver";
 import { execSync } from "child_process";
@@ -9,7 +13,7 @@ import { execSync } from "child_process";
 const MINIMUM_PNPM_AUDIT_REGISTRY_VERSION = "5.4.0";
 
 async function runPnpmAudit(
-  config: AuditCiConfig
+  config: AuditCiFullConfig
 ): Promise<PNPMAuditReport.AuditResponse> {
   const {
     directory,
@@ -20,9 +24,10 @@ async function runPnpmAudit(
   } = config;
   const pnpmExec = _pnpm || "pnpm";
 
-  let stdoutBuffer: any = {};
+  const stdoutBuffer: any = {};
   function outListener(data: any) {
-    stdoutBuffer = { ...stdoutBuffer, ...data };
+    // Object.assign is used here instead of the spread operator for minor performance gains.
+    Object.assign(stdoutBuffer, data);
   }
 
   const stderrBuffer: any[] = [];
@@ -61,7 +66,7 @@ async function runPnpmAudit(
 
 function printReport(
   parsedOutput: PNPMAuditReport.Audit,
-  levels: AuditCiConfig["levels"],
+  levels: AuditCiFullConfig["levels"],
   reportType: "full" | "important" | "summary",
   outputFormat: "text" | "json"
 ) {
@@ -78,9 +83,12 @@ function printReport(
     case "important": {
       const { advisories, metadata } = parsedOutput;
 
-      const relevantAdvisoryLevels = Object.keys(advisories).filter(
-        (advisory) => levels[advisories[advisory].severity]
-      );
+      const advisoryKeys = Object.keys(advisories) as GitHubAdvisoryId[];
+
+      const relevantAdvisoryLevels = advisoryKeys.filter((advisory) => {
+        const severity = advisories[advisory].severity;
+        return severity !== "info" && levels[severity];
+      });
 
       const relevantAdvisories: Record<string, PNPMAuditReport.Advisory> = {};
       for (const advisory of relevantAdvisoryLevels) {
@@ -106,10 +114,10 @@ function printReport(
 
 export function report(
   parsedOutput: PNPMAuditReport.Audit,
-  config: AuditCiConfig,
+  config: AuditCiFullConfig,
   reporter: (
     summary: Summary,
-    config: AuditCiConfig,
+    config: ReportConfig,
     audit?: PNPMAuditReport.Audit
   ) => Summary
 ) {
@@ -129,13 +137,24 @@ export function report(
  *
  * @returns Returns the audit report summary on resolve, `Error` on rejection.
  */
-export async function audit(config: AuditCiConfig, reporter = reportAudit) {
+export async function auditWithFullConfig(
+  config: AuditCiFullConfig,
+  reporter = reportAudit
+) {
   const parsedOutput = await runPnpmAudit(config);
   if ("error" in parsedOutput) {
     const { code, summary } = parsedOutput.error;
     throw new Error(`code ${code}: ${summary}`);
   }
   return report(parsedOutput, config, reporter);
+}
+
+/**
+ * Run audit-ci with PNPM.
+ */
+export async function audit(config: AuditCiConfig, reporter = reportAudit) {
+  const fullConfig = mapAuditCiConfigToAuditCiFullConfig(config);
+  return await auditWithFullConfig(fullConfig, reporter);
 }
 
 function pnpmAuditSupportsRegistry(

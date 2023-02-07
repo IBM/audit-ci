@@ -5,6 +5,7 @@ import escapeStringRegexp from "escape-string-regexp";
 import * as eventStream from "event-stream";
 import * as JSONStream from "JSONStream";
 import ReadlineTransform from "readline-transform";
+import Allowlist from "./allowlist";
 import { blue, yellow } from "./colors";
 import { AuditCiConfig } from "./config";
 import { Summary } from "./model";
@@ -21,7 +22,12 @@ export function partition<T>(a: T[], fun: (parameter: T) => boolean) {
   return returnValue;
 }
 
-export function reportAudit(summary: Summary, config: AuditCiConfig) {
+export type ReportConfig = Pick<
+  AuditCiConfig,
+  "show-found" | "show-not-found" | "output-format"
+> & { allowlist: Allowlist };
+
+export function reportAudit(summary: Summary, config: ReportConfig) {
   const {
     allowlist,
     "show-not-found": showNotFound,
@@ -129,8 +135,8 @@ export function runProgram(
   command: string,
   arguments_: readonly string[],
   options: SpawnOptionsWithoutStdio,
-  stdoutListener,
-  stderrListener
+  stdoutListener: (data: any) => void,
+  stderrListener: (data: any) => void
 ) {
   const transform = new ReadlineTransform({ skipEmpty: true });
   const proc = spawn(command, arguments_, options);

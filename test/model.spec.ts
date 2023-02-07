@@ -1,15 +1,29 @@
-const { expect } = require("chai");
-const { default: Model } = require("../dist/model");
-const { default: Allowlist } = require("../dist/allowlist");
-const { summaryWithDefault } = require("./common");
+import { NPMAuditReportV2 } from "audit-types";
+import { expect } from "chai";
+import Allowlist from "../lib/allowlist";
+import Model from "../lib/model";
+import { summaryWithDefault } from "./common";
 
-function config(additions) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Intentionally any to pass bad values
+function config(additions: any) {
   return { ...additions };
 }
 
 describe("Model", () => {
   it("does not support number parameters for Allowlist", () => {
-    expect(() => new Model({ allowlist: new Allowlist([123]) })).to.throw(
+    expect(
+      () =>
+        new Model({
+          // @ts-expect-error -- testing invalid input
+          allowlist: new Allowlist([123]),
+          levels: {
+            low: true,
+            moderate: true,
+            high: true,
+            critical: true,
+          },
+        })
+    ).to.throw(
       "Unsupported number as allowlist. Perform codemod to update config to use GitHub advisory as identifiers: https://github.com/quinnturner/audit-ci-codemod with `npx @quinnturner/audit-ci-codemod`. See also: https://github.com/IBM/audit-ci/pull/217"
     );
   });
@@ -48,7 +62,7 @@ describe("Model", () => {
 
   it("compute a summary", () => {
     const model = new Model({
-      levels: { critical: true },
+      levels: { low: true, high: true, moderate: true, critical: true },
       allowlist: new Allowlist(),
     });
 
@@ -83,76 +97,82 @@ describe("Model", () => {
 
     const parsedAuditOutput = {
       advisories: {
-        1: {
+        "GHSA-a-a-a": {
           id: 1,
-          title: "A",
           module_name: "M_A",
+          github_advisory_id: "GHSA-a-a-a",
           severity: "critical",
-          url: "https://github.com/advisories/GHSA-1",
+          url: "https://github.com/advisories/GHSA-a-a-a",
           findings: [{ paths: ["M_A"] }],
         },
-        2: {
+        "GHSA-a-a-b": {
           id: 2,
-          title: "B",
           module_name: "M_B",
+          github_advisory_id: "GHSA-a-a-b",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-2",
+          url: "https://github.com/advisories/GHSA-a-a-b",
           findings: [{ paths: ["M_B"] }],
         },
-        3: {
+        "GHSA-a-a-c": {
           id: 3,
-          title: "C",
           module_name: "M_C",
+          github_advisory_id: "GHSA-a-a-c",
           severity: "moderate",
-          url: "https://github.com/advisories/GHSA-3",
+          url: "https://github.com/advisories/GHSA-a-a-c",
           findings: [{ paths: ["M_C"] }],
         },
-        4: {
+        "GHSA-a-a-d": {
           id: 4,
-          title: "D",
           module_name: "M_D",
+          github_advisory_id: "GHSA-a-a-d",
           severity: "high",
-          url: "https://github.com/advisories/GHSA-4",
+          url: "https://github.com/advisories/GHSA-a-a-d",
           findings: [{ paths: ["M_D"] }],
         },
-        5: {
+        "GHSA-a-a-e": {
           id: 5,
-          title: "E",
           module_name: "M_E",
+          github_advisory_id: "GHSA-a-a-e",
           severity: "critical",
-          url: "https://github.com/advisories/GHSA-5",
+          url: "https://github.com/advisories/GHSA-a-a-e",
           findings: [{ paths: ["M_E"] }],
         },
-        6: {
+        "GHSA-a-a-f": {
           id: 6,
-          title: "F",
           module_name: "M_F",
+          github_advisory_id: "GHSA-a-a-f",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-6",
+          url: "https://github.com/advisories/GHSA-a-a-f",
           findings: [{ paths: ["M_F"] }],
         },
-        7: {
+        "GHSA-a-a-g": {
           id: 7,
-          title: "G",
           module_name: "M_G",
+          github_advisory_id: "GHSA-a-a-g",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-7",
+          url: "https://github.com/advisories/GHSA-a-a-g",
           findings: [{ paths: ["M_G"] }],
         },
       },
-    };
+    } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical", "low"],
-        advisoriesFound: ["GHSA-1", "GHSA-2", "GHSA-5", "GHSA-6", "GHSA-7"],
+        advisoriesFound: [
+          "GHSA-a-a-a",
+          "GHSA-a-a-b",
+          "GHSA-a-a-e",
+          "GHSA-a-a-f",
+          "GHSA-a-a-g",
+        ],
         advisoryPathsFound: [
-          "GHSA-1|M_A",
-          "GHSA-2|M_B",
-          "GHSA-5|M_E",
-          "GHSA-6|M_F",
-          "GHSA-7|M_G",
+          "GHSA-a-a-a|M_A",
+          "GHSA-a-a-b|M_B",
+          "GHSA-a-a-e|M_E",
+          "GHSA-a-a-f|M_F",
+          "GHSA-a-a-g|M_G",
         ],
       })
     );
@@ -166,77 +186,83 @@ describe("Model", () => {
 
     const parsedAuditOutput = {
       advisories: {
-        1: {
+        "GHSA-a-a-a": {
           id: 1,
-          title: "A",
           module_name: "M_A",
+          github_advisory_id: "GHSA-a-a-a",
           severity: "critical",
-          url: "https://github.com/advisories/GHSA-1",
+          url: "https://github.com/advisories/GHSA-a-a-a",
           findings: [{ paths: ["M_A"] }],
         },
-        2: {
+        "GHSA-a-a-b": {
           id: 2,
-          title: "B",
           module_name: "M_B",
+          github_advisory_id: "GHSA-a-a-b",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-2",
+          url: "https://github.com/advisories/GHSA-a-a-b",
           findings: [{ paths: ["M_B"] }],
         },
-        3: {
+        "GHSA-a-a-c": {
           id: 3,
-          title: "C",
           module_name: "M_C",
+          github_advisory_id: "GHSA-a-a-c",
           severity: "moderate",
-          url: "https://github.com/advisories/GHSA-3",
+          url: "https://github.com/advisories/GHSA-a-a-c",
           findings: [{ paths: ["M_C"] }],
         },
-        4: {
+        "GHSA-a-a-d": {
           id: 4,
-          title: "D",
           module_name: "M_D",
+          github_advisory_id: "GHSA-a-a-d",
           severity: "high",
-          url: "https://github.com/advisories/GHSA-4",
+          url: "https://github.com/advisories/GHSA-a-a-d",
           findings: [{ paths: ["M_D"] }],
         },
-        5: {
+        "GHSA-a-a-e": {
           id: 5,
-          title: "E",
           module_name: "M_E",
+          github_advisory_id: "GHSA-a-a-e",
           severity: "critical",
-          url: "https://github.com/advisories/GHSA-5",
+          url: "https://github.com/advisories/GHSA-a-a-e",
           findings: [{ paths: ["M_E"] }],
         },
-        6: {
+        "GHSA-a-a-f": {
           id: 6,
-          title: "F",
           module_name: "M_F",
+          github_advisory_id: "GHSA-a-a-f",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-6",
+          url: "https://github.com/advisories/GHSA-a-a-f",
           findings: [{ paths: ["M_F"] }],
         },
-        7: {
+        "GHSA-a-a-g": {
           id: 7,
-          title: "G",
           module_name: "M_G",
+          github_advisory_id: "GHSA-a-a-g",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-7",
+          url: "https://github.com/advisories/GHSA-a-a-g",
           findings: [{ paths: ["M_G"] }],
         },
       },
-    };
+    } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedModulesFound: ["M_A", "M_D"],
         failedLevelsFound: ["critical", "low", "moderate"],
-        advisoriesFound: ["GHSA-2", "GHSA-3", "GHSA-5", "GHSA-6", "GHSA-7"],
+        advisoriesFound: [
+          "GHSA-a-a-b",
+          "GHSA-a-a-c",
+          "GHSA-a-a-e",
+          "GHSA-a-a-f",
+          "GHSA-a-a-g",
+        ],
         advisoryPathsFound: [
-          "GHSA-2|M_B",
-          "GHSA-3|M_C",
-          "GHSA-5|M_E",
-          "GHSA-6|M_F",
-          "GHSA-7|M_G",
+          "GHSA-a-a-b|M_B",
+          "GHSA-a-a-c|M_C",
+          "GHSA-a-a-e|M_E",
+          "GHSA-a-a-f|M_F",
+          "GHSA-a-a-g|M_G",
         ],
       })
     );
@@ -245,7 +271,7 @@ describe("Model", () => {
   it("ignores allowlisted advisory IDs", () => {
     const model = new Model({
       levels: { critical: true, low: true, high: true, moderate: true },
-      allowlist: new Allowlist(["GHSA-2", "GHSA-3", "GHSA-6"]),
+      allowlist: new Allowlist(["GHSA-a-a-b", "GHSA-a-a-c", "GHSA-a-a-f"]),
     });
 
     const parsedAuditOutput = {
@@ -255,7 +281,7 @@ describe("Model", () => {
           title: "A",
           module_name: "M_A",
           severity: "critical",
-          url: "https://github.com/advisories/GHSA-1",
+          url: "https://github.com/advisories/GHSA-a-a-a",
           findings: [{ paths: ["M_A"] }],
         },
         2: {
@@ -263,7 +289,7 @@ describe("Model", () => {
           title: "B",
           module_name: "M_B",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-2",
+          url: "https://github.com/advisories/GHSA-a-a-b",
           findings: [{ paths: ["M_B"] }],
         },
         3: {
@@ -271,7 +297,7 @@ describe("Model", () => {
           title: "C",
           module_name: "M_C",
           severity: "moderate",
-          url: "https://github.com/advisories/GHSA-3",
+          url: "https://github.com/advisories/GHSA-a-a-c",
           findings: [{ paths: ["M_C"] }],
         },
         4: {
@@ -279,7 +305,7 @@ describe("Model", () => {
           title: "D",
           module_name: "M_D",
           severity: "high",
-          url: "https://github.com/advisories/GHSA-4",
+          url: "https://github.com/advisories/GHSA-a-a-d",
           findings: [{ paths: ["M_D"] }],
         },
         5: {
@@ -287,7 +313,7 @@ describe("Model", () => {
           title: "E",
           module_name: "M_E",
           severity: "critical",
-          url: "https://github.com/advisories/GHSA-5",
+          url: "https://github.com/advisories/GHSA-a-a-e",
           findings: [{ paths: ["M_E"] }],
         },
         6: {
@@ -295,7 +321,7 @@ describe("Model", () => {
           title: "F",
           module_name: "M_F",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-6",
+          url: "https://github.com/advisories/GHSA-a-a-f",
           findings: [{ paths: ["M_F_1"] }],
         },
         7: {
@@ -303,7 +329,7 @@ describe("Model", () => {
           title: "F",
           module_name: "M_F",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-6",
+          url: "https://github.com/advisories/GHSA-a-a-f",
           findings: [{ paths: ["M_F_2"] }],
         },
         8: {
@@ -311,7 +337,7 @@ describe("Model", () => {
           title: "G",
           module_name: "M_G",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-7",
+          url: "https://github.com/advisories/GHSA-a-a-g",
           findings: [{ paths: ["M_G"] }],
         },
       },
@@ -320,14 +346,19 @@ describe("Model", () => {
     const summary = model.load(parsedAuditOutput);
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: ["GHSA-2", "GHSA-3", "GHSA-6"],
+        allowlistedAdvisoriesFound: ["GHSA-a-a-b", "GHSA-a-a-c", "GHSA-a-a-f"],
         failedLevelsFound: ["critical", "high", "low"],
-        advisoriesFound: ["GHSA-1", "GHSA-4", "GHSA-5", "GHSA-7"],
+        advisoriesFound: [
+          "GHSA-a-a-a",
+          "GHSA-a-a-d",
+          "GHSA-a-a-e",
+          "GHSA-a-a-g",
+        ],
         advisoryPathsFound: [
-          "GHSA-1|M_A",
-          "GHSA-4|M_D",
-          "GHSA-5|M_E",
-          "GHSA-7|M_G",
+          "GHSA-a-a-a|M_A",
+          "GHSA-a-a-d|M_D",
+          "GHSA-a-a-e|M_E",
+          "GHSA-a-a-g|M_G",
         ],
       })
     );
@@ -335,7 +366,7 @@ describe("Model", () => {
 
   it("sorts the failedLevelsFound field", () => {
     const model = new Model({
-      levels: { critical: true, low: true },
+      levels: { low: true, high: true, moderate: true, critical: true },
       allowlist: new Allowlist(),
     });
 
@@ -346,7 +377,7 @@ describe("Model", () => {
           title: "A",
           module_name: "M_A",
           severity: "low",
-          url: "https://github.com/advisories/GHSA-1",
+          url: "https://github.com/advisories/GHSA-a-a-a",
           findings: [{ paths: ["M_A"] }],
         },
         2: {
@@ -354,7 +385,7 @@ describe("Model", () => {
           title: "B",
           module_name: "M_B",
           severity: "critical",
-          url: "https://github.com/advisories/GHSA-2",
+          url: "https://github.com/advisories/GHSA-a-a-b",
           findings: [{ paths: ["M_B_1"] }],
         },
         3: {
@@ -362,7 +393,7 @@ describe("Model", () => {
           title: "B",
           module_name: "M_B",
           severity: "critical",
-          url: "https://github.com/advisories/GHSA-2",
+          url: "https://github.com/advisories/GHSA-a-a-b",
           findings: [{ paths: ["M_B_2"] }],
         },
       },
@@ -372,130 +403,136 @@ describe("Model", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical", "low"],
-        advisoriesFound: ["GHSA-1", "GHSA-2"],
-        advisoryPathsFound: ["GHSA-1|M_A", "GHSA-2|M_B_1", "GHSA-2|M_B_2"],
+        advisoriesFound: ["GHSA-a-a-a", "GHSA-a-a-b"],
+        advisoryPathsFound: [
+          "GHSA-a-a-a|M_A",
+          "GHSA-a-a-b|M_B_1",
+          "GHSA-a-a-b|M_B_2",
+        ],
       })
     );
   });
 
   it("should handle advisories that reference each other in a loop for npm 7", () => {
     const model = new Model({
-      levels: { moderate: true },
+      levels: { low: true, moderate: true, high: false, critical: false },
       allowlist: new Allowlist(),
     });
 
     const parsedAuditOutput = {
       vulnerabilities: {
-        package1: {
-          name: "package1",
+        "GHSA-a-a-a": {
+          isDirect: false,
+          name: "GHSA-a-a-a",
           severity: "moderate",
-          via: ["package2", "package3"],
-          effects: ["package2"],
+          via: ["GHSA-a-a-b", "GHSA-a-a-c"],
+          effects: ["GHSA-a-a-b"],
           range: ">=3.0.1",
           nodes: ["node_modules/package1"],
           fixAvailable: {
-            name: "package2",
+            name: "GHSA-a-a-b",
             version: "3.0.1",
             isSemVerMajor: true,
           },
         },
-        package2: {
-          name: "package2",
+        "GHSA-a-a-b": {
+          isDirect: false,
+          name: "GHSA-a-a-b",
           severity: "moderate",
-          via: ["package1"],
-          effects: ["package1"],
+          via: ["GHSA-a-a-a"],
+          effects: ["GHSA-a-a-a"],
           range: ">=3.0.2",
-          nodes: ["node_modules/package2"],
+          nodes: ["node_modules/GHSA-a-a-b"],
           fixAvailable: {
-            name: "package2",
+            name: "GHSA-a-a-b",
             version: "3.0.1",
             isSemVerMajor: true,
           },
         },
-        package3: {
-          name: "package3",
-          severity: "moderate",
+        "GHSA-a-a-c": {
+          name: "GHSA-a-a-c",
+          isDirect: false,
           via: [
             {
               source: 123,
-              name: "package3",
-              dependency: "package3",
+              name: "GHSA-a-a-c",
+              dependency: "GHSA-a-a-c",
               title: "title",
-              url: "https://github.com/advisories/GHSA-123",
+              url: "https://github.com/advisories/GHSA-a-a-c",
               severity: "moderate",
               range: ">2.1.1 <5.0.1",
             },
           ],
-          effects: ["package3"],
-          range: ">2.1.1 <5.0.1",
-          nodes: ["node_modules/package1/node_modules/package3"],
-          fixAvailable: false,
+          effects: ["GHSA-a-a-c"],
         },
       },
-    };
+    } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-123"],
-        advisoryPathsFound: ["GHSA-123|package3>"],
+        advisoriesFound: ["GHSA-a-a-c"],
+        advisoryPathsFound: ["GHSA-a-a-c|GHSA-a-a-c>"],
       })
     );
   });
 
   it("should handle undefined `via`", () => {
     const model = new Model({
-      levels: { moderate: true },
+      levels: { low: true, moderate: true, high: false, critical: false },
       allowlist: new Allowlist(),
     });
 
     const parsedAuditOutput = {
       vulnerabilities: {
         package1: {
-          name: "package1",
-          severity: "moderate",
-          via: ["package2", "package3"],
-          effects: ["package2"],
+          name: "GHSA-a-a-a",
+          severity: "moderate" as const,
+          isDirect: false,
+          via: ["GHSA-a-a-b", "GHSA-a-a-c"],
+          effects: ["GHSA-a-a-b"],
           range: ">=3.0.1",
           nodes: ["node_modules/package1"],
           fixAvailable: {
-            name: "package2",
+            name: "GHSA-a-a-b",
             version: "3.0.1",
             isSemVerMajor: true,
-          },
+          } as NPMAuditReportV2.FixAvailable,
         },
-        package2: {
-          name: "package2",
-          severity: "moderate",
+        "GHSA-a-a-b": {
+          name: "GHSA-a-a-b",
+          severity: "moderate" as const,
+          isDirect: true,
           via: [],
-          effects: ["package1"],
+          effects: ["GHSA-a-a-a"],
           range: ">=3.0.2",
-          nodes: ["node_modules/package2"],
+          nodes: ["node_modules/GHSA-a-a-b"],
           fixAvailable: {
-            name: "package2",
+            name: "GHSA-a-a-b",
             version: "3.0.1",
             isSemVerMajor: true,
-          },
+          } as NPMAuditReportV2.FixAvailable,
         },
-        package3: {
-          name: "package3",
-          severity: "moderate",
+        "GHSA-a-a-c": {
+          name: "GHSA-a-a-c",
+          isDirect: false,
+          severity: "moderate" as const,
           via: [
             {
               source: 123,
-              name: "package3",
-              dependency: "package3",
+              name: "GHSA-a-a-c",
+              dependency: "GHSA-a-a-c",
               title: "title",
-              url: "https://github.com/advisories/GHSA-123",
+              url: "https://github.com/advisories/GHSA-a-a-c",
               severity: "moderate",
               range: ">2.1.1 <5.0.1",
             },
-          ],
-          effects: ["package3"],
+          ] as NPMAuditReportV2.Via[],
+          effects: ["GHSA-a-a-c"],
           range: ">2.1.1 <5.0.1",
-          nodes: ["node_modules/package1/node_modules/package3"],
-          fixAvailable: false,
+          nodes: ["node_modules/GHSA-a-a-a/node_modules/GHSA-a-a-c"],
+          fixAvailable: false as const,
         },
       },
     };
@@ -504,8 +541,8 @@ describe("Model", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-123"],
-        advisoryPathsFound: ["GHSA-123|package3>"],
+        advisoriesFound: ["GHSA-a-a-c"],
+        advisoryPathsFound: ["GHSA-a-a-c|GHSA-a-a-c>"],
       })
     );
   });

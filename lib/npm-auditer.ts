@@ -1,11 +1,19 @@
-import type { NPMAuditReportV1, NPMAuditReportV2 } from "audit-types";
+import type {
+  GitHubAdvisoryId,
+  NPMAuditReportV1,
+  NPMAuditReportV2,
+} from "audit-types";
 import { blue } from "./colors";
-import { reportAudit, runProgram } from "./common";
-import type { AuditCiConfig } from "./config";
-import Model from "./model";
+import { reportAudit, ReportConfig, runProgram } from "./common";
+import {
+  AuditCiConfig,
+  AuditCiFullConfig,
+  mapAuditCiConfigToAuditCiFullConfig,
+} from "./config";
+import Model, { Summary } from "./model";
 
 async function runNpmAudit(
-  config: AuditCiConfig
+  config: AuditCiFullConfig
 ): Promise<NPMAuditReportV1.AuditResponse | NPMAuditReportV2.AuditResponse> {
   const {
     directory,
@@ -56,11 +64,11 @@ export function isV2Audit(
 
 function printReport(
   parsedOutput: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit,
-  levels: AuditCiConfig["levels"],
+  levels: AuditCiFullConfig["levels"],
   reportType: "full" | "important" | "summary",
   outputFormat: "text" | "json"
 ) {
-  const printReportObject = (text, object) => {
+  const printReportObject = (text: string, object: unknown) => {
     if (outputFormat === "text") {
       console.log(blue, text);
     }
@@ -71,18 +79,40 @@ function printReport(
       printReportObject("NPM audit report JSON:", parsedOutput);
       break;
     case "important": {
-      const advisories = isV2Audit(parsedOutput)
-        ? parsedOutput.vulnerabilities
-        : parsedOutput.advisories;
+      const relevantAdvisories = (() => {
+        if (isV2Audit(parsedOutput)) {
+          const advisories = parsedOutput.vulnerabilities;
+          const relevantAdvisoryLevels = Object.keys(advisories).filter(
+            (advisory) => {
+              const severity = advisories[advisory].severity;
+              return severity !== "info" && levels[severity];
+            }
+          );
 
-      const relevantAdvisoryLevels = Object.keys(advisories).filter(
-        (advisory) => levels[advisories[advisory].severity]
-      );
+          const relevantAdvisories: Record<string, NPMAuditReportV2.Advisory> =
+            {};
+          for (const advisory of relevantAdvisoryLevels) {
+            relevantAdvisories[advisory] = advisories[advisory];
+          }
+          return relevantAdvisories;
+        } else {
+          const advisories = parsedOutput.advisories;
+          const advisoryKeys = Object.keys(advisories) as GitHubAdvisoryId[];
+          const relevantAdvisoryLevels = advisoryKeys.filter((advisory) => {
+            const severity = advisories[advisory].severity;
+            return severity !== "info" && levels[severity];
+          });
 
-      const relevantAdvisories = {};
-      for (const advisory of relevantAdvisoryLevels) {
-        relevantAdvisories[advisory] = advisories[advisory];
-      }
+          const relevantAdvisories: Record<
+            GitHubAdvisoryId,
+            NPMAuditReportV1.Advisory
+          > = {};
+          for (const advisory of relevantAdvisoryLevels) {
+            relevantAdvisories[advisory] = advisories[advisory];
+          }
+          return relevantAdvisories;
+        }
+      })();
 
       const keyFindings = {
         advisories: relevantAdvisories,
@@ -101,7 +131,15 @@ function printReport(
   }
 }
 
-export function report(parsedOutput, config: AuditCiConfig, reporter) {
+export function report(
+  parsedOutput: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit,
+  config: AuditCiFullConfig,
+  reporter: (
+    summary: Summary,
+    config: ReportConfig,
+    audit: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit
+  ) => Summary
+) {
   const {
     levels,
     "report-type": reportType,
@@ -118,7 +156,10 @@ export function report(parsedOutput, config: AuditCiConfig, reporter) {
  *
  * @returns Returns the audit report summary on resolve, `Error` on rejection.
  */
-export async function audit(config: AuditCiConfig, reporter = reportAudit) {
+export async function auditWithFullConfig(
+  config: AuditCiFullConfig,
+  reporter = reportAudit
+) {
   const parsedOutput = await runNpmAudit(config);
   if ("error" in parsedOutput) {
     const { code, summary } = parsedOutput.error;
@@ -127,4 +168,14 @@ export async function audit(config: AuditCiConfig, reporter = reportAudit) {
     throw new Error(parsedOutput.message);
   }
   return report(parsedOutput, config, reporter);
+}
+
+/**
+ * Audit your NPM project!
+ *
+ * @returns Returns the audit report summary on resolve, `Error` on rejection.
+ */
+export async function audit(config: AuditCiConfig, reporter = reportAudit) {
+  const fullConfig = mapAuditCiConfigToAuditCiFullConfig(config);
+  return await auditWithFullConfig(fullConfig, reporter);
 }

@@ -1,5 +1,6 @@
 import { yellow } from "./colors";
-import type { AuditCiConfig } from "./config";
+import { ReportConfig } from "./common";
+import type { AuditCiFullConfig } from "./config";
 import type { Summary } from "./model";
 import * as npmAuditer from "./npm-auditer";
 import * as pnpmAuditer from "./pnpm-auditer";
@@ -11,9 +12,11 @@ const PARTIAL_RETRY_ERROR_MSG = {
   // `Your configured registry (${opts.registry}) does not support audit requests.`
   // `Your configured registry (${opts.registry}) may not support audit requests, or the audit endpoint may be temporarily unavailable.`
   // Between them, all three use the phrasing 'not support audit'.
-  npm: `not support audit`,
-  yarn: "503 Service Unavailable",
-};
+  npm: [`not support audit`],
+  yarn: ["503 Service Unavailable"],
+  // TODO: Identify retry-able error message for pnpm
+  pnpm: [],
+} as const;
 
 function getAuditor(
   packageManager: "npm" | "yarn" | "pnpm"
@@ -31,8 +34,8 @@ function getAuditor(
 }
 
 async function audit(
-  config: AuditCiConfig,
-  reporter?: (summary: Summary, config: AuditCiConfig) => Summary
+  config: AuditCiFullConfig,
+  reporter?: (summary: Summary, config: ReportConfig) => Summary
 ) {
   const {
     "pass-enoaudit": passENoAudit,
@@ -42,15 +45,17 @@ async function audit(
   } = config;
   const auditor = getAuditor(packageManager);
 
-  async function run(attempt = 0) {
+  async function run(attempt = 0): Promise<Summary | undefined> {
     try {
-      const result = await auditor.audit(config, reporter);
+      const result = await auditor.auditWithFullConfig(config, reporter);
       return result;
     } catch (error: any) {
       const message = error.message || error;
       const isRetryableMessage =
         typeof message === "string" &&
-        message.includes(PARTIAL_RETRY_ERROR_MSG[packageManager]);
+        PARTIAL_RETRY_ERROR_MSG[packageManager].some((retryErrorMessage) =>
+          message.includes(retryErrorMessage)
+        );
       const shouldRetry = attempt < maxRetryCount && isRetryableMessage;
       if (shouldRetry) {
         if (outputFormat === "text") {

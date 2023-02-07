@@ -1,12 +1,11 @@
-// @ts-check
-const { expect } = require("chai");
-const {
-  matchString,
-  gitHubAdvisoryUrlToAdvisoryId,
+import { expect } from "chai";
+import {
+  deduplicate,
   gitHubAdvisoryIdToUrl,
+  gitHubAdvisoryUrlToAdvisoryId,
   isGitHubAdvisoryId,
-} = require("../dist/common");
-const { deduplicate } = require("../dist/common");
+  matchString,
+} from "../lib/common";
 
 describe("matchString", () => {
   it("works for various prefixes and suffixes of wildcards", () => {

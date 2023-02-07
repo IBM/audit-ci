@@ -1,6 +1,5 @@
 import type { GitHubAdvisoryId } from "audit-types";
 import { isGitHubAdvisoryId } from "./common";
-import type { AuditCiPreprocessedConfig } from "./config";
 import {
   type NSPContent,
   type NSPRecord,
@@ -107,7 +106,7 @@ class Allowlist {
   }
 
   static mapConfigToAllowlist(
-    config: Pick<AuditCiPreprocessedConfig, "allowlist">
+    config: Readonly<{ allowlist: AllowlistRecord[] }>
   ) {
     const { allowlist } = config;
     const deduplicatedAllowlist = dedupeAllowlistRecords(allowlist || []);

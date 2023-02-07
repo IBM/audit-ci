@@ -34,7 +34,11 @@ function mapExtraArgumentsInput(
   return config["extra-args"].map((a) => a.replace(/^\\/, ""));
 }
 
-export type AuditCiPreprocessedConfig = {
+/**
+ * The output of `Yargs`'s `parse` function.
+ * This is the type of the `argv` object.
+ */
+type AuditCiPreprocessedConfig = {
   /** Exit for low or above vulnerabilities */
   l: boolean;
   /** Exit for moderate or above vulnerabilities */
@@ -95,7 +99,21 @@ export type AuditCiPreprocessedConfig = {
 type ComplexConfig = Omit<
   AuditCiPreprocessedConfig,
   // Remove single-letter options from the base config to avoid confusion.
-  "allowlist" | "a" | "p" | "o" | "d" | "s" | "r" | "l" | "m" | "h" | "c"
+  | "allowlist"
+  | "a"
+  | "p"
+  | "o"
+  | "d"
+  | "s"
+  | "r"
+  | "l"
+  | "m"
+  | "h"
+  | "c"
+  | "low"
+  | "moderate"
+  | "high"
+  | "critical"
 > & {
   /** Package manager */
   "package-manager": "npm" | "yarn" | "pnpm";
@@ -103,15 +121,41 @@ type ComplexConfig = Omit<
   allowlist: Allowlist;
   /** The vulnerability levels to fail on, if `moderate` is set `true`, `high` and `critical` should be as well. */
   levels: { [K in keyof VulnerabilityLevels]: VulnerabilityLevels[K] };
-  /** A path to npm, uses npm from PATH if not specified (internal use only) */
+  /**
+   * A path to npm, uses npm from `$PATH` if not specified
+   * @internal
+   */
   _npm?: string;
-  /** A path to pnpm, uses pnpm from PATH if not specified (internal use only) */
+  /**
+   * A path to pnpm, uses pnpm from `$PATH` if not specified
+   * @internal
+   */
   _pnpm?: string;
-  /** A path to yarn, uses yarn from PATH if not specified (internal use only) */
+  /**
+   * A path to yarn, uses yarn from `$PATH` if not specified
+   * @internal
+   */
   _yarn?: string;
 };
 
-export type AuditCiConfig = { [K in keyof ComplexConfig]: ComplexConfig[K] };
+export type AuditCiFullConfig = {
+  [K in keyof ComplexConfig]: ComplexConfig[K];
+};
+
+type AuditCiConfigComplex = Omit<
+  Partial<AuditCiFullConfig>,
+  "levels" | "allowlist"
+> & {
+  allowlist?: AllowlistRecord[];
+  low?: boolean;
+  moderate?: boolean;
+  high?: boolean;
+  critical?: boolean;
+};
+
+export type AuditCiConfig = {
+  [K in keyof AuditCiConfigComplex]: AuditCiConfigComplex[K];
+};
 
 /**
  * @param pmArgument the package manager (including the `auto` option)
@@ -129,6 +173,7 @@ function resolvePackageManagerType(
       return pmArgument;
     case "auto": {
       const getPath = (file: string) => path.resolve(directory, file);
+      // TODO: Consider prioritizing `package.json#packageManager` for determining the package manager.
       const packageLockExists = existsSync(getPath("package-lock.json"));
       if (packageLockExists) return "npm";
       const shrinkwrapExists = existsSync(getPath("npm-shrinkwrap.json"));
@@ -145,6 +190,27 @@ function resolvePackageManagerType(
       throw new Error(`Unexpected package manager argument: ${pmArgument}`);
   }
 }
+
+const defaults = {
+  low: false,
+  moderate: false,
+  high: false,
+  critical: false,
+  "skip-dev": false,
+  "pass-enoaudit": false,
+  "retry-count": 5,
+  "report-type": "important" as const,
+  report: false,
+  directory: "./",
+  "package-manager": "auto" as const,
+  "show-not-found": true,
+  "show-found": true,
+  registry: undefined,
+  summary: false,
+  allowlist: [] as AllowlistRecord[],
+  "output-format": "text" as const,
+  "extra-args": [] as string[],
+};
 
 function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
   const allowlist = Allowlist.mapConfigToAllowlist(argv);
@@ -163,7 +229,7 @@ function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
     directory
   );
 
-  const result: AuditCiConfig = {
+  const result: AuditCiFullConfig = {
     ...argv,
     "package-manager": resolvedPackageManager,
     levels: mapVulnerabilityLevelInput({
@@ -179,7 +245,50 @@ function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
   return result;
 }
 
-export async function runYargs(): Promise<AuditCiConfig> {
+export function mapAuditCiConfigToAuditCiFullConfig(
+  config: AuditCiConfig
+): AuditCiFullConfig {
+  const packageManager =
+    config["package-manager"] ?? defaults["package-manager"];
+  const directory = config.directory ?? defaults.directory;
+
+  const resolvedPackageManager = resolvePackageManagerType(
+    packageManager,
+    directory
+  );
+
+  const allowlist = Allowlist.mapConfigToAllowlist({
+    allowlist: config.allowlist ?? defaults.allowlist,
+  });
+
+  const levels = mapVulnerabilityLevelInput({
+    low: config.low ?? defaults.low,
+    moderate: config.moderate ?? defaults.moderate,
+    high: config.high ?? defaults.high,
+    critical: config.critical ?? defaults.critical,
+  });
+
+  const fullConfig: AuditCiFullConfig = {
+    "skip-dev": config["skip-dev"] ?? defaults["skip-dev"],
+    "pass-enoaudit": config["pass-enoaudit"] ?? defaults["pass-enoaudit"],
+    "retry-count": config["retry-count"] ?? defaults["retry-count"],
+    "report-type": config["report-type"] ?? defaults["report-type"],
+    "package-manager": resolvedPackageManager,
+    directory,
+    report: config.report ?? defaults.report,
+    registry: config.registry ?? defaults.registry,
+    "show-not-found": config["show-not-found"] ?? defaults["show-not-found"],
+    "show-found": config["show-found"] ?? defaults["show-found"],
+    summary: config.summary ?? defaults.summary,
+    "output-format": config["output-format"] ?? defaults["output-format"],
+    allowlist,
+    levels,
+    "extra-args": config["extra-args"] ?? defaults["extra-args"],
+  };
+  return fullConfig;
+}
+
+export async function runYargs(): Promise<AuditCiFullConfig> {
   const { argv } = config("config", (configPath) =>
     // Supports JSON, JSONC, & JSON5
     parse(readFileSync(configPath, "utf8"), {
@@ -191,43 +300,43 @@ export async function runYargs(): Promise<AuditCiConfig> {
     .options({
       l: {
         alias: "low",
-        default: false,
+        default: defaults.low,
         describe: "Exit for low vulnerabilities or higher",
         type: "boolean",
       },
       m: {
         alias: "moderate",
-        default: false,
+        default: defaults.moderate,
         describe: "Exit for moderate vulnerabilities or higher",
         type: "boolean",
       },
       h: {
         alias: "high",
-        default: false,
+        default: defaults.high,
         describe: "Exit for high vulnerabilities or higher",
         type: "boolean",
       },
       c: {
         alias: "critical",
-        default: false,
+        default: defaults.critical,
         describe: "Exit for critical vulnerabilities",
         type: "boolean",
       },
       p: {
         alias: "package-manager",
-        default: "auto",
+        default: defaults["package-manager"],
         describe: "Choose a package manager",
         choices: ["auto", "npm", "yarn", "pnpm"],
       },
       r: {
         alias: "report",
-        default: false,
+        default: defaults.report,
         describe: "Show a full audit report",
         type: "boolean",
       },
       s: {
         alias: "summary",
-        default: false,
+        default: defaults.summary,
         describe: "Show a summary audit report",
         type: "boolean",
       },
@@ -251,40 +360,40 @@ export async function runYargs(): Promise<AuditCiConfig> {
         choices: ["text", "json"],
       },
       "show-found": {
-        default: true,
+        default: defaults["show-found"],
         describe: "Show allowlisted advisories that are found",
         type: "boolean",
       },
       "show-not-found": {
-        default: true,
+        default: defaults["show-not-found"],
         describe: "Show allowlisted advisories that are not found",
         type: "boolean",
       },
       registry: {
-        default: undefined,
+        default: defaults.registry,
         describe: "The registry to resolve packages by name and version",
         type: "string",
       },
       "report-type": {
-        default: "important",
+        default: defaults["report-type"],
         describe: "Format for the audit report results",
         type: "string",
         choices: ["important", "summary", "full"],
       },
       "retry-count": {
-        default: 5,
+        default: defaults["retry-count"],
         describe:
           "The number of attempts audit-ci calls an unavailable registry before failing",
         type: "number",
       },
       "pass-enoaudit": {
-        default: false,
+        default: defaults["pass-enoaudit"],
         describe:
           "Pass if no audit is performed due to the registry returning ENOAUDIT",
         type: "boolean",
       },
       "skip-dev": {
-        default: false,
+        default: defaults["skip-dev"],
         describe: "Skip devDependencies",
         type: "boolean",
       },

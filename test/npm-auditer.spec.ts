@@ -1,33 +1,47 @@
-// @ts-check
-const { expect } = require("chai");
-const { report } = require("../dist/pnpm-auditer");
-const { default: Allowlist } = require("../dist/allowlist");
-const {
+import { NPMAuditReportV1 } from "audit-types";
+import { expect } from "chai";
+import Allowlist from "../lib/allowlist";
+import { auditWithFullConfig, report } from "../lib/npm-auditer";
+import {
+  config as baseConfig,
   summaryWithDefault,
-  config: baseConfig,
   testDirectory,
-} = require("./common");
+} from "./common";
 
-const reportPnpmCritical = require("./pnpm-critical/pnpm-output.json");
-const reportPnpmHighSeverity = require("./pnpm-high/pnpm-output.json");
-const reportPnpmModerateSeverity = require("./pnpm-moderate/pnpm-output.json");
-const reportPnpmAllowlistedPath = require("./pnpm-allowlisted-path/pnpm-output.json");
-const reportPnpmLow = require("./pnpm-low/pnpm-output.json");
-const reportPnpmNone = require("./pnpm-none/pnpm-output.json");
-const reportPnpmSkipDevelopment = require("./pnpm-skip-dev/pnpm-output.json");
+import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm-output.json";
+import untypedReportNpmCritical from "./npm-critical/npm-output.json";
+import untypedReportNpmHighSeverity from "./npm-high/npm-output.json";
+import untypedReportNpmLow from "./npm-low/npm-output.json";
+import untypedReportNpmModerateSeverity from "./npm-moderate/npm-output.json";
+import untypedReportNpmNone from "./npm-none/npm-output.json";
+import untypedReportNpmSkipDevelopment from "./npm-skip-dev/npm-output.json";
 
-function config(additions) {
-  return baseConfig({ ...additions, "package-manager": "pnpm" });
+const reportNpmAllowlistedPath =
+  untypedReportNpmAllowlistedPath as NPMAuditReportV1.Audit;
+const reportNpmCritical = untypedReportNpmCritical as NPMAuditReportV1.Audit;
+const reportNpmHighSeverity =
+  untypedReportNpmHighSeverity as NPMAuditReportV1.Audit;
+const reportNpmLow = untypedReportNpmLow as NPMAuditReportV1.Audit;
+const reportNpmModerateSeverity =
+  untypedReportNpmModerateSeverity as NPMAuditReportV1.Audit;
+const reportNpmNone = untypedReportNpmNone as NPMAuditReportV1.Audit;
+const reportNpmSkipDevelopment =
+  untypedReportNpmSkipDevelopment as NPMAuditReportV1.Audit;
+
+function config(
+  additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">
+) {
+  return baseConfig({ ...additions, "package-manager": "npm" });
 }
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
-describe("pnpm-auditer", () => {
+describe("npm-auditer", () => {
   it("prints full report with critical severity", () => {
     const summary = report(
-      reportPnpmCritical,
+      reportNpmCritical,
       config({
-        directory: testDirectory("pnpm-critical"),
+        directory: testDirectory("npm-critical"),
         levels: { critical: true },
         "report-type": "full",
       }),
@@ -43,9 +57,9 @@ describe("pnpm-auditer", () => {
   });
   it("does not report critical severity if it set to false", () => {
     const summary = report(
-      reportPnpmCritical,
+      reportNpmCritical,
       config({
-        directory: testDirectory("pnpm-critical"),
+        directory: testDirectory("npm-critical"),
         levels: { critical: false },
       }),
       (_summary) => _summary
@@ -54,9 +68,9 @@ describe("pnpm-auditer", () => {
   });
   it("reports summary with high severity", () => {
     const summary = report(
-      reportPnpmHighSeverity,
+      reportNpmHighSeverity,
       config({
-        directory: testDirectory("pnpm-high"),
+        directory: testDirectory("npm-high"),
         levels: { high: true },
         "report-type": "summary",
       }),
@@ -72,9 +86,9 @@ describe("pnpm-auditer", () => {
   });
   it("reports important info with moderate severity", () => {
     const summary = report(
-      reportPnpmModerateSeverity,
+      reportNpmModerateSeverity,
       config({
-        directory: testDirectory("pnpm-moderate"),
+        directory: testDirectory("npm-moderate"),
         levels: { moderate: true },
         "report-type": "important",
       }),
@@ -90,9 +104,9 @@ describe("pnpm-auditer", () => {
   });
   it("does not report moderate severity if it set to false", () => {
     const summary = report(
-      reportPnpmModerateSeverity,
+      reportNpmModerateSeverity,
       config({
-        directory: testDirectory("pnpm-moderate"),
+        directory: testDirectory("npm-moderate"),
         levels: { moderate: false },
       }),
       (_summary) => _summary
@@ -101,9 +115,25 @@ describe("pnpm-auditer", () => {
   });
   it("ignores an advisory if it is allowlisted", () => {
     const summary = report(
-      reportPnpmModerateSeverity,
+      reportNpmModerateSeverity,
       config({
-        directory: testDirectory("pnpm-moderate"),
+        directory: testDirectory("npm-moderate"),
+        levels: { moderate: true },
+        allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
+      }),
+      (_summary) => _summary
+    );
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+      })
+    );
+  });
+  it("ignores an advisory if it is allowlisted", () => {
+    const summary = report(
+      reportNpmModerateSeverity,
+      config({
+        directory: testDirectory("npm-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
       }),
@@ -117,9 +147,9 @@ describe("pnpm-auditer", () => {
   });
   it("ignores an advisory if it is allowlisted using a NSPRecord", () => {
     const summary = report(
-      reportPnpmModerateSeverity,
+      reportNpmModerateSeverity,
       config({
-        directory: testDirectory("pnpm-moderate"),
+        directory: testDirectory("npm-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist([
           {
@@ -139,9 +169,9 @@ describe("pnpm-auditer", () => {
   });
   it("does not ignore an advisory that is not allowlisted", () => {
     const summary = report(
-      reportPnpmModerateSeverity,
+      reportNpmModerateSeverity,
       config({
-        directory: testDirectory("pnpm-moderate"),
+        directory: testDirectory("npm-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist(["GHSA-cff4-rrq6-h78w"]),
       }),
@@ -158,9 +188,9 @@ describe("pnpm-auditer", () => {
   });
   it("does not ignore an advisory that is not allowlisted using a NSPRecord", () => {
     const summary = report(
-      reportPnpmModerateSeverity,
+      reportNpmModerateSeverity,
       config({
-        directory: testDirectory("pnpm-moderate"),
+        directory: testDirectory("npm-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist([
           "GHSA-cff4-rrq6-h78w",
@@ -184,9 +214,9 @@ describe("pnpm-auditer", () => {
   });
   it("ignores an advisory that has not expired", () => {
     const summary = report(
-      reportPnpmModerateSeverity,
+      reportNpmModerateSeverity,
       config({
-        directory: testDirectory("pnpm-moderate"),
+        directory: testDirectory("npm-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist([
           {
@@ -207,9 +237,9 @@ describe("pnpm-auditer", () => {
   });
   it("does not ignore an advisory that has expired", () => {
     const summary = report(
-      reportPnpmModerateSeverity,
+      reportNpmModerateSeverity,
       config({
-        directory: testDirectory("pnpm-moderate"),
+        directory: testDirectory("npm-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist([
           "GHSA-cff4-rrq6-h78w",
@@ -234,13 +264,16 @@ describe("pnpm-auditer", () => {
   });
   it("reports only vulnerabilities with a not allowlisted path", () => {
     const summary = report(
-      reportPnpmAllowlistedPath,
+      reportNpmAllowlistedPath,
       config({
-        directory: testDirectory("pnpm-allowlisted-path"),
+        directory: testDirectory("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: new Allowlist([
           "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>*",
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "*|github-build>axios",
         ]),
       }),
       (_summary) => _summary
@@ -255,10 +288,15 @@ describe("pnpm-auditer", () => {
         failedLevelsFound: ["high"],
         allowlistedPathsFound: [
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
         ],
         advisoryPathsFound: [
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
           "GHSA-4w2v-q235-vp99|axios",
         ],
@@ -267,16 +305,21 @@ describe("pnpm-auditer", () => {
   });
   it("allowlist all vulnerabilities with an allowlisted path", () => {
     const summary = report(
-      reportPnpmAllowlistedPath,
+      reportNpmAllowlistedPath,
       config({
-        directory: testDirectory("pnpm-allowlisted-path"),
+        directory: testDirectory("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: new Allowlist([
           "GHSA-cph5-m8f7-6c5x|axios",
           "GHSA-4w2v-q235-vp99|axios",
           "GHSA-42xw-2xvc-qx8m|axios",
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
         ]),
       }),
       (_summary) => _summary
@@ -285,21 +328,26 @@ describe("pnpm-auditer", () => {
       summaryWithDefault({
         allowlistedPathsFound: [
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
           "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
         ],
       })
     );
   });
   it("allowlist all vulnerabilities matching a wildcard allowlist path", () => {
     const summary = report(
-      reportPnpmAllowlistedPath,
+      reportNpmAllowlistedPath,
       config({
-        directory: testDirectory("pnpm-allowlisted-path"),
+        directory: testDirectory("npm-allowlisted-path"),
         levels: { moderate: true },
-        allowlist: new Allowlist(["*|axios", "*|axios>*"]),
+        allowlist: new Allowlist(["*|axios", "*|github-build>*", "*|axios>*"]),
       }),
       (_summary) => _summary
     );
@@ -307,19 +355,24 @@ describe("pnpm-auditer", () => {
       summaryWithDefault({
         allowlistedPathsFound: [
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
           "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
         ],
       })
     );
   });
   it("reports low severity", () => {
     const summary = report(
-      reportPnpmLow,
+      reportNpmLow,
       config({
-        directory: testDirectory("pnpm-low"),
+        directory: testDirectory("npm-low"),
         levels: { low: true },
       }),
       (_summary) => _summary
@@ -334,20 +387,32 @@ describe("pnpm-auditer", () => {
   });
   it("passes with no vulnerabilities", () => {
     const summary = report(
-      reportPnpmNone,
+      reportNpmNone,
       config({
-        directory: testDirectory("pnpm-none"),
+        directory: testDirectory("npm-none"),
         levels: { low: true },
       }),
       (_summary) => _summary
     );
     expect(summary).to.eql(summaryWithDefault());
   });
+  it("fails with error code ENOTFOUND on a non-existent site", (done) => {
+    auditWithFullConfig(
+      config({
+        directory: testDirectory("npm-low"),
+        levels: { low: true },
+        registry: "https://registry.nonexistentdomain0000000000.com",
+      })
+    ).catch((error) => {
+      expect(error.message).to.include("ENOTFOUND");
+      done();
+    });
+  });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(
-      reportPnpmSkipDevelopment,
+      reportNpmSkipDevelopment,
       config({
-        directory: testDirectory("pnpm-skip-dev"),
+        directory: testDirectory("npm-skip-dev"),
         "skip-dev": true,
         "report-type": "important",
       }),
@@ -358,7 +423,7 @@ describe("pnpm-auditer", () => {
   // it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
   //   audit(
   //     config({
-  //       directory: testDirectory("pnpm-low"),
+  //       directory: testDirectory("npm-low"),
   //       levels: { low: true },
   //       registry: "https://example.com",
   //     })
@@ -368,12 +433,12 @@ describe("pnpm-auditer", () => {
   //   });
   // });
   // it("passes using --pass-enoaudit", () => {
-  //   const directory = testDirectory("pnpm-500");
+  //   const directory = testDirectory("npm-500");
   //   return audit(
   //     config({
   //       directory,
   //       "pass-enoaudit": true,
-  //       _pnpm: path.join(directory, "pnpm"),
+  //       _npm: path.join(directory, "npm"),
   //     })
   //   );
   // });

@@ -1,11 +1,7 @@
-// @ts-check
-const { expect } = require("chai");
-const semver = require("semver");
-const sinon = require("sinon");
-const {
-  auditCiVersion,
-  printAuditCiVersion,
-} = require("../dist/audit-ci-version");
+import { expect } from "chai";
+import semver from "semver";
+import sinon from "sinon";
+import { auditCiVersion, printAuditCiVersion } from "../lib/audit-ci-version";
 
 describe("audit-ci package", () => {
   it("gets the version of the audit-ci package", () => {

@@ -1,7 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/mocharc",
+  "require": "ts-node/register",
+  "extensions": [
+    "ts"
+  ],
   "timeout": 40000,
   "recursive": true,
   "reporter": "spec",
+  "spec": [
+    "test/*.spec.ts"
+  ],
   "exit": true
 }
