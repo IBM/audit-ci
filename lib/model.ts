@@ -151,7 +151,6 @@ class Model {
       | PartialPNPMAuditReportAudit
   ) {
     /** NPM 6 & PNPM */
-
     if ("advisories" in parsedOutput && parsedOutput.advisories) {
       for (const advisory of Object.values<
         DeepWriteable<
@@ -294,6 +293,13 @@ class Model {
       }
     }
 
+    // Clean up the data structures for more consistent output.
+    this.advisoriesFound.sort();
+    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)].sort();
+    this.allowlistedAdvisoriesFound.sort();
+    this.allowlistedModulesFound.sort();
+    this.allowlistedPathsFound.sort();
+
     return this.getSummary();
   }
 
@@ -312,22 +318,22 @@ class Model {
 
     const advisoriesFound = [
       ...new Set(this.advisoriesFound.map((a) => advisoryMapper(a))),
-    ];
+    ].sort();
 
-    const allowlistedAdvisoriesNotFound = this.allowlist.advisories.filter(
-      (id) => !this.allowlistedAdvisoriesFound.includes(id)
-    );
-    const allowlistedModulesNotFound = this.allowlist.modules.filter(
-      (id) => !this.allowlistedModulesFound.includes(id)
-    );
-    const allowlistedPathsNotFound = this.allowlist.paths.filter(
-      (id) =>
-        !this.allowlistedPathsFound.some((foundPath) =>
-          matchString(id, foundPath)
-        )
-    );
-
-    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)];
+    const allowlistedAdvisoriesNotFound = this.allowlist.advisories
+      .filter((id) => !this.allowlistedAdvisoriesFound.includes(id))
+      .sort();
+    const allowlistedModulesNotFound = this.allowlist.modules
+      .filter((id) => !this.allowlistedModulesFound.includes(id))
+      .sort();
+    const allowlistedPathsNotFound = this.allowlist.paths
+      .filter(
+        (id) =>
+          !this.allowlistedPathsFound.some((foundPath) =>
+            matchString(id, foundPath)
+          )
+      )
+      .sort();
 
     const summary: Summary = {
       advisoriesFound,
