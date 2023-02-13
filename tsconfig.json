@@ -9,6 +9,7 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "importHelpers": true,
     // Only needed for tests, disabled in build
     "resolveJsonModule": true
   },
