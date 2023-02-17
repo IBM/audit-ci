@@ -104,8 +104,8 @@ describe("yarn-auditer", function testYarnAuditer() {
         directory: testDirectory("yarn-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist([
-          "GHSA-rvg8-pwq2-xj7q",
           "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+          "GHSA-rvg8-pwq2-xj7q",
         ]),
       }),
       (_summary) => _summary
@@ -124,12 +124,12 @@ describe("yarn-auditer", function testYarnAuditer() {
         levels: { moderate: true },
         allowlist: new Allowlist([
           {
-            "GHSA-rvg8-pwq2-xj7q": {
+            "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik": {
               active: true,
             },
           },
           {
-            "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik": {
+            "GHSA-rvg8-pwq2-xj7q": {
               active: true,
             },
           },
@@ -157,10 +157,10 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-hm7f-rq7q-j9xp"],
+        advisoriesFound: ["GHSA-hm7f-rq7q-j9xp", "GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: [
-          "GHSA-rvg8-pwq2-xj7q|base64url",
           "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+          "GHSA-rvg8-pwq2-xj7q|base64url",
         ],
       })
     );
@@ -185,10 +185,10 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-hm7f-rq7q-j9xp"],
+        advisoriesFound: ["GHSA-hm7f-rq7q-j9xp", "GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: [
-          "GHSA-rvg8-pwq2-xj7q|base64url",
           "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+          "GHSA-rvg8-pwq2-xj7q|base64url",
         ],
       })
     );
@@ -249,10 +249,10 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-rvg8-pwq2-xj7q", "GHSA-hm7f-rq7q-j9xp"],
+        advisoriesFound: ["GHSA-hm7f-rq7q-j9xp", "GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: [
-          "GHSA-rvg8-pwq2-xj7q|base64url",
           "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+          "GHSA-rvg8-pwq2-xj7q|base64url",
         ],
       })
     );

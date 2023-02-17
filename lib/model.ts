@@ -151,7 +151,6 @@ class Model {
       | PartialPNPMAuditReportAudit
   ) {
     /** NPM 6 & PNPM */
-
     if ("advisories" in parsedOutput && parsedOutput.advisories) {
       for (const advisory of Object.values<
         DeepWriteable<
@@ -293,7 +292,6 @@ class Model {
         this.process(advisory);
       }
     }
-
     return this.getSummary();
   }
 
@@ -301,33 +299,39 @@ class Model {
     advisoryMapper: (advisory: any) => GitHubAdvisoryId = (a) =>
       a.github_advisory_id
   ) {
+    // Clean up the data structures for more consistent output.
+    this.advisoriesFound.sort();
+    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)].sort();
+    this.allowlistedAdvisoriesFound.sort();
+    this.allowlistedModulesFound.sort();
+    this.allowlistedPathsFound.sort();
+
     const foundSeverities = new Set<"low" | "moderate" | "high" | "critical">();
     for (const { severity } of this.advisoriesFound) {
       if (severity !== "info") {
         foundSeverities.add(severity);
       }
     }
-    const failedLevelsFound = [...foundSeverities];
-    failedLevelsFound.sort();
+    const failedLevelsFound = [...foundSeverities].sort();
 
     const advisoriesFound = [
       ...new Set(this.advisoriesFound.map((a) => advisoryMapper(a))),
-    ];
+    ].sort();
 
-    const allowlistedAdvisoriesNotFound = this.allowlist.advisories.filter(
-      (id) => !this.allowlistedAdvisoriesFound.includes(id)
-    );
-    const allowlistedModulesNotFound = this.allowlist.modules.filter(
-      (id) => !this.allowlistedModulesFound.includes(id)
-    );
-    const allowlistedPathsNotFound = this.allowlist.paths.filter(
-      (id) =>
-        !this.allowlistedPathsFound.some((foundPath) =>
-          matchString(id, foundPath)
-        )
-    );
-
-    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)];
+    const allowlistedAdvisoriesNotFound = this.allowlist.advisories
+      .filter((id) => !this.allowlistedAdvisoriesFound.includes(id))
+      .sort();
+    const allowlistedModulesNotFound = this.allowlist.modules
+      .filter((id) => !this.allowlistedModulesFound.includes(id))
+      .sort();
+    const allowlistedPathsNotFound = this.allowlist.paths
+      .filter(
+        (id) =>
+          !this.allowlistedPathsFound.some((foundPath) =>
+            matchString(id, foundPath)
+          )
+      )
+      .sort();
 
     const summary: Summary = {
       advisoriesFound,

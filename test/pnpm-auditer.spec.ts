@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import Allowlist from "../lib/allowlist";
-import { AuditCiFullConfig } from "../lib/config";
 import { report } from "../lib/pnpm-auditer";
 import {
   config as baseConfig,
@@ -250,19 +249,19 @@ describe("pnpm-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         advisoriesFound: [
+          "GHSA-4w2v-q235-vp99",
           "GHSA-74fj-2j2h-c42q",
           "GHSA-cph5-m8f7-6c5x",
-          "GHSA-4w2v-q235-vp99",
         ],
         failedLevelsFound: ["high"],
         allowlistedPathsFound: [
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
           "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
         ],
         advisoryPathsFound: [
+          "GHSA-4w2v-q235-vp99|axios",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
-          "GHSA-4w2v-q235-vp99|axios",
         ],
       })
     );
@@ -274,11 +273,11 @@ describe("pnpm-auditer", () => {
         directory: testDirectory("pnpm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: new Allowlist([
-          "GHSA-cph5-m8f7-6c5x|axios",
-          "GHSA-4w2v-q235-vp99|axios",
           "GHSA-42xw-2xvc-qx8m|axios",
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-4w2v-q235-vp99|axios",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
         ]),
       }),
       (_summary) => _summary
@@ -286,11 +285,11 @@ describe("pnpm-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedPathsFound: [
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-4w2v-q235-vp99|axios",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
-          "GHSA-4w2v-q235-vp99|axios",
-          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
         ],
       })
     );
@@ -308,11 +307,11 @@ describe("pnpm-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedPathsFound: [
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-4w2v-q235-vp99|axios",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
-          "GHSA-4w2v-q235-vp99|axios",
-          "GHSA-42xw-2xvc-qx8m|axios",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
         ],
       })
     );
