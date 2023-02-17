@@ -25,19 +25,19 @@ describe("Allowlist", () => {
   it("can map config to advisories Allowlist", () => {
     const { advisories, modules, paths } = Allowlist.mapConfigToAllowlist({
       allowlist: [
-        "GHSA-pw2r-vq6v-hr8c",
+        "GHSA-42xw-2xvc-qx8m",
+        "GHSA-4w2v-q235-vp99",
         "GHSA-74fj-2j2h-c42q",
         "GHSA-cph5-m8f7-6c5x",
-        "GHSA-4w2v-q235-vp99",
-        "GHSA-42xw-2xvc-qx8m",
+        "GHSA-pw2r-vq6v-hr8c",
       ],
     });
     expect(advisories).to.deep.equal([
-      "GHSA-pw2r-vq6v-hr8c",
+      "GHSA-42xw-2xvc-qx8m",
+      "GHSA-4w2v-q235-vp99",
       "GHSA-74fj-2j2h-c42q",
       "GHSA-cph5-m8f7-6c5x",
-      "GHSA-4w2v-q235-vp99",
-      "GHSA-42xw-2xvc-qx8m",
+      "GHSA-pw2r-vq6v-hr8c",
     ]);
     expect(modules).to.deep.equal([]);
     expect(paths).to.deep.equal([]);
@@ -46,21 +46,21 @@ describe("Allowlist", () => {
   it("can map config to paths Allowlist", () => {
     const { advisories, modules, paths } = Allowlist.mapConfigToAllowlist({
       allowlist: [
-        "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+        "GHSA-42xw-2xvc-qx8m|axios",
+        "GHSA-4w2v-q235-vp99|axios",
         "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
         "GHSA-cph5-m8f7-6c5x|axios",
-        "GHSA-4w2v-q235-vp99|axios",
-        "GHSA-42xw-2xvc-qx8m|axios",
+        "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
       ],
     });
     expect(advisories).to.deep.equal([]);
     expect(modules).to.deep.equal([]);
     expect(paths).to.deep.equal([
-      "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+      "GHSA-42xw-2xvc-qx8m|axios",
+      "GHSA-4w2v-q235-vp99|axios",
       "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
       "GHSA-cph5-m8f7-6c5x|axios",
-      "GHSA-4w2v-q235-vp99|axios",
-      "GHSA-42xw-2xvc-qx8m|axios",
+      "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
     ]);
   });
 

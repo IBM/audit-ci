@@ -252,11 +252,11 @@ describe("npm7-auditer", () => {
         directory: testDirectory("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: new Allowlist([
+          "*|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
           "GHSA-42xw-2xvc-qx8m|github-build>*",
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
           "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
-          "*|github-build>axios",
         ]),
       }),
       (_summary) => _summary
@@ -264,24 +264,24 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         advisoriesFound: [
-          "GHSA-cph5-m8f7-6c5x",
           "GHSA-4w2v-q235-vp99",
           "GHSA-74fj-2j2h-c42q",
+          "GHSA-cph5-m8f7-6c5x",
         ],
         failedLevelsFound: ["high"],
         allowlistedPathsFound: [
-          "GHSA-cph5-m8f7-6c5x|github-build>axios",
-          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
           "GHSA-42xw-2xvc-qx8m|github-build>axios",
-          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
         ],
         advisoryPathsFound: [
-          "GHSA-cph5-m8f7-6c5x|axios",
           "GHSA-4w2v-q235-vp99|axios",
-          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|axios",
         ],
       })
     );
@@ -293,16 +293,16 @@ describe("npm7-auditer", () => {
         directory: testDirectory("npm-allowlisted-path"),
         levels: { moderate: true },
         allowlist: new Allowlist([
-          "GHSA-cph5-m8f7-6c5x|axios",
-          "GHSA-4w2v-q235-vp99|axios",
           "GHSA-42xw-2xvc-qx8m|axios",
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
-          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
+          "GHSA-42xw-2xvc-qx8m|github-build>axios",
+          "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
           "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|axios",
           "GHSA-cph5-m8f7-6c5x|github-build>axios",
-          "GHSA-4w2v-q235-vp99|github-build>axios",
-          "GHSA-42xw-2xvc-qx8m|github-build>axios",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
         ]),
       }),
       (_summary) => _summary
@@ -310,16 +310,16 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedPathsFound: [
-          "GHSA-cph5-m8f7-6c5x|axios",
-          "GHSA-cph5-m8f7-6c5x|github-build>axios",
-          "GHSA-4w2v-q235-vp99|axios",
-          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
           "GHSA-42xw-2xvc-qx8m|github-build>axios",
-          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
-          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
         ],
       })
     );
@@ -337,16 +337,16 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedPathsFound: [
-          "GHSA-cph5-m8f7-6c5x|axios",
-          "GHSA-cph5-m8f7-6c5x|github-build>axios",
-          "GHSA-4w2v-q235-vp99|axios",
-          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-42xw-2xvc-qx8m|axios",
           "GHSA-42xw-2xvc-qx8m|github-build>axios",
-          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
-          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
-          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-4w2v-q235-vp99|axios",
+          "GHSA-4w2v-q235-vp99|github-build>axios",
           "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
+          "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
+          "GHSA-cph5-m8f7-6c5x|axios",
+          "GHSA-cph5-m8f7-6c5x|github-build>axios",
+          "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
+          "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
         ],
       })
     );

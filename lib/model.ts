@@ -292,14 +292,6 @@ class Model {
         this.process(advisory);
       }
     }
-
-    // Clean up the data structures for more consistent output.
-    this.advisoriesFound.sort();
-    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)].sort();
-    this.allowlistedAdvisoriesFound.sort();
-    this.allowlistedModulesFound.sort();
-    this.allowlistedPathsFound.sort();
-
     return this.getSummary();
   }
 
@@ -307,14 +299,20 @@ class Model {
     advisoryMapper: (advisory: any) => GitHubAdvisoryId = (a) =>
       a.github_advisory_id
   ) {
+    // Clean up the data structures for more consistent output.
+    this.advisoriesFound.sort();
+    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)].sort();
+    this.allowlistedAdvisoriesFound.sort();
+    this.allowlistedModulesFound.sort();
+    this.allowlistedPathsFound.sort();
+
     const foundSeverities = new Set<"low" | "moderate" | "high" | "critical">();
     for (const { severity } of this.advisoriesFound) {
       if (severity !== "info") {
         foundSeverities.add(severity);
       }
     }
-    const failedLevelsFound = [...foundSeverities];
-    failedLevelsFound.sort();
+    const failedLevelsFound = [...foundSeverities].sort();
 
     const advisoriesFound = [
       ...new Set(this.advisoriesFound.map((a) => advisoryMapper(a))),
