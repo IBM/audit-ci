@@ -39,6 +39,7 @@
     "README.md"
   ],
   "scripts": {
+    "tsc": "tsc -p tsconfig.build.json",
     "build": "concurrently \"tsc -p tsconfig.build.json --noEmit\" \"tsup lib/index.ts lib/bin.ts\"",
     "lint": "eslint . --ext .ts,.js,.cjs",
     "lint:fix": "eslint . --ext .ts,.js,.cjs --fix",
