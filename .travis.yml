@@ -20,7 +20,7 @@ cache: npm
 script:
   # Have audit-ci run audit-ci to audit itself :)
   # Temporary to properly test TypeScript PR
-  - npm run build
+  - npm run tsc
   - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then node dist/audit-ci.js --config ./audit-ci.jsonc; fi
   - npm run lint
   - npm run test

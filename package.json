@@ -3,8 +3,16 @@
   "version": "6.6.1",
   "description": "Audits NPM, Yarn, and PNPM projects in CI environments",
   "license": "Apache-2.0",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "homepage": "https://github.com/IBM/audit-ci",
   "bugs": "https://github.com/IBM/audit-ci/issues",
   "repository": {
@@ -26,11 +34,13 @@
   "bin": "./dist/bin.js",
   "files": [
     "dist/*.js",
+    "dist/*.js.map",
     "dist/*.d.ts",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "tsc": "tsc -p tsconfig.build.json",
+    "build": "concurrently \"tsc -p tsconfig.build.json --noEmit\" \"tsup lib/index.ts lib/bin.ts\"",
     "lint": "eslint . --ext .ts,.js,.cjs",
     "lint:fix": "eslint . --ext .ts,.js,.cjs --fix",
     "format": "prettier --write lib test",
@@ -68,6 +78,7 @@
     "audit-types": "^0.5.6",
     "c8": "^7.12.0",
     "chai": "^4.3.7",
+    "concurrently": "^7.6.0",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.27.5",
@@ -77,6 +88,7 @@
     "sinon": "^13.0.2",
     "ts-json-schema-generator": "^1.2.0",
     "ts-node": "^10.9.1",
+    "tsup": "^6.5.0",
     "typescript": "^4.9.4"
   }
 }
