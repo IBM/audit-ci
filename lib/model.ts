@@ -1,13 +1,13 @@
 import type { GitHubAdvisoryId, NPMAuditReportV2 } from "audit-types";
-import Allowlist from "./allowlist";
+import Allowlist from "./allowlist.js";
 import {
   gitHubAdvisoryUrlToAdvisoryId,
   matchString,
   partition,
-} from "./common";
-import type { AuditCiFullConfig } from "./config";
-import type { VulnerabilityLevels } from "./map-vulnerability";
-import type { DeepReadonly, DeepWriteable } from "./types";
+} from "./common.js";
+import type { AuditCiFullConfig } from "./config.js";
+import type { VulnerabilityLevels } from "./map-vulnerability.js";
+import type { DeepReadonly, DeepWriteable } from "./types.js";
 
 const SUPPORTED_SEVERITY_LEVELS = new Set([
   "critical",

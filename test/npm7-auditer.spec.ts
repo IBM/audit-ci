@@ -1,12 +1,12 @@
 import { NPMAuditReportV2 } from "audit-types";
 import { expect } from "chai";
-import Allowlist from "../lib/allowlist";
-import { auditWithFullConfig, report } from "../lib/npm-auditer";
+import Allowlist from "../lib/allowlist.js";
+import { auditWithFullConfig, report } from "../lib/npm-auditer.js";
 import {
   config as baseConfig,
   summaryWithDefault,
   testDirectory,
-} from "./common";
+} from "./common.js";
 
 import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm7-output.json";
 import untypedReportNpmCritical from "./npm-critical/npm7-output.json";

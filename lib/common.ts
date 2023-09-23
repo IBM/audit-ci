@@ -2,13 +2,13 @@ import { GitHubAdvisoryId } from "audit-types";
 import { SpawnOptionsWithoutStdio } from "child_process";
 import { spawn } from "cross-spawn";
 import escapeStringRegexp from "escape-string-regexp";
-import * as eventStream from "event-stream";
+import eventStream from "event-stream";
 import * as JSONStream from "JSONStream";
 import ReadlineTransform from "readline-transform";
-import Allowlist from "./allowlist";
-import { blue, yellow } from "./colors";
-import { AuditCiConfig } from "./config";
-import { Summary } from "./model";
+import Allowlist from "./allowlist.js";
+import { blue, yellow } from "./colors.js";
+import { AuditCiConfig } from "./config.js";
+import { Summary } from "./model.js";
 
 export function partition<T>(a: T[], fun: (parameter: T) => boolean) {
   const returnValue: { truthy: T[]; falsy: T[] } = { truthy: [], falsy: [] };
@@ -138,6 +138,8 @@ export function runProgram(
   stdoutListener: (data: any) => void,
   stderrListener: (data: any) => void
 ) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const transform = new ReadlineTransform({ skipEmpty: true });
   const proc = spawn(command, arguments_, options);
   let recentMessage: string;
@@ -145,7 +147,7 @@ export function runProgram(
   proc.stdout.setEncoding("utf8");
   proc.stdout
     .pipe(
-      transform.on("error", (error) => {
+      transform.on("error", (error: any) => {
         throw error;
       })
     )

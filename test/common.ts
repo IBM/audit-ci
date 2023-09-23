@@ -1,8 +1,8 @@
 import path from "path";
-import Allowlist from "../lib/allowlist";
-import { AuditCiFullConfig } from "../lib/config";
-import { mapVulnerabilityLevelInput } from "../lib/map-vulnerability";
-import { Summary } from "../lib/model";
+import Allowlist from "../lib/allowlist.js";
+import { AuditCiFullConfig } from "../lib/config.js";
+import { mapVulnerabilityLevelInput } from "../lib/map-vulnerability.js";
+import { Summary } from "../lib/model.js";
 
 export function summaryWithDefault(additions: Partial<Summary> = {}) {
   const summary = {

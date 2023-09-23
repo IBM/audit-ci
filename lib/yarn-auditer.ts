@@ -1,14 +1,14 @@
 import type { YarnAudit, YarnBerryAuditReport } from "audit-types";
 import { execSync } from "child_process";
 import * as semver from "semver";
-import { blue, red, yellow } from "./colors";
-import { reportAudit, runProgram } from "./common";
+import { blue, red, yellow } from "./colors.js";
+import { reportAudit, runProgram } from "./common.js";
 import {
   mapAuditCiConfigToAuditCiFullConfig,
   type AuditCiConfig,
   type AuditCiFullConfig,
-} from "./config";
-import Model, { type Summary } from "./model";
+} from "./config.js";
+import Model, { type Summary } from "./model.js";
 
 const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
 const MINIMUM_YARN_BERRY_VERSION = "2.4.0";

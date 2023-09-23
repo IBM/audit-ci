@@ -3,14 +3,14 @@ import type {
   NPMAuditReportV1,
   NPMAuditReportV2,
 } from "audit-types";
-import { blue } from "./colors";
-import { reportAudit, ReportConfig, runProgram } from "./common";
+import { blue } from "./colors.js";
+import { reportAudit, ReportConfig, runProgram } from "./common.js";
 import {
   AuditCiConfig,
   AuditCiFullConfig,
   mapAuditCiConfigToAuditCiFullConfig,
-} from "./config";
-import Model, { Summary } from "./model";
+} from "./config.js";
+import Model, { Summary } from "./model.js";
 
 async function runNpmAudit(
   config: AuditCiFullConfig

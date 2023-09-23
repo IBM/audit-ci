@@ -5,7 +5,7 @@ import {
   gitHubAdvisoryUrlToAdvisoryId,
   isGitHubAdvisoryId,
   matchString,
-} from "../lib/common";
+} from "../lib/common.js";
 
 describe("matchString", () => {
   it("works for various prefixes and suffixes of wildcards", () => {

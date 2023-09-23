@@ -1,6 +1,6 @@
-import audit from "./audit";
-import { green, red } from "./colors";
-import { runYargs } from "./config";
+import audit from "./audit.js";
+import { green, red } from "./colors.js";
+import { runYargs } from "./config.js";
 
 /**
  * Runs the audit-ci CLI.
