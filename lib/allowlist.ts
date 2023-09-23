@@ -1,12 +1,12 @@
 import type { GitHubAdvisoryId } from "audit-types";
-import { isGitHubAdvisoryId } from "./common";
+import { isGitHubAdvisoryId } from "./common.js";
 import {
   type NSPContent,
   type NSPRecord,
   type GitHubNSPRecord,
   getAllowlistId,
   isNSPRecordActive,
-} from "./nsp-record";
+} from "./nsp-record.js";
 
 export type AllowlistRecord = string | NSPRecord;
 

@@ -1,17 +1,17 @@
-export { default as Allowlist, AllowlistRecord } from "./allowlist";
-export { runAuditCi } from "./audit-ci";
+export { default as Allowlist, AllowlistRecord } from "./allowlist.js";
+export { runAuditCi } from "./audit-ci.js";
 export {
   gitHubAdvisoryIdToUrl,
   gitHubAdvisoryUrlToAdvisoryId,
   isGitHubAdvisoryId,
   type ReportConfig,
-} from "./common";
-export type { AuditCiConfig } from "./config";
+} from "./common.js";
+export type { AuditCiConfig } from "./config.js";
 export {
   mapVulnerabilityLevelInput,
   type VulnerabilityLevels,
-} from "./map-vulnerability";
-export type { Summary } from "./model";
-export { audit as npmAudit } from "./npm-auditer";
-export { audit as pnpmAudit } from "./pnpm-auditer";
-export { audit as yarnAudit } from "./yarn-auditer";
+} from "./map-vulnerability.js";
+export type { Summary } from "./model.js";
+export { audit as npmAudit } from "./npm-auditer.js";
+export { audit as pnpmAudit } from "./pnpm-auditer.js";
+export { audit as yarnAudit } from "./yarn-auditer.js";

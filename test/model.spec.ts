@@ -1,8 +1,8 @@
 import { NPMAuditReportV2 } from "audit-types";
 import { expect } from "chai";
-import Allowlist from "../lib/allowlist";
-import Model from "../lib/model";
-import { summaryWithDefault } from "./common";
+import Allowlist from "../lib/allowlist.js";
+import Model from "../lib/model.js";
+import { summaryWithDefault } from "./common.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Intentionally any to pass bad values
 function config(additions: any) {

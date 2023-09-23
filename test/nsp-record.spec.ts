@@ -3,7 +3,7 @@ import {
   getAllowlistId,
   getNSPContent,
   isNSPRecordActive,
-} from "../lib/nsp-record";
+} from "../lib/nsp-record.js";
 
 describe("getAllowlistId", () => {
   it("should get the allowlist id", () => {

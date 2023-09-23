@@ -1,10 +1,10 @@
-import { yellow } from "./colors";
-import { ReportConfig } from "./common";
-import type { AuditCiFullConfig } from "./config";
-import type { Summary } from "./model";
-import * as npmAuditer from "./npm-auditer";
-import * as pnpmAuditer from "./pnpm-auditer";
-import * as yarnAuditer from "./yarn-auditer";
+import { yellow } from "./colors.js";
+import { ReportConfig } from "./common.js";
+import type { AuditCiFullConfig } from "./config.js";
+import type { Summary } from "./model.js";
+import * as npmAuditer from "./npm-auditer.js";
+import * as pnpmAuditer from "./pnpm-auditer.js";
+import * as yarnAuditer from "./yarn-auditer.js";
 
 const PARTIAL_RETRY_ERROR_MSG = {
   // The three ENOAUDIT error messages for NPM are:

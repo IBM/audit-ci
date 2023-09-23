@@ -2,13 +2,13 @@ import { ok } from "assert";
 import { expect } from "chai";
 import childProcess from "child_process";
 import semver from "semver";
-import Allowlist from "../lib/allowlist";
-import audit from "../lib/audit";
+import Allowlist from "../lib/allowlist.js";
+import audit from "../lib/audit.js";
 import {
   config as baseConfig,
   summaryWithDefault,
   testDirectory,
-} from "./common";
+} from "./common.js";
 
 function config(
   additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">

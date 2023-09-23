@@ -3,7 +3,7 @@ import {
   default as Allowlist,
   normalizeAllowlistRecord,
   dedupeAllowlistRecords,
-} from "../lib/allowlist";
+} from "../lib/allowlist.js";
 
 describe("Allowlist", () => {
   it("can map config to empty Allowlist", () => {

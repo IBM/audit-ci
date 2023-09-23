@@ -1,14 +1,14 @@
 import type { GitHubAdvisoryId, PNPMAuditReport } from "audit-types";
-import { blue, yellow } from "./colors";
-import { reportAudit, ReportConfig, runProgram } from "./common";
+import { execSync } from "child_process";
+import * as semver from "semver";
+import { blue, yellow } from "./colors.js";
+import { ReportConfig, reportAudit, runProgram } from "./common.js";
 import {
   AuditCiConfig,
   AuditCiFullConfig,
   mapAuditCiConfigToAuditCiFullConfig,
-} from "./config";
-import Model, { type Summary } from "./model";
-import * as semver from "semver";
-import { execSync } from "child_process";
+} from "./config.js";
+import Model, { type Summary } from "./model.js";
 
 const MINIMUM_PNPM_AUDIT_REGISTRY_VERSION = "5.4.0";
 
