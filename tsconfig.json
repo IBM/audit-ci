@@ -3,7 +3,16 @@
   "compilerOptions": {
     "types": ["bun-types", "./types/JSONStream/index.d.ts"],
     "allowJs": true,
+
+    // enable latest features
+    "lib": ["esnext"],
+    "module": "esnext",
+    "target": "esnext",
+
+    "moduleResolution": "bundler",
     "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force",
     "importHelpers": true,
     // Only needed for tests, disabled in build
     "resolveJsonModule": true
