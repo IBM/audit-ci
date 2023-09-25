@@ -293,9 +293,7 @@ export function mapAuditCiConfigToAuditCiFullConfig(
 }
 
 export async function runYargs(): Promise<AuditCiFullConfig> {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const { argv } = yargs("config", (configPath) =>
+  const { argv } = yargs().config("config", (configPath) =>
       // Supports JSON, JSONC, & JSON5
       jju.parse(readFileSync(configPath, "utf8"), {
         // When passing an allowlist using NSRecord syntax, yargs will throw an error
