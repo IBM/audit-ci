@@ -14,7 +14,7 @@ threshold while ignoring allowlisted advisories.
 
 ## Requirements
 
-- Node >=12.9.0 (Yarn Berry requires Node >=12.13.0)
+- Node >=16
 - _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
 - _(Optional)_ PNPM >=4.3.0
 
@@ -28,9 +28,9 @@ _(Recommended)_ Install `audit-ci` during your CI environment using `npx`, `yarn
 
 ```sh
 # Use the option for your project's package manager, pinning to a major version to avoid breaking changes
-npx audit-ci@^6 --config ./audit-ci.jsonc
-yarn dlx audit-ci@^6 --config ./audit-ci.jsonc
-pnpm dlx audit-ci@^6 --config ./audit-ci.jsonc
+npx audit-ci@^7 --config ./audit-ci.jsonc
+yarn dlx audit-ci@^7 --config ./audit-ci.jsonc
+pnpm dlx audit-ci@^7 --config ./audit-ci.jsonc
 ```
 
 Alternatively, `audit-ci` can be installed as a devDependency.
@@ -197,7 +197,7 @@ You can also use an object notation ([NSPRecord](#nsprecord-fields)) in which yo
 steps:
   - uses: actions/checkout@v2
   - name: Audit for vulnerabilities
-    run: npx audit-ci@^6 --config ./audit-ci.jsonc
+    run: npx audit-ci@^7 --config ./audit-ci.jsonc
 ```
 
 _(Recommended)_ Run `audit-ci` immediately after checking out the git repository to reduce the risk of executing a `postinstall` script from a compromised NPM package.
@@ -223,7 +223,7 @@ steps:
   # command: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then npx audit-ci --config ./audit-ci.jsonc ; fi
   - run:
       name: run-audit-ci
-      command: npx audit-ci@^6 --config ./audit-ci.jsonc
+      command: npx audit-ci@^7 --config ./audit-ci.jsonc
   - run:
       name: install-npm
       command: "npm install --no-audit"
@@ -237,14 +237,14 @@ Auditing only on PR builds is [recommended](#qa)
 scripts:
   # This script should be the first that runs to reduce the risk of
   # executing a script from a compromised NPM package.
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npx audit-ci@^6 --config ./audit-ci.jsonc; fi
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npx audit-ci@^7 --config ./audit-ci.jsonc; fi
 ```
 
 For `Travis-CI` not using PR builds:
 
 ```yml
 scripts:
-  - npx audit-ci@^6 --config ./audit-ci.jsonc
+  - npx audit-ci@^7 --config ./audit-ci.jsonc
 ```
 
 ## Options
@@ -349,7 +349,7 @@ With a `JSON5` config file:
 Or, with the CLI with `yarn dlx`:
 
 ```sh
-yarn dlx audit-ci@^6 -l -a "GHSA-38f5-ghc2-fcmv" lodash base64url --show-found false
+yarn dlx audit-ci@^7 -l -a "GHSA-38f5-ghc2-fcmv" lodash base64url --show-found false
 ```
 
 ### Prevents build with critical vulnerabilities showing the full report
@@ -367,7 +367,7 @@ With a `JSONC` config file:
 Or, with the CLI with `pnpm dlx`:
 
 ```sh
-pnpm dlx audit-ci@^6 --critical --report-type full
+pnpm dlx audit-ci@^7 --critical --report-type full
 ```
 
 ### Continues build regardless of vulnerabilities, but show the summary report
@@ -384,7 +384,7 @@ With a `JSONC` config file:
 Or, with the CLI:
 
 ```sh
-npx audit-ci@^6 --report-type summary
+npx audit-ci@^7 --report-type summary
 ```
 
 ### Pass additional args to Yarn Berry to exclude a certain package from audit
@@ -401,7 +401,7 @@ With a `JSONC` config file, in a project on Yarn Berry v3.3.0 or later:
 Or, with the CLI:
 
 ```sh
-npx audit-ci@^6 --extra-args '\--exclude' example
+npx audit-ci@^7 --extra-args '\--exclude' example
 ```
 
 ### Example config file and different directory usage
@@ -428,7 +428,7 @@ npx audit-ci@^6 --extra-args '\--exclude' example
 ```
 
 ```sh
-npx audit-ci@^6 --directory test/npm-config-file --config test/npm-config-file/audit-ci.jsonc
+npx audit-ci@^7 --directory test/npm-config-file --config test/npm-config-file/audit-ci.jsonc
 ```
 
 #### test/pnpm-config-file/audit-ci.json5
@@ -449,7 +449,7 @@ npx audit-ci@^6 --directory test/npm-config-file --config test/npm-config-file/a
 ```
 
 ```sh
-npx audit-ci@^6 --directory test/pnpm-config-file --config test/pnpm-config-file/audit-ci.json5
+npx audit-ci@^7 --directory test/pnpm-config-file --config test/pnpm-config-file/audit-ci.json5
 ```
 
 ## Codemod
