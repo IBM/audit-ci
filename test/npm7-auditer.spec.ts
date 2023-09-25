@@ -1,5 +1,5 @@
 import { NPMAuditReportV2 } from "audit-types";
-import { expect } from "chai";
+import { describe, expect, it } from "bun:test";
 import Allowlist from "../lib/allowlist.js";
 import { auditWithFullConfig, report } from "../lib/npm-auditer.js";
 import {
@@ -46,7 +46,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
@@ -63,7 +63,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("reports summary with high severity", () => {
     const summary = report(
@@ -75,7 +75,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["high"],
         advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
@@ -93,7 +93,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
@@ -110,7 +110,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("ignores an advisory if it is allowlisted", () => {
     const summary = report(
@@ -122,7 +122,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       }),
@@ -144,7 +144,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       }),
@@ -160,7 +160,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -186,7 +186,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -212,7 +212,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       }),
@@ -236,7 +236,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -261,7 +261,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         advisoriesFound: [
           "GHSA-4w2v-q235-vp99",
@@ -307,7 +307,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedPathsFound: [
           "GHSA-42xw-2xvc-qx8m|axios",
@@ -334,7 +334,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedPathsFound: [
           "GHSA-42xw-2xvc-qx8m|axios",
@@ -360,7 +360,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["low"],
         advisoriesFound: ["GHSA-c6rq-rjc2-86v2"],
@@ -377,7 +377,7 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("fails with error code ENOTFOUND on a non-existent site", (done) => {
     auditWithFullConfig(
@@ -387,7 +387,7 @@ describe("npm7-auditer", () => {
         registry: "https://registry.nonexistentdomain0000000000.com",
       }),
     ).catch((error) => {
-      expect(error.message).to.include("ENOTFOUND");
+      expect(error.message).toInclude("ENOTFOUND");
       done();
     });
   });
@@ -400,7 +400,7 @@ describe("npm7-auditer", () => {
       }),
     )
       .catch((error) => {
-        expect(error.message).to.include("ECONNREFUSED");
+        expect(error.message).toInclude("ECONNREFUSED");
         done();
       })
       .catch((error) => done(error));
@@ -415,6 +415,6 @@ describe("npm7-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
 });

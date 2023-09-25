@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { describe, expect, it } from "bun:test";
 import Allowlist from "../lib/allowlist.js";
 import { report } from "../lib/pnpm-auditer.js";
 import {
@@ -34,7 +34,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
@@ -51,7 +51,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("reports summary with high severity", () => {
     const summary = report(
@@ -63,7 +63,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["high"],
         advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
@@ -81,7 +81,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
@@ -98,7 +98,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("ignores an advisory if it is allowlisted", () => {
     const summary = report(
@@ -110,7 +110,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       }),
@@ -132,7 +132,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       }),
@@ -148,7 +148,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -174,7 +174,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -200,7 +200,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
       }),
@@ -224,7 +224,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -246,7 +246,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         advisoriesFound: [
           "GHSA-4w2v-q235-vp99",
@@ -282,7 +282,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedPathsFound: [
           "GHSA-42xw-2xvc-qx8m|axios",
@@ -304,7 +304,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedPathsFound: [
           "GHSA-42xw-2xvc-qx8m|axios",
@@ -325,7 +325,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["low"],
         advisoriesFound: ["GHSA-c6rq-rjc2-86v2"],
@@ -342,7 +342,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(
@@ -354,7 +354,7 @@ describe("pnpm-auditer", () => {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   // it("fails errors with code ENOAUDIT on a valid site with no audit", (done) => {
   //   audit(

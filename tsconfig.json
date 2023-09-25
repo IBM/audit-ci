@@ -1,7 +1,7 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "typeRoots": ["node_modules/@types", "types"],
+    "types": ["bun-types", "./types/JSONStream/index.d.ts"],
     "allowJs": true,
     "noEmit": true,
     "importHelpers": true,

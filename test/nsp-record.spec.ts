@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect, describe, it } from "bun:test";
 import {
   getAllowlistId,
   getNSPContent,
@@ -12,7 +12,7 @@ describe("getAllowlistId", () => {
         active: true,
       },
     });
-    expect(id).to.eql("myid");
+    expect(id).toEqual("myid");
   });
 });
 
@@ -25,7 +25,7 @@ describe("getNSPContent", () => {
       },
     });
 
-    expect(content).to.eql({
+    expect(content).toEqual({
       active: true,
       notes: "my notes",
     });
@@ -42,7 +42,7 @@ describe("isNSPRecordActive", () => {
       },
     });
 
-    expect(active).to.eql(true);
+    expect(active).toEqual(true);
   });
 
   it("should not be active if active=false and there is no expiry", () => {
@@ -52,7 +52,7 @@ describe("isNSPRecordActive", () => {
       },
     });
 
-    expect(active).to.eql(false);
+    expect(active).toEqual(false);
   });
 
   it("should be active if expiry is in the future", () => {
@@ -66,7 +66,7 @@ describe("isNSPRecordActive", () => {
       now,
     );
 
-    expect(active).to.eql(true);
+    expect(active).toEqual(true);
   });
 
   it("should not be active if expiry is in the past", () => {
@@ -80,7 +80,7 @@ describe("isNSPRecordActive", () => {
       now,
     );
 
-    expect(active).to.eql(false);
+    expect(active).toEqual(false);
   });
 
   it("should not be active if expiry date is invalid", () => {
@@ -94,7 +94,7 @@ describe("isNSPRecordActive", () => {
       now,
     );
 
-    expect(active).to.eql(false);
+    expect(active).toEqual(false);
   });
 
   it("should test some different date formats", () => {
@@ -134,7 +134,7 @@ describe("isNSPRecordActive", () => {
           },
           now,
         ),
-      ).to.eql(true);
+      ).toEqual(true);
     }
 
     for (const expiry of expiredDates) {
@@ -148,7 +148,7 @@ describe("isNSPRecordActive", () => {
           },
           now,
         ),
-      ).to.eql(false);
+      ).toEqual(false);
     }
   });
 });

@@ -160,8 +160,6 @@ export function runProgram(
       }),
     )
     .pipe(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore -- JSONStream.parse() accepts (pattern: any) when it should accept (pattern?: any)
       JSONStream.parse().on("error", () => {
         errorMessage = recentMessage;
         throw new Error(errorMessage);

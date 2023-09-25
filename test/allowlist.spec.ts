@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { describe, expect, it } from "bun:test";
 import {
   default as Allowlist,
   normalizeAllowlistRecord,
@@ -10,17 +10,17 @@ describe("Allowlist", () => {
     const { advisories, modules, paths } = Allowlist.mapConfigToAllowlist({
       allowlist: [],
     });
-    expect(advisories).to.deep.equal([]);
-    expect(modules).to.deep.equal([]);
-    expect(paths).to.deep.equal([]);
+    expect(advisories).toEqual([]);
+    expect(modules).toEqual([]);
+    expect(paths).toEqual([]);
   });
   it("can map config to modules Allowlist", () => {
     const { advisories, modules, paths } = Allowlist.mapConfigToAllowlist({
       allowlist: ["axios", "mocha"],
     });
-    expect(advisories).to.deep.equal([]);
-    expect(modules).to.deep.equal(["axios", "mocha"]);
-    expect(paths).to.deep.equal([]);
+    expect(advisories).toEqual([]);
+    expect(modules).toEqual(["axios", "mocha"]);
+    expect(paths).toEqual([]);
   });
   it("can map config to advisories Allowlist", () => {
     const { advisories, modules, paths } = Allowlist.mapConfigToAllowlist({
@@ -32,15 +32,15 @@ describe("Allowlist", () => {
         "GHSA-pw2r-vq6v-hr8c",
       ],
     });
-    expect(advisories).to.deep.equal([
+    expect(advisories).toEqual([
       "GHSA-42xw-2xvc-qx8m",
       "GHSA-4w2v-q235-vp99",
       "GHSA-74fj-2j2h-c42q",
       "GHSA-cph5-m8f7-6c5x",
       "GHSA-pw2r-vq6v-hr8c",
     ]);
-    expect(modules).to.deep.equal([]);
-    expect(paths).to.deep.equal([]);
+    expect(modules).toEqual([]);
+    expect(paths).toEqual([]);
   });
 
   it("can map config to paths Allowlist", () => {
@@ -53,9 +53,9 @@ describe("Allowlist", () => {
         "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
       ],
     });
-    expect(advisories).to.deep.equal([]);
-    expect(modules).to.deep.equal([]);
-    expect(paths).to.deep.equal([
+    expect(advisories).toEqual([]);
+    expect(modules).toEqual([]);
+    expect(paths).toEqual([
       "GHSA-42xw-2xvc-qx8m|axios",
       "GHSA-4w2v-q235-vp99|axios",
       "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
@@ -71,16 +71,16 @@ describe("Allowlist", () => {
         "GHSA-74fj-2j2h-c42q|axios>follow-redirects",
       ],
     });
-    expect(advisories).to.deep.equal([]);
-    expect(modules).to.deep.equal([]);
-    expect(paths).to.deep.equal(["GHSA-74fj-2j2h-c42q|axios>follow-redirects"]);
+    expect(advisories).toEqual([]);
+    expect(modules).toEqual([]);
+    expect(paths).toEqual(["GHSA-74fj-2j2h-c42q|axios>follow-redirects"]);
   });
 });
 
 describe("normalizeAllowlistRecord", () => {
   it("should normalize a string allowlist id into a NSPRecord", () => {
     const record = normalizeAllowlistRecord("myid");
-    expect(record).to.eql({
+    expect(record).toEqual({
       myid: {
         active: true,
         expiry: undefined,
@@ -97,7 +97,7 @@ describe("normalizeAllowlistRecord", () => {
         notes: undefined,
       },
     });
-    expect(record).to.eql({
+    expect(record).toEqual({
       myid: {
         active: true,
         expiry: undefined,
@@ -110,7 +110,7 @@ describe("normalizeAllowlistRecord", () => {
 describe("dedupeAllowlistRecords", () => {
   it("should dedupe string allowlist ids", () => {
     const records = dedupeAllowlistRecords(["abc", "abc", "xyz"]);
-    expect(records.length).to.eql(2);
+    expect(records.length).toEqual(2);
   });
 
   it("should dedupe NSPRecord objects", () => {
@@ -132,7 +132,7 @@ describe("dedupeAllowlistRecords", () => {
       },
     ]);
 
-    expect(records.length).to.eql(2);
+    expect(records.length).toEqual(2);
   });
 
   it("should dedupe mixed NSPRecord objects and string allowlist ids", () => {
@@ -150,7 +150,7 @@ describe("dedupeAllowlistRecords", () => {
       },
     ]);
 
-    expect(records.length).to.eql(2);
+    expect(records.length).toEqual(2);
   });
 
   it("should keep the first duped entry when deduping", () => {
@@ -169,7 +169,7 @@ describe("dedupeAllowlistRecords", () => {
       },
     ]);
 
-    expect(records).to.eql([
+    expect(records).toEqual([
       {
         abc: {
           active: true,
@@ -190,7 +190,7 @@ describe("dedupeAllowlistRecords", () => {
       },
     ]);
 
-    expect(records).to.eql([
+    expect(records).toEqual([
       {
         abc: {
           active: true,

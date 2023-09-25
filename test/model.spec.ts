@@ -1,5 +1,5 @@
 import { NPMAuditReportV2 } from "audit-types";
-import { expect } from "chai";
+import { describe, expect, it } from "bun:test";
 import Allowlist from "../lib/allowlist.js";
 import Model from "../lib/model.js";
 import { summaryWithDefault } from "./common.js";
@@ -23,19 +23,19 @@ describe("Model", () => {
             critical: true,
           },
         }),
-    ).to.throw(
+    ).toThrow(
       "Unsupported number as allowlist. Perform codemod to update config to use GitHub advisory as identifiers: https://github.com/quinnturner/audit-ci-codemod with `npx @quinnturner/audit-ci-codemod`. See also: https://github.com/IBM/audit-ci/pull/217",
     );
   });
 
   it("rejects misspelled severity levels", () => {
-    expect(() => new Model(config({ levels: { critical_: true } }))).to.throw(
+    expect(() => new Model(config({ levels: { critical_: true } }))).toThrow(
       "Unsupported severity levels found: critical_",
     );
     expect(
       () =>
         new Model(config({ levels: { Low: true, hgih: true, mdrate: true } })),
-    ).to.throw("Unsupported severity levels found: Low, hgih, mdrate");
+    ).toThrow("Unsupported severity levels found: Low, hgih, mdrate");
     expect(
       () =>
         new Model(
@@ -43,7 +43,7 @@ describe("Model", () => {
             levels: { mdrate: true, critical: true, hgih: true, low: true },
           }),
         ),
-    ).to.throw("Unsupported severity levels found: hgih, mdrate");
+    ).toThrow("Unsupported severity levels found: hgih, mdrate");
   });
 
   it("returns an empty summary for an empty audit output", () => {
@@ -57,7 +57,7 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
 
   it("compute a summary", () => {
@@ -80,7 +80,7 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
@@ -157,7 +157,7 @@ describe("Model", () => {
     } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["critical", "low"],
         advisoriesFound: [
@@ -246,7 +246,7 @@ describe("Model", () => {
     } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedModulesFound: ["M_A", "M_D"],
         failedLevelsFound: ["critical", "low", "moderate"],
@@ -344,7 +344,7 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-a-a-b", "GHSA-a-a-c", "GHSA-a-a-f"],
         failedLevelsFound: ["critical", "high", "low"],
@@ -400,7 +400,7 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["critical", "low"],
         advisoriesFound: ["GHSA-a-a-a", "GHSA-a-a-b"],
@@ -469,7 +469,7 @@ describe("Model", () => {
     } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-a-a-c"],
@@ -538,7 +538,7 @@ describe("Model", () => {
     };
 
     const summary = model.load(parsedAuditOutput);
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-a-a-c"],

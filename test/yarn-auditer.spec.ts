@@ -1,5 +1,5 @@
 import { ok } from "assert";
-import { expect } from "chai";
+import { describe, expect, it } from "bun:test";
 import childProcess from "child_process";
 import semver from "semver";
 import Allowlist from "../lib/allowlist.js";
@@ -24,7 +24,6 @@ const canRunYarnBerry = semver.gte(
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
 describe("yarn-auditer", function testYarnAuditer() {
-  this.slow(3000);
   it("prints full report with critical severity", async () => {
     const summary = await audit(
       config({
@@ -34,7 +33,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
@@ -50,7 +49,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("reports summary with high severity", async () => {
     const summary = await audit(
@@ -61,7 +60,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["high"],
         advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
@@ -79,7 +78,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         allowlistedAdvisoriesFound: ["GHSA-hm7f-rq7q-j9xp"],
@@ -96,7 +95,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("ignores an advisory if it is allowlisted", async () => {
     const summary = await audit(
@@ -110,7 +109,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
@@ -137,7 +136,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
@@ -153,7 +152,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -181,7 +180,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -215,7 +214,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
@@ -245,7 +244,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
@@ -265,7 +264,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["low"],
         advisoriesFound: ["GHSA-c6rq-rjc2-86v2"],
@@ -281,7 +280,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("doesn't use the registry flag since it's not supported in Yarn yet", () =>
     audit(
@@ -303,7 +302,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         }),
         (_summary) => _summary,
       );
-      expect(summary).to.eql(
+      expect(summary).toEqual(
         summaryWithDefault({
           failedLevelsFound: ["moderate"],
           advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
@@ -322,7 +321,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         }),
         (_summary) => _summary,
       );
-      expect(summary).to.eql(summaryWithDefault());
+      expect(summary).toEqual(summaryWithDefault());
     },
   );
   (canRunYarnBerry ? it : it.skip)(
@@ -336,7 +335,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         }),
         (_summary) => _summary,
       );
-      expect(summary).to.eql(
+      expect(summary).toEqual(
         summaryWithDefault({
           allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         }),
@@ -360,7 +359,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         }),
         (_summary) => _summary,
       );
-      expect(summary).to.eql(
+      expect(summary).toEqual(
         summaryWithDefault({
           allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         }),
@@ -378,7 +377,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("reports summary with no vulnerabilities in yarn v1 workspace", async () => {
     const summary = await audit(
@@ -389,7 +388,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(summaryWithDefault());
+    expect(summary).toEqual(summaryWithDefault());
   });
   it("reports summary with vulnerabilities in yarn v1 workspaces", async () => {
     // TODO: There's a bug with yarn classic workspaces and failing to audit
@@ -405,7 +404,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       }),
       (_summary) => _summary,
     );
-    expect(summary).to.eql(
+    expect(summary).toEqual(
       summaryWithDefault({
         failedLevelsFound: ["high", "moderate"],
         advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
@@ -427,7 +426,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         }),
         (_summary) => _summary,
       );
-      expect(summary).to.eql(summaryWithDefault());
+      expect(summary).toEqual(summaryWithDefault());
     },
   );
   (canRunYarnBerry ? it : it.skip)(
@@ -441,7 +440,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         }),
         (_summary) => _summary,
       );
-      expect(summary).to.eql(
+      expect(summary).toEqual(
         summaryWithDefault({
           failedLevelsFound: ["critical", "high", "moderate"],
           advisoriesFound: [
@@ -470,7 +469,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         }),
         (_summary) => _summary,
       );
-      expect(summary).to.eql(
+      expect(summary).toEqual(
         summaryWithDefault({
           failedLevelsFound: ["high", "moderate"],
           advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
@@ -494,7 +493,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         }),
         (_summary) => _summary,
       );
-      expect(summary).to.eql(
+      expect(summary).toEqual(
         summaryWithDefault({
           failedLevelsFound: ["high", "moderate"],
           advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
@@ -516,7 +515,7 @@ describe("yarn-auditer", function testYarnAuditer() {
       (_summary) => _summary,
     );
     ok(summary);
-    expect(summary.advisoryPathsFound).to.eql([
+    expect(summary.advisoryPathsFound).toEqual([
       ...new Set(summary.advisoryPathsFound),
     ]);
   });
