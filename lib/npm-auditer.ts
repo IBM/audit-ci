@@ -13,7 +13,7 @@ import {
 import Model, { Summary } from "./model.js";
 
 async function runNpmAudit(
-  config: AuditCiFullConfig
+  config: AuditCiFullConfig,
 ): Promise<NPMAuditReportV1.AuditResponse | NPMAuditReportV2.AuditResponse> {
   const {
     directory,
@@ -24,12 +24,16 @@ async function runNpmAudit(
   } = config;
   const npmExec = _npm || "npm";
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let stdoutBuffer: any = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function outListener(data: any) {
     stdoutBuffer = { ...stdoutBuffer, ...data };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stderrBuffer: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function errorListener(line: any) {
     stderrBuffer.push(line);
   }
@@ -48,13 +52,13 @@ async function runNpmAudit(
   await runProgram(npmExec, arguments_, options, outListener, errorListener);
   if (stderrBuffer.length > 0) {
     throw new Error(
-      `Invocation of npm audit failed:\n${stderrBuffer.join("\n")}`
+      `Invocation of npm audit failed:\n${stderrBuffer.join("\n")}`,
     );
   }
   return stdoutBuffer;
 }
 export function isV2Audit(
-  parsedOutput: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit
+  parsedOutput: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit,
 ): parsedOutput is NPMAuditReportV2.Audit {
   return (
     "auditReportVersion" in parsedOutput &&
@@ -66,7 +70,7 @@ function printReport(
   parsedOutput: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit,
   levels: AuditCiFullConfig["levels"],
   reportType: "full" | "important" | "summary",
-  outputFormat: "text" | "json"
+  outputFormat: "text" | "json",
 ) {
   const printReportObject = (text: string, object: unknown) => {
     if (outputFormat === "text") {
@@ -75,9 +79,10 @@ function printReport(
     console.log(JSON.stringify(object, undefined, 2));
   };
   switch (reportType) {
-    case "full":
+    case "full": {
       printReportObject("NPM audit report JSON:", parsedOutput);
       break;
+    }
     case "important": {
       const relevantAdvisories = (() => {
         if (isV2Audit(parsedOutput)) {
@@ -86,7 +91,7 @@ function printReport(
             (advisory) => {
               const severity = advisories[advisory].severity;
               return severity !== "info" && levels[severity];
-            }
+            },
           );
 
           const relevantAdvisories: Record<string, NPMAuditReportV2.Advisory> =
@@ -121,13 +126,15 @@ function printReport(
       printReportObject("NPM audit report results:", keyFindings);
       break;
     }
-    case "summary":
+    case "summary": {
       printReportObject("NPM audit report summary:", parsedOutput.metadata);
       break;
-    default:
+    }
+    default: {
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`
+        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
       );
+    }
   }
 }
 
@@ -137,8 +144,8 @@ export function report(
   reporter: (
     summary: Summary,
     config: ReportConfig,
-    audit: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit
-  ) => Summary
+    audit: NPMAuditReportV1.Audit | NPMAuditReportV2.Audit,
+  ) => Summary,
 ) {
   const {
     levels,
@@ -158,7 +165,7 @@ export function report(
  */
 export async function auditWithFullConfig(
   config: AuditCiFullConfig,
-  reporter = reportAudit
+  reporter = reportAudit,
 ) {
   const parsedOutput = await runNpmAudit(config);
   if ("error" in parsedOutput) {

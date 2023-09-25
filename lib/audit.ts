@@ -19,23 +19,27 @@ const PARTIAL_RETRY_ERROR_MSG = {
 } as const;
 
 function getAuditor(
-  packageManager: "npm" | "yarn" | "pnpm"
+  packageManager: "npm" | "yarn" | "pnpm",
 ): typeof yarnAuditer | typeof npmAuditer | typeof pnpmAuditer {
   switch (packageManager) {
-    case "yarn":
+    case "yarn": {
       return yarnAuditer;
-    case "npm":
+    }
+    case "npm": {
       return npmAuditer;
-    case "pnpm":
+    }
+    case "pnpm": {
       return pnpmAuditer;
-    default:
+    }
+    default: {
       throw new Error(`Invalid package manager: ${packageManager}`);
+    }
   }
 }
 
 async function audit(
   config: AuditCiFullConfig,
-  reporter?: (summary: Summary, config: ReportConfig) => Summary
+  reporter?: (summary: Summary, config: ReportConfig) => Summary,
 ) {
   const {
     "pass-enoaudit": passENoAudit,
@@ -49,12 +53,15 @@ async function audit(
     try {
       const result = await auditor.auditWithFullConfig(config, reporter);
       return result;
-    } catch (error: any) {
-      const message = error.message || error;
+    } catch (error: unknown) {
+      const message =
+        error && typeof error === "object" && "message" in error
+          ? error.message
+          : error;
       const isRetryableMessage =
         typeof message === "string" &&
         PARTIAL_RETRY_ERROR_MSG[packageManager].some((retryErrorMessage) =>
-          message.includes(retryErrorMessage)
+          message.includes(retryErrorMessage),
         );
       const shouldRetry = attempt < maxRetryCount && isRetryableMessage;
       if (shouldRetry) {
@@ -67,7 +74,7 @@ async function audit(
       if (shouldPassWithoutAuditing) {
         console.warn(
           yellow,
-          `ACTION RECOMMENDED: An audit could not performed due to ${maxRetryCount} audits that resulted in ENOAUDIT. Perform an audit manually and verify that no significant vulnerabilities exist before merging.`
+          `ACTION RECOMMENDED: An audit could not performed due to ${maxRetryCount} audits that resulted in ENOAUDIT. Perform an audit manually and verify that no significant vulnerabilities exist before merging.`,
         );
         return;
       }
