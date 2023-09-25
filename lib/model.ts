@@ -18,7 +18,7 @@ const SUPPORTED_SEVERITY_LEVELS = new Set([
 
 const prependPath = <N extends string, C extends string>(
   newItem: N,
-  currentPath: C
+  currentPath: C,
 ): `${N}>${C}` => `${newItem}>${currentPath}`;
 
 const isVia = <T>(via: T | string): via is T => {
@@ -77,11 +77,11 @@ class Model {
 
   constructor(config: Pick<AuditCiFullConfig, "allowlist" | "levels">) {
     const unsupported = Object.keys(config.levels).filter(
-      (level) => !SUPPORTED_SEVERITY_LEVELS.has(level)
+      (level) => !SUPPORTED_SEVERITY_LEVELS.has(level),
     );
     if (unsupported.length > 0) {
       throw new Error(
-        `Unsupported severity levels found: ${unsupported.sort().join(", ")}`
+        `Unsupported severity levels found: ${unsupported.sort().join(", ")}`,
       );
     }
     this.failingSeverities = config.levels;
@@ -124,10 +124,12 @@ class Model {
 
     const flattenedPaths = findings.flatMap((finding) => finding.paths);
     const flattenedAllowlist = flattenedPaths.map(
-      (path) => `${githubAdvisoryId}|${path}` as const
+      (path) => `${githubAdvisoryId}|${path}` as const,
     );
     const { truthy, falsy } = partition(flattenedAllowlist, (path) =>
-      this.allowlist.paths.some((allowedPath) => matchString(allowedPath, path))
+      this.allowlist.paths.some((allowedPath) =>
+        matchString(allowedPath, path),
+      ),
     );
     for (const path of truthy) {
       allowlistedPathsFoundSet.add(path);
@@ -148,7 +150,7 @@ class Model {
     parsedOutput:
       | PartialNPMAuditReportV2Audit
       | PartialNPMAuditReportV1Audit
-      | PartialPNPMAuditReportAudit
+      | PartialPNPMAuditReportAudit,
   ) {
     /** NPM 6 & PNPM */
     if ("advisories" in parsedOutput && parsedOutput.advisories) {
@@ -159,7 +161,7 @@ class Model {
         >
       >(parsedOutput.advisories)) {
         advisory.github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(
-          advisory.url
+          advisory.url,
         );
         // PNPM paths have a leading `.>`
         // "paths": [
@@ -235,7 +237,7 @@ class Model {
           cVuln: DeepReadonly<
             PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]
           >,
-          dependencyPath: string
+          dependencyPath: string,
         ): string[] => {
           const visitedModule = visitedModules.get(cVuln.name);
           if (visitedModule) {
@@ -243,7 +245,7 @@ class Model {
               const resultWithExtraCarat = prependPath(name, dependencyPath);
               return resultWithExtraCarat.slice(
                 0,
-                Math.max(0, resultWithExtraCarat.length - 1)
+                Math.max(0, resultWithExtraCarat.length - 1),
               );
             });
           }
@@ -258,7 +260,7 @@ class Model {
             return [newPath.slice(0, Math.max(0, newPath.length - 1))];
           }
           const result = cVuln.effects.flatMap((effect) =>
-            recursiveMagic(parsedOutput.vulnerabilities[effect], newPath)
+            recursiveMagic(parsedOutput.vulnerabilities[effect], newPath),
           );
           return result;
         };
@@ -269,7 +271,7 @@ class Model {
         }
         const advisories = (
           (vias as Array<string | NPMAuditReportV2.Via>).filter(
-            (via) => typeof via !== "string"
+            (via) => typeof via !== "string",
           ) as NPMAuditReportV2.Via[]
         )
           .map((via) => via.source)
@@ -296,8 +298,9 @@ class Model {
   }
 
   getSummary(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     advisoryMapper: (advisory: any) => GitHubAdvisoryId = (a) =>
-      a.github_advisory_id
+      a.github_advisory_id,
   ) {
     // Clean up the data structures for more consistent output.
     this.advisoriesFound.sort();
@@ -328,8 +331,8 @@ class Model {
       .filter(
         (id) =>
           !this.allowlistedPathsFound.some((foundPath) =>
-            matchString(id, foundPath)
-          )
+            matchString(id, foundPath),
+          ),
       )
       .sort();
 

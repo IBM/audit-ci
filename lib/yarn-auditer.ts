@@ -48,14 +48,14 @@ const printJson = (data: unknown) => {
 
 const isClassicAuditAdvisory = (
   data: unknown,
-  type: unknown
+  type: unknown,
 ): data is YarnAudit.AuditAdvisoryResponse => {
   return type === "auditAdvisory";
 };
 
 const isClassicAuditSummary = (
   data: unknown,
-  type: unknown
+  type: unknown,
 ): data is YarnAudit.AuditSummary => {
   return type === "auditSummary";
 };
@@ -67,7 +67,7 @@ const isClassicAuditSummary = (
  */
 export async function auditWithFullConfig(
   config: AuditCiFullConfig,
-  reporter = reportAudit
+  reporter = reportAudit,
 ): Promise<Summary> {
   const {
     levels,
@@ -87,14 +87,14 @@ export async function auditWithFullConfig(
   const isYarnVersionSupported = yarnSupportsAudit(yarnVersion);
   if (!isYarnVersionSupported) {
     throw new Error(
-      `Yarn ${yarnVersion} not supported, must be ^${MINIMUM_YARN_CLASSIC_VERSION} or >=${MINIMUM_YARN_BERRY_VERSION}`
+      `Yarn ${yarnVersion} not supported, must be ^${MINIMUM_YARN_CLASSIC_VERSION} or >=${MINIMUM_YARN_BERRY_VERSION}`,
     );
   }
   const isYarnClassic = yarnSupportsClassicAudit(yarnVersion);
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
 
   function isClassicGuard(
-    response: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse
+    response: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse,
   ): response is YarnAudit.AuditResponse {
     return isYarnClassic;
   }
@@ -105,32 +105,39 @@ export async function auditWithFullConfig(
     }
   };
   switch (reportType) {
-    case "full":
+    case "full": {
       printHeader(`${yarnName} audit report JSON:`);
       break;
-    case "important":
+    }
+    case "important": {
       printHeader(`${yarnName} audit report results:`);
       break;
-    case "summary":
+    }
+    case "summary": {
       printHeader(`${yarnName} audit report summary:`);
       break;
-    default:
+    }
+    default: {
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`
+        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
       );
+    }
   }
 
   // Define a function to print based on the report type.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let printAuditData: any;
   switch (reportType) {
-    case "full":
+    case "full": {
       printAuditData = (line: unknown) => {
         printJson(line);
       };
       break;
-    case "important":
+    }
+    case "important": {
       printAuditData = isYarnClassic
-        ? ({ type, data }: any) => {
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ({ type, data }: any) => {
             if (isClassicAuditAdvisory(data, type)) {
               const severity = data.advisory.severity;
               if (severity !== "info" && levels[severity]) {
@@ -144,7 +151,8 @@ export async function auditWithFullConfig(
             printJson(metadata);
           };
       break;
-    case "summary":
+    }
+    case "summary": {
       printAuditData = isYarnClassic
         ? ({ type, data }: { type: unknown; data: unknown }) => {
             if (isClassicAuditAdvisory(data, type)) {
@@ -155,14 +163,16 @@ export async function auditWithFullConfig(
             printJson(metadata);
           };
       break;
-    default:
+    }
+    default: {
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`
+        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
       );
+    }
   }
 
   function outListener(
-    line: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse
+    line: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse,
   ) {
     try {
       if (isClassicGuard(line)) {
@@ -184,7 +194,7 @@ export async function auditWithFullConfig(
 
         if ("advisories" in line) {
           for (const advisory of Object.values<YarnBerryAuditReport.Advisory>(
-            line.advisories
+            line.advisories,
           )) {
             model.process(advisory);
           }
@@ -197,7 +207,9 @@ export async function auditWithFullConfig(
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stderrBuffer: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function errorListener(line: any) {
     stderrBuffer.push(line);
 
@@ -227,7 +239,7 @@ export async function auditWithFullConfig(
     } else {
       console.warn(
         yellow,
-        "Yarn audit does not support the registry flag yet."
+        "Yarn audit does not support the registry flag yet.",
       );
     }
   }
@@ -238,7 +250,7 @@ export async function auditWithFullConfig(
   if (missingLockFile) {
     console.warn(
       yellow,
-      "No yarn.lock file. This does not affect auditing, but it may be a mistake."
+      "No yarn.lock file. This does not affect auditing, but it may be a mistake.",
     );
   }
 

@@ -24,7 +24,7 @@ const DEFAULT_NSP_CONTENT: Readonly<NSPContent> = {
  * @returns Normalized NSPRecord object.
  */
 export function normalizeAllowlistRecord(
-  recordOrId: AllowlistRecord
+  recordOrId: AllowlistRecord,
 ): NSPRecord {
   return typeof recordOrId === "string"
     ? {
@@ -40,7 +40,7 @@ export function normalizeAllowlistRecord(
  * @returns An array of NSPRecords with duplicates removed.
  */
 export function dedupeAllowlistRecords(
-  recordsOrIds: AllowlistRecord[]
+  recordsOrIds: AllowlistRecord[],
 ): NSPRecord[] {
   const map = new Map<string, NSPRecord>();
   for (const recordOrId of recordsOrIds) {
@@ -78,7 +78,7 @@ class Allowlist {
     for (const allowlist of input) {
       if (typeof allowlist === "number") {
         throw new TypeError(
-          "Unsupported number as allowlist. Perform codemod to update config to use GitHub advisory as identifiers: https://github.com/quinnturner/audit-ci-codemod with `npx @quinnturner/audit-ci-codemod`. See also: https://github.com/IBM/audit-ci/pull/217"
+          "Unsupported number as allowlist. Perform codemod to update config to use GitHub advisory as identifiers: https://github.com/quinnturner/audit-ci-codemod with `npx @quinnturner/audit-ci-codemod`. See also: https://github.com/IBM/audit-ci/pull/217",
         );
       }
 
@@ -106,7 +106,7 @@ class Allowlist {
   }
 
   static mapConfigToAllowlist(
-    config: Readonly<{ allowlist: AllowlistRecord[] }>
+    config: Readonly<{ allowlist: AllowlistRecord[] }>,
   ) {
     const { allowlist } = config;
     const deduplicatedAllowlist = dedupeAllowlistRecords(allowlist || []);

@@ -26,7 +26,7 @@ export function getAllowlistId(nspRecord: NSPRecord | GitHubNSPRecord): string {
  * @returns The NSPContent object.
  */
 export function getNSPContent(
-  nspRecord: NSPRecord | GitHubNSPRecord
+  nspRecord: NSPRecord | GitHubNSPRecord,
 ): NSPContent {
   const values = Object.values(nspRecord);
   if (values.length > 0) {
@@ -45,7 +45,7 @@ export function getNSPContent(
     }
   ]
 }
-    `
+    `,
   );
 }
 
@@ -58,7 +58,7 @@ export function getNSPContent(
  */
 export function isNSPRecordActive(
   nspRecord: NSPRecord,
-  now = new Date()
+  now = new Date(),
 ): boolean {
   const content = getNSPContent(nspRecord);
   if (!content.active) {

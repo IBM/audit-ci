@@ -20,11 +20,11 @@ describe("gitHubAdvisoryUrlToAdvisoryId", () => {
   it("converts github-advisory-url to just the advisory-id", () => {
     expect(
       gitHubAdvisoryUrlToAdvisoryId(
-        "https://github.com/advisories/GHSA-qrpm-p2h7-hrv2"
-      )
+        "https://github.com/advisories/GHSA-qrpm-p2h7-hrv2",
+      ),
     ).to.eql("GHSA-qrpm-p2h7-hrv2");
     expect(
-      gitHubAdvisoryUrlToAdvisoryId("https://github.com/advisories/GHSA-1")
+      gitHubAdvisoryUrlToAdvisoryId("https://github.com/advisories/GHSA-1"),
     ).to.eql("GHSA-1");
   });
 });
@@ -33,19 +33,19 @@ describe("gitHubAdvisoryIdToUrl", () => {
   it("converts a GitHub advisory identifier to the GitHub URL for the advisory", () => {
     const id = "GHSA-qrpm-p2h7-hrv2";
     expect(gitHubAdvisoryIdToUrl(id)).to.eql(
-      `https://github.com/advisories/${id}`
+      `https://github.com/advisories/${id}`,
     );
   });
   it("does not handle null or undefined in a special way", () => {
     // @ts-expect-error testing null
     // eslint-disable-next-line unicorn/no-null
     expect(gitHubAdvisoryIdToUrl(null)).to.eql(
-      `https://github.com/advisories/null`
+      `https://github.com/advisories/null`,
     );
     // @ts-expect-error testing undefined
     // eslint-disable-next-line unicorn/no-useless-undefined
     expect(gitHubAdvisoryIdToUrl(undefined)).to.eql(
-      `https://github.com/advisories/undefined`
+      `https://github.com/advisories/undefined`,
     );
   });
 });

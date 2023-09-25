@@ -22,7 +22,7 @@ export function summaryWithDefault(additions: Partial<Summary> = {}) {
 export function config(
   additions: Omit<Partial<AuditCiFullConfig>, "levels"> & {
     levels?: Partial<AuditCiFullConfig["levels"]>;
-  } & Required<Pick<AuditCiFullConfig, "package-manager">>
+  } & Required<Pick<AuditCiFullConfig, "package-manager">>,
 ): AuditCiFullConfig {
   const defaultConfig = {
     levels: {
