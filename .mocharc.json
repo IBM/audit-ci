@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/mocharc",
-  "require": "ts-node/register",
+  "loader": "ts-node/esm",
   "extensions": [
     "ts"
   ],

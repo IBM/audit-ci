@@ -8,13 +8,13 @@ import {
   testDirectory,
 } from "./common.js";
 
-import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm-output.json";
-import untypedReportNpmCritical from "./npm-critical/npm-output.json";
-import untypedReportNpmHighSeverity from "./npm-high/npm-output.json";
-import untypedReportNpmLow from "./npm-low/npm-output.json";
-import untypedReportNpmModerateSeverity from "./npm-moderate/npm-output.json";
-import untypedReportNpmNone from "./npm-none/npm-output.json";
-import untypedReportNpmSkipDevelopment from "./npm-skip-dev/npm-output.json";
+import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm-output.json" assert { type: "json" };
+import untypedReportNpmCritical from "./npm-critical/npm-output.json" assert { type: "json" };
+import untypedReportNpmHighSeverity from "./npm-high/npm-output.json" assert { type: "json" };
+import untypedReportNpmLow from "./npm-low/npm-output.json" assert { type: "json" };
+import untypedReportNpmModerateSeverity from "./npm-moderate/npm-output.json" assert { type: "json" };
+import untypedReportNpmNone from "./npm-none/npm-output.json" assert { type: "json" };
+import untypedReportNpmSkipDevelopment from "./npm-skip-dev/npm-output.json" assert { type: "json" };
 
 const reportNpmAllowlistedPath =
   untypedReportNpmAllowlistedPath as NPMAuditReportV1.Audit;

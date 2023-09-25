@@ -7,13 +7,13 @@ import {
   testDirectory,
 } from "./common.js";
 
-import reportPnpmAllowlistedPath from "./pnpm-allowlisted-path/pnpm-output.json";
-import reportPnpmCritical from "./pnpm-critical/pnpm-output.json";
-import reportPnpmHighSeverity from "./pnpm-high/pnpm-output.json";
-import reportPnpmLow from "./pnpm-low/pnpm-output.json";
-import reportPnpmModerateSeverity from "./pnpm-moderate/pnpm-output.json";
-import reportPnpmNone from "./pnpm-none/pnpm-output.json";
-import reportPnpmSkipDevelopment from "./pnpm-skip-dev/pnpm-output.json";
+import reportPnpmAllowlistedPath from "./pnpm-allowlisted-path/pnpm-output.json" assert { type: "json" };
+import reportPnpmCritical from "./pnpm-critical/pnpm-output.json" assert { type: "json" };
+import reportPnpmHighSeverity from "./pnpm-high/pnpm-output.json" assert { type: "json" };
+import reportPnpmLow from "./pnpm-low/pnpm-output.json" assert { type: "json" };
+import reportPnpmModerateSeverity from "./pnpm-moderate/pnpm-output.json" assert { type: "json" };
+import reportPnpmNone from "./pnpm-none/pnpm-output.json" assert { type: "json" };
+import reportPnpmSkipDevelopment from "./pnpm-skip-dev/pnpm-output.json" assert { type: "json" };
 
 function config(
   additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">

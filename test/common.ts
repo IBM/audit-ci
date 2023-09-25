@@ -53,6 +53,8 @@ export function config(
   };
 }
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 export function testDirectory(s: string) {
   return path.resolve(__dirname, s);
 }
