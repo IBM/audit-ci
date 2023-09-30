@@ -74,8 +74,8 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDirectory("yarn-moderate"),
         allowlist: new Allowlist([
-          "GHSA-hm7f-rq7q-j9xp",
           "GHSA-9wf9-qvvp-2929",
+          "GHSA-hm7f-rq7q-j9xp",
         ]),
         levels: { moderate: true },
         "report-type": "important",
@@ -86,8 +86,8 @@ describe("yarn-auditer", function testYarnAuditer() {
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         allowlistedAdvisoriesFound: [
-          "GHSA-hm7f-rq7q-j9xp",
           "GHSA-9wf9-qvvp-2929",
+          "GHSA-hm7f-rq7q-j9xp",
         ],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
@@ -167,13 +167,13 @@ describe("yarn-auditer", function testYarnAuditer() {
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
         advisoriesFound: [
-          "GHSA-hm7f-rq7q-j9xp",
           "GHSA-9wf9-qvvp-2929",
+          "GHSA-hm7f-rq7q-j9xp",
           "GHSA-rvg8-pwq2-xj7q",
         ],
         advisoryPathsFound: [
-          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
           "GHSA-9wf9-qvvp-2929|@builder.io/qwik",
+          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
           "GHSA-rvg8-pwq2-xj7q|base64url",
         ],
       }),
@@ -244,8 +244,8 @@ describe("yarn-auditer", function testYarnAuditer() {
           "GHSA-9wf9-qvvp-2929",
         ],
         allowlistedPathsFound: [
-          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
           "GHSA-9wf9-qvvp-2929|@builder.io/qwik",
+          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
         ],
       }),
     );
