@@ -11,14 +11,14 @@ import {
 } from "./common";
 
 function config(
-  additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">
+  additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">,
 ) {
   return baseConfig({ ...additions, "package-manager": "yarn" });
 }
 
 const canRunYarnBerry = semver.gte(
   childProcess.execSync("node -v").toString().replace("\n", ""),
-  "12.13.0"
+  "12.13.0",
 );
 
 // To modify what slow times are, need to use
@@ -32,14 +32,14 @@ describe("yarn-auditer", function testYarnAuditer() {
         levels: { critical: true },
         "report-type": "full",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
         advisoryPathsFound: ["GHSA-28xh-wpgr-7fm8|open"],
-      })
+      }),
     );
   });
   it("does not report critical severity if it set to false", async () => {
@@ -48,7 +48,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         directory: testDirectory("yarn-critical"),
         levels: { critical: false },
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });
@@ -59,33 +59,39 @@ describe("yarn-auditer", function testYarnAuditer() {
         levels: { high: true },
         "report-type": "summary",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
-        advisoryPathsFound: ["GHSA-38f5-ghc2-fcmv|cryo"],
-      })
+        advisoriesFound: ["GHSA-hrpp-h998-j3pp"],
+        advisoryPathsFound: ["GHSA-hrpp-h998-j3pp|qs"],
+      }),
     );
   });
   it("reports important info with moderate severity", async () => {
     const summary = await audit(
       config({
         directory: testDirectory("yarn-moderate"),
-        allowlist: new Allowlist(["GHSA-hm7f-rq7q-j9xp"]),
+        allowlist: new Allowlist([
+          "GHSA-hm7f-rq7q-j9xp",
+          "GHSA-9wf9-qvvp-2929",
+        ]),
         levels: { moderate: true },
         "report-type": "important",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
-        allowlistedAdvisoriesFound: ["GHSA-hm7f-rq7q-j9xp"],
+        allowlistedAdvisoriesFound: [
+          "GHSA-hm7f-rq7q-j9xp",
+          "GHSA-9wf9-qvvp-2929",
+        ],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
-      })
+      }),
     );
   });
   it("does not report moderate severity if it set to false", async () => {
@@ -94,7 +100,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         directory: testDirectory("yarn-moderate"),
         levels: { moderate: false },
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });
@@ -108,13 +114,13 @@ describe("yarn-auditer", function testYarnAuditer() {
           "GHSA-rvg8-pwq2-xj7q",
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
-      })
+      }),
     );
   });
   it("ignores an advisory if it is allowlisted using a NSPRecord", async () => {
@@ -135,13 +141,13 @@ describe("yarn-auditer", function testYarnAuditer() {
           },
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
-      })
+      }),
     );
   });
   it("does not ignore an advisory that is not allowlisted", async () => {
@@ -149,20 +155,28 @@ describe("yarn-auditer", function testYarnAuditer() {
       config({
         directory: testDirectory("yarn-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist(["GHSA-cff4-rrq6-h78w"]),
+        allowlist: new Allowlist([
+          "GHSA-cff4-rrq6-h78w",
+          "GHSA-9wf9-qvvp-2929",
+        ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
         failedLevelsFound: ["moderate"],
-        advisoriesFound: ["GHSA-hm7f-rq7q-j9xp", "GHSA-rvg8-pwq2-xj7q"],
+        advisoriesFound: [
+          "GHSA-hm7f-rq7q-j9xp",
+          "GHSA-9wf9-qvvp-2929",
+          "GHSA-rvg8-pwq2-xj7q",
+        ],
         advisoryPathsFound: [
           "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+          "GHSA-9wf9-qvvp-2929|@builder.io/qwik",
           "GHSA-rvg8-pwq2-xj7q|base64url",
         ],
-      })
+      }),
     );
   });
   it("does not ignore an advisory that is not allowlisted using a NSPRecord", async () => {
@@ -171,6 +185,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         directory: testDirectory("yarn-moderate"),
         levels: { moderate: true },
         allowlist: new Allowlist([
+          "GHSA-9wf9-qvvp-2929",
           "GHSA-cff4-rrq6-h78w",
           {
             "GHSA-rvg8-pwq2-xj7q": {
@@ -179,7 +194,7 @@ describe("yarn-auditer", function testYarnAuditer() {
           },
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
@@ -187,10 +202,11 @@ describe("yarn-auditer", function testYarnAuditer() {
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-hm7f-rq7q-j9xp", "GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: [
+          "GHSA-9wf9-qvvp-2929|@builder.io/qwik",
           "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
           "GHSA-rvg8-pwq2-xj7q|base64url",
         ],
-      })
+      }),
     );
   });
   it("ignores an advisory that has not expired", async () => {
@@ -211,15 +227,27 @@ describe("yarn-auditer", function testYarnAuditer() {
               expiry: new Date(Date.now() + 9000).toISOString(),
             },
           },
+          {
+            "GHSA-9wf9-qvvp-2929|@builder.io/qwik": {
+              active: true,
+              expiry: new Date(Date.now() + 9000).toISOString(),
+            },
+          },
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-        allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
-      })
+        allowlistedAdvisoriesFound: [
+          "GHSA-rvg8-pwq2-xj7q",
+          "GHSA-9wf9-qvvp-2929",
+        ],
+        allowlistedPathsFound: [
+          "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
+          "GHSA-9wf9-qvvp-2929|@builder.io/qwik",
+        ],
+      }),
     );
   });
   it("does not ignore an advisory that has expired", async () => {
@@ -243,7 +271,7 @@ describe("yarn-auditer", function testYarnAuditer() {
           },
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
@@ -254,7 +282,7 @@ describe("yarn-auditer", function testYarnAuditer() {
           "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
           "GHSA-rvg8-pwq2-xj7q|base64url",
         ],
-      })
+      }),
     );
   });
   it("reports low severity", async () => {
@@ -263,14 +291,14 @@ describe("yarn-auditer", function testYarnAuditer() {
         directory: testDirectory("yarn-low"),
         levels: { low: true },
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
         advisoriesFound: ["GHSA-c6rq-rjc2-86v2"],
         advisoryPathsFound: ["GHSA-c6rq-rjc2-86v2|chownr"],
-      })
+      }),
     );
   });
   it("passes with no vulnerabilities", async () => {
@@ -279,7 +307,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         directory: testDirectory("yarn-none"),
         levels: { low: true },
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });
@@ -290,7 +318,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         levels: { low: true },
         registry: "https://example.com",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     ));
   (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] reports important info with moderate severity",
@@ -301,16 +329,16 @@ describe("yarn-auditer", function testYarnAuditer() {
           levels: { moderate: true },
           "report-type": "important",
         }),
-        (_summary) => _summary
+        (_summary) => _summary,
       );
       expect(summary).to.eql(
         summaryWithDefault({
           failedLevelsFound: ["moderate"],
           advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
           advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
-        })
+        }),
       );
-    }
+    },
   );
   (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] does not report moderate severity if it set to false",
@@ -320,10 +348,10 @@ describe("yarn-auditer", function testYarnAuditer() {
           directory: testDirectory("yarn-berry-moderate"),
           levels: { moderate: false },
         }),
-        (_summary) => _summary
+        (_summary) => _summary,
       );
       expect(summary).to.eql(summaryWithDefault());
-    }
+    },
   );
   (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] ignores an advisory if it is allowlisted",
@@ -334,14 +362,14 @@ describe("yarn-auditer", function testYarnAuditer() {
           levels: { moderate: true },
           allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
         }),
-        (_summary) => _summary
+        (_summary) => _summary,
       );
       expect(summary).to.eql(
         summaryWithDefault({
           allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-        })
+        }),
       );
-    }
+    },
   );
   (canRunYarnBerry ? it : it.skip)(
     "[Yarn Berry] ignores an advisory if it is allowlisted using a NSPRecord",
@@ -358,25 +386,25 @@ describe("yarn-auditer", function testYarnAuditer() {
             },
           ]),
         }),
-        (_summary) => _summary
+        (_summary) => _summary,
       );
       expect(summary).to.eql(
         summaryWithDefault({
           allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-        })
+        }),
       );
-    }
+    },
   );
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", async () => {
     const summary = await audit(
       config({
         directory: testDirectory(
-          canRunYarnBerry ? "yarn-berry-skip-dev" : "yarn-skip-dev"
+          canRunYarnBerry ? "yarn-berry-skip-dev" : "yarn-skip-dev",
         ),
         "skip-dev": true,
         "report-type": "important",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });
@@ -387,7 +415,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         levels: { moderate: true },
         "report-type": "important",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });
@@ -403,17 +431,17 @@ describe("yarn-auditer", function testYarnAuditer() {
         levels: { moderate: true },
         "report-type": "important",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high", "moderate"],
-        advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+        advisoriesFound: ["GHSA-hrpp-h998-j3pp", "GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: [
-          "GHSA-38f5-ghc2-fcmv|audit-ci-yarn-workspace-high-vulnerability>cryo",
+          "GHSA-hrpp-h998-j3pp|audit-ci-yarn-workspace-high-vulnerability>qs",
           "GHSA-rvg8-pwq2-xj7q|audit-ci-yarn-workspace-moderate-vulnerability>base64url",
         ],
-      })
+      }),
     );
   });
   (canRunYarnBerry ? it : it.skip)(
@@ -425,10 +453,10 @@ describe("yarn-auditer", function testYarnAuditer() {
           levels: { moderate: true },
           "report-type": "important",
         }),
-        (_summary) => _summary
+        (_summary) => _summary,
       );
       expect(summary).to.eql(summaryWithDefault());
-    }
+    },
   );
   (canRunYarnBerry ? it : it.skip)(
     "reports summary with vulnerabilities in yarn berry workspaces",
@@ -439,24 +467,24 @@ describe("yarn-auditer", function testYarnAuditer() {
           levels: { moderate: true },
           "report-type": "important",
         }),
-        (_summary) => _summary
+        (_summary) => _summary,
       );
       expect(summary).to.eql(
         summaryWithDefault({
-          failedLevelsFound: ["critical", "high", "moderate"],
+          failedLevelsFound: ["critical", "moderate"],
           advisoriesFound: [
             "GHSA-28xh-wpgr-7fm8",
-            "GHSA-38f5-ghc2-fcmv",
+            "GHSA-hrpp-h998-j3pp",
             "GHSA-rvg8-pwq2-xj7q",
           ],
           advisoryPathsFound: [
             "GHSA-28xh-wpgr-7fm8|open",
-            "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-hrpp-h998-j3pp|qs",
             "GHSA-rvg8-pwq2-xj7q|base64url",
           ],
-        })
+        }),
       );
-    }
+    },
   );
   (canRunYarnBerry ? it : it.skip)(
     "reports summary with vulnerabilities in yarn berry workspaces with skip-dev=true",
@@ -468,19 +496,19 @@ describe("yarn-auditer", function testYarnAuditer() {
           "skip-dev": true,
           "report-type": "important",
         }),
-        (_summary) => _summary
+        (_summary) => _summary,
       );
       expect(summary).to.eql(
         summaryWithDefault({
-          failedLevelsFound: ["high", "moderate"],
-          advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+          failedLevelsFound: ["critical", "moderate"],
+          advisoriesFound: ["GHSA-hrpp-h998-j3pp", "GHSA-rvg8-pwq2-xj7q"],
           advisoryPathsFound: [
-            "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-hrpp-h998-j3pp|qs",
             "GHSA-rvg8-pwq2-xj7q|base64url",
           ],
-        })
+        }),
       );
-    }
+    },
   );
   (canRunYarnBerry ? it : it.skip)(
     "reports summary with vulnerabilities in yarn berry workspaces with extra-args: --environment production",
@@ -492,19 +520,19 @@ describe("yarn-auditer", function testYarnAuditer() {
           "extra-args": ["--environment", "production"],
           "report-type": "important",
         }),
-        (_summary) => _summary
+        (_summary) => _summary,
       );
       expect(summary).to.eql(
         summaryWithDefault({
-          failedLevelsFound: ["high", "moderate"],
-          advisoriesFound: ["GHSA-38f5-ghc2-fcmv", "GHSA-rvg8-pwq2-xj7q"],
+          failedLevelsFound: ["critical", "moderate"],
+          advisoriesFound: ["GHSA-hrpp-h998-j3pp", "GHSA-rvg8-pwq2-xj7q"],
           advisoryPathsFound: [
-            "GHSA-38f5-ghc2-fcmv|cryo",
+            "GHSA-hrpp-h998-j3pp|qs",
             "GHSA-rvg8-pwq2-xj7q|base64url",
           ],
-        })
+        }),
       );
-    }
+    },
   );
   it("does not report duplicate paths", async () => {
     const summary = await audit(
@@ -513,7 +541,7 @@ describe("yarn-auditer", function testYarnAuditer() {
         levels: { high: true },
         "report-type": "summary",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     ok(summary);
     expect(summary.advisoryPathsFound).to.eql([

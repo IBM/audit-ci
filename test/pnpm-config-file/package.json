@@ -1,5 +1,5 @@
 {
-  "name": "audit-ci-npm-config",
+  "name": "audit-ci-pnpm-config",
   "description": "Test package.json with config file",
   "dependencies": {
     "open": "0.0.5"

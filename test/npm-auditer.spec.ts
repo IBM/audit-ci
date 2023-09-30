@@ -29,7 +29,7 @@ const reportNpmSkipDevelopment =
   untypedReportNpmSkipDevelopment as NPMAuditReportV1.Audit;
 
 function config(
-  additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">
+  additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">,
 ) {
   return baseConfig({ ...additions, "package-manager": "npm" });
 }
@@ -45,14 +45,14 @@ describe("npm-auditer", () => {
         levels: { critical: true },
         "report-type": "full",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
         advisoryPathsFound: ["GHSA-28xh-wpgr-7fm8|open"],
-      })
+      }),
     );
   });
   it("does not report critical severity if it set to false", () => {
@@ -62,7 +62,7 @@ describe("npm-auditer", () => {
         directory: testDirectory("npm-critical"),
         levels: { critical: false },
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });
@@ -74,14 +74,14 @@ describe("npm-auditer", () => {
         levels: { high: true },
         "report-type": "summary",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
-        advisoryPathsFound: ["GHSA-38f5-ghc2-fcmv|cryo"],
-      })
+        advisoriesFound: ["GHSA-hrpp-h998-j3pp"],
+        advisoryPathsFound: ["GHSA-hrpp-h998-j3pp|qs"],
+      }),
     );
   });
   it("reports important info with moderate severity", () => {
@@ -92,14 +92,14 @@ describe("npm-auditer", () => {
         levels: { moderate: true },
         "report-type": "important",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
-      })
+      }),
     );
   });
   it("does not report moderate severity if it set to false", () => {
@@ -109,7 +109,7 @@ describe("npm-auditer", () => {
         directory: testDirectory("npm-moderate"),
         levels: { moderate: false },
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });
@@ -121,12 +121,12 @@ describe("npm-auditer", () => {
         levels: { moderate: true },
         allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-      })
+      }),
     );
   });
   it("ignores an advisory if it is allowlisted", () => {
@@ -137,12 +137,12 @@ describe("npm-auditer", () => {
         levels: { moderate: true },
         allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-      })
+      }),
     );
   });
   it("ignores an advisory if it is allowlisted using a NSPRecord", () => {
@@ -159,12 +159,12 @@ describe("npm-auditer", () => {
           },
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-      })
+      }),
     );
   });
   it("does not ignore an advisory that is not allowlisted", () => {
@@ -175,7 +175,7 @@ describe("npm-auditer", () => {
         levels: { moderate: true },
         allowlist: new Allowlist(["GHSA-cff4-rrq6-h78w"]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
@@ -183,7 +183,7 @@ describe("npm-auditer", () => {
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
-      })
+      }),
     );
   });
   it("does not ignore an advisory that is not allowlisted using a NSPRecord", () => {
@@ -201,7 +201,7 @@ describe("npm-auditer", () => {
           },
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
@@ -209,7 +209,7 @@ describe("npm-auditer", () => {
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
-      })
+      }),
     );
   });
   it("ignores an advisory that has not expired", () => {
@@ -227,12 +227,12 @@ describe("npm-auditer", () => {
           },
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-      })
+      }),
     );
   });
   it("does not ignore an advisory that has expired", () => {
@@ -251,7 +251,7 @@ describe("npm-auditer", () => {
           },
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
@@ -259,7 +259,7 @@ describe("npm-auditer", () => {
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
         advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
-      })
+      }),
     );
   });
   it("reports only vulnerabilities with a not allowlisted path", () => {
@@ -276,7 +276,7 @@ describe("npm-auditer", () => {
           "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
@@ -300,7 +300,7 @@ describe("npm-auditer", () => {
           "GHSA-74fj-2j2h-c42q|github-build>axios>follow-redirects",
           "GHSA-cph5-m8f7-6c5x|axios",
         ],
-      })
+      }),
     );
   });
   it("allowlist all vulnerabilities with an allowlisted path", () => {
@@ -322,7 +322,7 @@ describe("npm-auditer", () => {
           "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
         ]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
@@ -338,7 +338,7 @@ describe("npm-auditer", () => {
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
           "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
         ],
-      })
+      }),
     );
   });
   it("allowlist all vulnerabilities matching a wildcard allowlist path", () => {
@@ -349,7 +349,7 @@ describe("npm-auditer", () => {
         levels: { moderate: true },
         allowlist: new Allowlist(["*|axios", "*|axios>*", "*|github-build>*"]),
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
@@ -365,7 +365,7 @@ describe("npm-auditer", () => {
           "GHSA-pw2r-vq6v-hr8c|axios>follow-redirects",
           "GHSA-pw2r-vq6v-hr8c|github-build>axios>follow-redirects",
         ],
-      })
+      }),
     );
   });
   it("reports low severity", () => {
@@ -375,14 +375,14 @@ describe("npm-auditer", () => {
         directory: testDirectory("npm-low"),
         levels: { low: true },
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["low"],
         advisoriesFound: ["GHSA-c6rq-rjc2-86v2"],
         advisoryPathsFound: ["GHSA-c6rq-rjc2-86v2|chownr"],
-      })
+      }),
     );
   });
   it("passes with no vulnerabilities", () => {
@@ -392,7 +392,7 @@ describe("npm-auditer", () => {
         directory: testDirectory("npm-none"),
         levels: { low: true },
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });
@@ -402,7 +402,7 @@ describe("npm-auditer", () => {
         directory: testDirectory("npm-low"),
         levels: { low: true },
         registry: "https://registry.nonexistentdomain0000000000.com",
-      })
+      }),
     ).catch((error) => {
       expect(error.message).to.include("ENOTFOUND");
       done();
@@ -416,7 +416,7 @@ describe("npm-auditer", () => {
         "skip-dev": true,
         "report-type": "important",
       }),
-      (_summary) => _summary
+      (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
   });

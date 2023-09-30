@@ -1,5 +1,5 @@
 {
-  "name": "audit-ci-npm-no-vulnerability",
+  "name": "audit-ci-pnpm-no-vulnerability",
   "description": "Test package.json with low vulnerability",
   "dependencies": {
     "node-noop": "1.0.0"
