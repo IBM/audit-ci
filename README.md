@@ -1,7 +1,6 @@
 # audit-ci
 
 [![npm version](https://badge.fury.io/js/audit-ci.svg)](https://badge.fury.io/js/audit-ci)
-[![Build Status](https://app.travis-ci.com/IBM/audit-ci.svg?branch=main)](https://app.travis-ci.com/github/IBM/audit-ci)
 [![CircleCI](https://circleci.com/gh/IBM/audit-ci/tree/main.svg?style=svg)](https://circleci.com/gh/IBM/audit-ci/tree/main)
 [![GitHub CI](https://github.com/IBM/audit-ci/actions/workflows/build.yml/badge.svg)](https://github.com/IBM/audit-ci/actions/workflows/build.yml)
 [![CodeQL](https://github.com/IBM/audit-ci/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/IBM/audit-ci/actions/workflows/codeql-analysis.yml)

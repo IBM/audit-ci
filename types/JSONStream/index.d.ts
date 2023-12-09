@@ -3,7 +3,6 @@
 // This vendor definition is inlined directly in the project
 // to avoid capitalization issues caused on Linux machines.
 // See failed builds:
-// https://app.travis-ci.com/github/IBM/audit-ci/builds/260124479
 // https://app.circleci.com/jobs/github/quinnturner/audit-ci/367
 
 // Type definitions for JSONStream v0.8.0
