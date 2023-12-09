@@ -1,5 +1,5 @@
 {
-  "name": "audit-ci-npm-allowlisted-path",
+  "name": "audit-ci-pnpm-allowlisted-path",
   "dependencies": {
     "axios": "^0.15.3",
     "github-build": "^1.2.0"

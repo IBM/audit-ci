@@ -78,8 +78,8 @@ describe("npm7-auditer", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["high"],
-        advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
-        advisoryPathsFound: ["GHSA-38f5-ghc2-fcmv|cryo"],
+        advisoriesFound: ["GHSA-hrpp-h998-j3pp"],
+        advisoryPathsFound: ["GHSA-hrpp-h998-j3pp|qs"],
       })
     );
   });

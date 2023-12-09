@@ -1,27 +1,38 @@
 {
   "auditReportVersion": 2,
   "vulnerabilities": {
-    "cryo": {
-      "name": "cryo",
+    "qs": {
+      "name": "qs",
       "severity": "high",
       "isDirect": true,
       "via": [
         {
-          "source": 1066151,
-          "name": "cryo",
-          "dependency": "cryo",
-          "title": "Code Injection in cryo",
-          "url": "https://github.com/advisories/GHSA-38f5-ghc2-fcmv",
+          "source": 1094102,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs vulnerable to Prototype Pollution",
+          "url": "https://github.com/advisories/GHSA-hrpp-h998-j3pp",
           "severity": "high",
-          "range": "<=0.0.6"
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=6.10.0 <6.10.3"
         }
       ],
       "effects": [],
-      "range": "*",
+      "range": "6.10.0 - 6.10.2",
       "nodes": [
-        "node_modules/cryo"
+        "node_modules/qs"
       ],
-      "fixAvailable": false
+      "fixAvailable": {
+        "name": "qs",
+        "version": "6.11.2",
+        "isSemVerMajor": false
+      }
     }
   },
   "metadata": {
@@ -34,12 +45,12 @@
       "total": 1
     },
     "dependencies": {
-      "prod": 2,
+      "prod": 10,
       "dev": 0,
       "optional": 0,
       "peer": 0,
       "peerOptional": 0,
-      "total": 1
+      "total": 9
     }
   }
 }
