@@ -19,7 +19,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       # Have audit-ci run audit-ci to audit itself :)
-      - run: node ./dist/audit-ci.js --config ./audit-ci.jsonc
+      - run: node ./dist/bin.js --config ./audit-ci.jsonc
       - run: npm test
       - run: npm run lint
       - run: npm run format -- --check
