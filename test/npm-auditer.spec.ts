@@ -1,5 +1,5 @@
 import { NPMAuditReportV1 } from "audit-types";
-import { expect } from "chai";
+import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { auditWithFullConfig, report } from "../lib/npm-auditer.js";
 import {
@@ -8,13 +8,13 @@ import {
   testDirectory,
 } from "./common.js";
 
-import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm-output.json" assert { type: "json" };
-import untypedReportNpmCritical from "./npm-critical/npm-output.json" assert { type: "json" };
-import untypedReportNpmHighSeverity from "./npm-high/npm-output.json" assert { type: "json" };
-import untypedReportNpmLow from "./npm-low/npm-output.json" assert { type: "json" };
-import untypedReportNpmModerateSeverity from "./npm-moderate/npm-output.json" assert { type: "json" };
-import untypedReportNpmNone from "./npm-none/npm-output.json" assert { type: "json" };
-import untypedReportNpmSkipDevelopment from "./npm-skip-dev/npm-output.json" assert { type: "json" };
+import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm-output.json";
+import untypedReportNpmCritical from "./npm-critical/npm-output.json";
+import untypedReportNpmHighSeverity from "./npm-high/npm-output.json";
+import untypedReportNpmLow from "./npm-low/npm-output.json";
+import untypedReportNpmModerateSeverity from "./npm-moderate/npm-output.json";
+import untypedReportNpmNone from "./npm-none/npm-output.json";
+import untypedReportNpmSkipDevelopment from "./npm-skip-dev/npm-output.json";
 
 const reportNpmAllowlistedPath =
   untypedReportNpmAllowlistedPath as NPMAuditReportV1.Audit;
@@ -396,17 +396,20 @@ describe("npm-auditer", () => {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
-  it("fails with error code ENOTFOUND on a non-existent site", (done) => {
-    auditWithFullConfig(
-      config({
-        directory: testDirectory("npm-low"),
-        levels: { low: true },
-        registry: "https://registry.nonexistentdomain0000000000.com",
-      })
-    ).catch((error) => {
-      expect(error.message).to.include("ENOTFOUND");
-      done();
-    });
+  it("fails with error code ENOTFOUND on a non-existent site", async () => {
+    try {
+      await auditWithFullConfig(
+        config({
+          directory: testDirectory("npm-low"),
+          levels: { low: true },
+          registry: "https://registry.nonexistentdomain0000000000.com",
+        })
+      );
+    } catch (error) {
+      expect((error as Error).message).to.include("ENOTFOUND");
+      return;
+    }
+    throw new Error("Expected an error to be thrown");
   });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(

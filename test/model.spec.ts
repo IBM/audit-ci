@@ -1,5 +1,5 @@
 import { NPMAuditReportV2 } from "audit-types";
-import { expect } from "chai";
+import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import Model from "../lib/model.js";
 import { summaryWithDefault } from "./common.js";

@@ -3,7 +3,7 @@ import { SpawnOptionsWithoutStdio } from "child_process";
 import { spawn } from "cross-spawn";
 import escapeStringRegexp from "escape-string-regexp";
 import eventStream from "event-stream";
-import * as JSONStream from "JSONStream";
+import * as JSONStream from "jsonstream-next";
 import ReadlineTransform from "readline-transform";
 import Allowlist from "./allowlist.js";
 import { blue, yellow } from "./colors.js";
@@ -161,7 +161,7 @@ export function runProgram(
     )
     .pipe(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore -- JSONStream.parse() accepts (pattern: any) when it should accept (pattern?: any)
+      // @ts-expect-error -- JSONStream.parse() accepts (pattern: any) when it should accept (pattern?: any)
       JSONStream.parse().on("error", () => {
         errorMessage = recentMessage;
         throw new Error(errorMessage);
