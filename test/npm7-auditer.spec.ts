@@ -1,8 +1,8 @@
 import { NPMAuditReportV2 } from "audit-types";
 import { expect } from "chai";
 import semver from "semver";
-import Allowlist from "../lib/allowlist";
-import { auditWithFullConfig, report } from "../lib/npm-auditer";
+import Allowlist from "../lib/allowlist.js";
+import { auditWithFullConfig, report } from "../lib/npm-auditer.js";
 import {
   config as baseConfig,
   summaryWithDefault,
