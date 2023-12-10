@@ -24,7 +24,7 @@ const canRunYarnBerry = semver.gte(
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
 describe(
-  "yarn-auditer",
+  "yarn-auditor",
   () => {
     it("prints full report with critical severity", async () => {
       const summary = await audit(

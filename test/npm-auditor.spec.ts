@@ -1,7 +1,7 @@
 import { NPMAuditReportV1 } from "audit-types";
 import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
-import { auditWithFullConfig, report } from "../lib/npm-auditer.js";
+import { auditWithFullConfig, report } from "../lib/npm-auditor.js";
 import {
   config as baseConfig,
   summaryWithDefault,
@@ -36,7 +36,7 @@ function config(
 
 // To modify what slow times are, need to use
 // function() {} instead of () => {}
-describe("npm-auditer", () => {
+describe("npm-auditor", () => {
   it("prints full report with critical severity", () => {
     const summary = report(
       reportNpmCritical,

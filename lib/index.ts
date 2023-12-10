@@ -12,6 +12,6 @@ export {
   type VulnerabilityLevels,
 } from "./map-vulnerability.js";
 export type { Summary } from "./model.js";
-export { audit as npmAudit } from "./npm-auditer.js";
-export { audit as pnpmAudit } from "./pnpm-auditer.js";
-export { audit as yarnAudit } from "./yarn-auditer.js";
+export { audit as npmAudit } from "./npm-auditor.js";
+export { audit as pnpmAudit } from "./pnpm-auditor.js";
+export { audit as yarnAudit } from "./yarn-auditor.js";
