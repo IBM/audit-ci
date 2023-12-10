@@ -1,17 +1,14 @@
-import { expect } from "chai";
-import childProcess from "child_process";
 import semver, { SemVer } from "semver";
-import Allowlist from "../lib/allowlist";
-import audit from "../lib/audit";
+import { describe, expect, it as unskippableIt } from "vitest";
+import Allowlist from "../lib/allowlist.js";
+import audit from "../lib/audit.js";
 import {
   config as baseConfig,
   summaryWithDefault,
   testDirectory,
-} from "./common";
-const nodeVersion = childProcess
-  .execSync("node -v")
-  .toString()
-  .replace("\n", "");
+} from "./common.js";
+
+const nodeVersion = process.version;
 
 const canRunYarnBerry = semver.gte(nodeVersion, "12.13.0");
 
@@ -36,12 +33,11 @@ export function performAuditTests({
     });
 
   const it =
-    !canRunYarnBerry && majorVersion > 1 ? globalThis.it.skip : globalThis.it;
+    !canRunYarnBerry && majorVersion > 1 ? unskippableIt.skip : unskippableIt;
 
   // To modify what slow times are, need to use
   // function() {} instead of () => {}
   describe(`yarn-${majorVersion}-auditor`, function testYarnAuditor() {
-    this.slow(3000);
     it("prints full report with critical severity", async () => {
       const summary = await audit(
         config({
@@ -309,5 +305,7 @@ export function performAuditTests({
         }),
         (_summary) => _summary
       ));
+  }, {
+    timeout: 10_000,
   });
 }

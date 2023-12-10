@@ -1,6 +1,6 @@
 import path from "path";
 import { SemVer } from "semver";
-import { performAuditTests } from "./yarn-auditor";
+import { performAuditTests } from "./yarn-auditor.js";
 
 const version = "4.0.0-rc.35";
 
