@@ -3,5 +3,6 @@
   "description": "Test package.json with high vulnerability",
   "dependencies": {
     "cryo": "0.0.6"
-  }
+  },
+  "packageManager": "yarn@4.0.2"
 }

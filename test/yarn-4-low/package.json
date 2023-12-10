@@ -4,5 +4,5 @@
   "dependencies": {
     "micromatch": "2.3.0"
   },
-  "packageManager": "yarn@4.0.0-rc.35"
+  "packageManager": "yarn@4.0.2"
 }
