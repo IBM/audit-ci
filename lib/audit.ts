@@ -2,9 +2,9 @@ import { yellow } from "./colors.js";
 import { ReportConfig } from "./common.js";
 import type { AuditCiFullConfig } from "./config.js";
 import type { Summary } from "./model.js";
-import * as npmAuditer from "./npm-auditer.js";
-import * as pnpmAuditer from "./pnpm-auditer.js";
-import * as yarnAuditer from "./yarn-auditer.js";
+import * as npmAuditor from "./npm-auditor.js";
+import * as pnpmAuditor from "./pnpm-auditor.js";
+import * as yarnAuditor from "./yarn-auditor.js";
 
 const PARTIAL_RETRY_ERROR_MSG = {
   // The three ENOAUDIT error messages for NPM are:
@@ -20,16 +20,16 @@ const PARTIAL_RETRY_ERROR_MSG = {
 
 function getAuditor(
   packageManager: "npm" | "yarn" | "pnpm",
-): typeof yarnAuditer | typeof npmAuditer | typeof pnpmAuditer {
+): typeof yarnAuditor | typeof npmAuditor | typeof pnpmAuditor {
   switch (packageManager) {
     case "yarn": {
-      return yarnAuditer;
+      return yarnAuditor;
     }
     case "npm": {
-      return npmAuditer;
+      return npmAuditor;
     }
     case "pnpm": {
-      return pnpmAuditer;
+      return pnpmAuditor;
     }
     default: {
       throw new Error(`Invalid package manager: ${packageManager}`);
