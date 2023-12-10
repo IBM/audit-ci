@@ -1,0 +1,8 @@
+{
+  "name": "audit-ci-yarn-4-workspace",
+  "description": "Test yarn workspace",
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@4.0.2"
+}

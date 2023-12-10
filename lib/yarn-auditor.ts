@@ -1,6 +1,4 @@
 import type { YarnAudit, YarnBerryAuditReport } from "audit-types";
-import { execSync } from "child_process";
-import * as semver from "semver";
 import { blue, red, yellow } from "./colors.js";
 import { reportAudit, runProgram } from "./common.js";
 import {
@@ -9,38 +7,14 @@ import {
   type AuditCiFullConfig,
 } from "./config.js";
 import Model, { type Summary } from "./model.js";
-
-const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
-const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
-/**
- * Change this to the appropriate version when
- * yarn audit --registry is supported:
- * @see https://github.com/yarnpkg/yarn/issues/7012
- */
-const MINIMUM_YARN_AUDIT_REGISTRY_VERSION = "99.99.99";
-
-function getYarnVersion(cwd?: string) {
-  const version = execSync("yarn -v", { cwd }).toString().replace("\n", "");
-  return version;
-}
-
-function yarnSupportsClassicAudit(yarnVersion: string | semver.SemVer) {
-  return semver.satisfies(yarnVersion, `^${MINIMUM_YARN_CLASSIC_VERSION}`);
-}
-
-function yarnSupportsBerryAudit(yarnVersion: string | semver.SemVer) {
-  return semver.gte(yarnVersion, MINIMUM_YARN_BERRY_VERSION);
-}
-
-function yarnSupportsAudit(yarnVersion: string | semver.SemVer) {
-  return (
-    yarnSupportsClassicAudit(yarnVersion) || yarnSupportsBerryAudit(yarnVersion)
-  );
-}
-
-function yarnAuditSupportsRegistry(yarnVersion: string | semver.SemVer) {
-  return semver.gte(yarnVersion, MINIMUM_YARN_AUDIT_REGISTRY_VERSION);
-}
+import {
+  MINIMUM_YARN_BERRY_VERSION,
+  MINIMUM_YARN_CLASSIC_VERSION,
+  getYarnVersion,
+  yarnAuditSupportsRegistry,
+  yarnSupportsAudit,
+  yarnSupportsClassicAudit,
+} from "./yarn-version.js";
 
 const printJson = (data: unknown) => {
   console.log(JSON.stringify(data, undefined, 2));
@@ -83,7 +57,7 @@ export async function auditWithFullConfig(
   let missingLockFile = false;
   const model = new Model(config);
 
-  const yarnVersion = getYarnVersion(directory);
+  const yarnVersion = getYarnVersion(yarnExec, directory);
   const isYarnVersionSupported = yarnSupportsAudit(yarnVersion);
   if (!isYarnVersionSupported) {
     throw new Error(

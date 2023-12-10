@@ -1,0 +1,13 @@
+{
+  "name": "audit-ci-yarn-duplicate-paths",
+  "description": "Test package.json with duplicate vulnerability paths",
+  "dependencies": {
+    "minimist": "1.2.5"
+  },
+  "resolutions": {
+    "minimist": "1.2.5"
+  },
+  "devDependencies": {
+    "esdoc": "1.1.0"
+  }
+}

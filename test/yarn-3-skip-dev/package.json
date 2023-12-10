@@ -1,0 +1,11 @@
+{
+  "name": "audit-ci-yarn-3-skip-dev",
+  "description": "Test package.json with critical devDependency",
+  "dependencies": {
+    "node-noop": "1.0.0"
+  },
+  "devDependencies": {
+    "open": "0.0.5"
+  },
+  "packageManager": "yarn@3.7.0"
+}
