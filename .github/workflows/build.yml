@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ["16", "18", "20"]
+        node: ["18", "20", "21"]
     name: Build and test with Node ${{ matrix.node }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://registry.npmjs.org/
@@ -20,6 +20,6 @@ jobs:
       - run: npm run build
       # Have audit-ci run audit-ci to audit itself :)
       - run: node ./dist/bin.js --config ./audit-ci.jsonc
-      - run: npm test
+      - run: npm run coverage
       - run: npm run lint
       - run: npm run format -- --check

@@ -1,8 +1,8 @@
 import { NPMAuditReportV2 } from "audit-types";
-import { expect } from "chai";
-import Allowlist from "../lib/allowlist";
-import Model from "../lib/model";
-import { summaryWithDefault } from "./common";
+import { describe, expect, it } from "vitest";
+import Allowlist from "../lib/allowlist.js";
+import Model from "../lib/model.js";
+import { summaryWithDefault } from "./common.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Intentionally any to pass bad values
 function config(additions: any) {
@@ -22,27 +22,27 @@ describe("Model", () => {
             high: true,
             critical: true,
           },
-        })
+        }),
     ).to.throw(
-      "Unsupported number as allowlist. Perform codemod to update config to use GitHub advisory as identifiers: https://github.com/quinnturner/audit-ci-codemod with `npx @quinnturner/audit-ci-codemod`. See also: https://github.com/IBM/audit-ci/pull/217"
+      "Unsupported number as allowlist. Perform codemod to update config to use GitHub advisory as identifiers: https://github.com/quinnturner/audit-ci-codemod with `npx @quinnturner/audit-ci-codemod`. See also: https://github.com/IBM/audit-ci/pull/217",
     );
   });
 
   it("rejects misspelled severity levels", () => {
     expect(() => new Model(config({ levels: { critical_: true } }))).to.throw(
-      "Unsupported severity levels found: critical_"
+      "Unsupported severity levels found: critical_",
     );
     expect(
       () =>
-        new Model(config({ levels: { Low: true, hgih: true, mdrate: true } }))
+        new Model(config({ levels: { Low: true, hgih: true, mdrate: true } })),
     ).to.throw("Unsupported severity levels found: Low, hgih, mdrate");
     expect(
       () =>
         new Model(
           config({
             levels: { mdrate: true, critical: true, hgih: true, low: true },
-          })
-        )
+          }),
+        ),
     ).to.throw("Unsupported severity levels found: hgih, mdrate");
   });
 
@@ -85,7 +85,7 @@ describe("Model", () => {
         failedLevelsFound: ["critical"],
         advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
         advisoryPathsFound: ["GHSA-28xh-wpgr-7fm8|open"],
-      })
+      }),
     );
   });
 
@@ -174,7 +174,7 @@ describe("Model", () => {
           "GHSA-a-a-f|M_F",
           "GHSA-a-a-g|M_G",
         ],
-      })
+      }),
     );
   });
 
@@ -264,7 +264,7 @@ describe("Model", () => {
           "GHSA-a-a-f|M_F",
           "GHSA-a-a-g|M_G",
         ],
-      })
+      }),
     );
   });
 
@@ -360,7 +360,7 @@ describe("Model", () => {
           "GHSA-a-a-e|M_E",
           "GHSA-a-a-g|M_G",
         ],
-      })
+      }),
     );
   });
 
@@ -409,7 +409,7 @@ describe("Model", () => {
           "GHSA-a-a-b|M_B_1",
           "GHSA-a-a-b|M_B_2",
         ],
-      })
+      }),
     );
   });
 
@@ -474,7 +474,7 @@ describe("Model", () => {
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-a-a-c"],
         advisoryPathsFound: ["GHSA-a-a-c|GHSA-a-a-c>"],
-      })
+      }),
     );
   });
 
@@ -543,7 +543,7 @@ describe("Model", () => {
         failedLevelsFound: ["moderate"],
         advisoriesFound: ["GHSA-a-a-c"],
         advisoryPathsFound: ["GHSA-a-a-c|GHSA-a-a-c>"],
-      })
+      }),
     );
   });
 });

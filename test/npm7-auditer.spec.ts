@@ -1,13 +1,13 @@
 import { NPMAuditReportV2 } from "audit-types";
-import { expect } from "chai";
 import semver from "semver";
-import Allowlist from "../lib/allowlist";
-import { auditWithFullConfig, report } from "../lib/npm-auditer";
+import { describe, expect, it } from "vitest";
+import Allowlist from "../lib/allowlist.js";
+import { auditWithFullConfig, report } from "../lib/npm-auditer.js";
 import {
   config as baseConfig,
   summaryWithDefault,
   testDirectory,
-} from "./common";
+} from "./common.js";
 
 import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm7-output.json";
 import untypedReportNpmCritical from "./npm-critical/npm7-output.json";
@@ -31,10 +31,6 @@ const reportNpmSkipDevelopment =
   untypedReportNpmSkipDevelopment as unknown as NPMAuditReportV2.Audit;
 
 const nodeVersion = process.version;
-
-function nodeVersionIsAtLeast(version: string) {
-  return semver.gte(nodeVersion, version);
-}
 
 function config(
   additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">
@@ -386,32 +382,36 @@ describe("npm7-auditer", () => {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
-  it("fails with error code ENOTFOUND on a non-existent site", (done) => {
-    auditWithFullConfig(
-      config({
-        directory: testDirectory("npm-low"),
-        levels: { low: true },
-        registry: "https://registry.nonexistentdomain0000000000.com",
-      })
-    ).catch((error) => {
-      expect(error.message).to.include("ENOTFOUND");
-      done();
-    });
-  });
-  semver.lt(nodeVersion, "20.0.0") &&
-    it("fails with error code ECONNREFUSED on a live site with no registry", (done) => {
-      auditWithFullConfig(
+  it("fails with error code ENOTFOUND on a non-existent site", async () => {
+    try {
+      await auditWithFullConfig(
         config({
           directory: testDirectory("npm-low"),
           levels: { low: true },
-          registry: "http://localhost",
+          registry: "https://registry.nonexistentdomain0000000000.com",
         })
-      )
-        .catch((error) => {
-          expect(error.message).to.include("ECONNREFUSED");
-          done();
-        })
-        .catch((error) => done(error));
+      );
+    } catch (error) {
+      expect((error as Error).message).to.include("ENOTFOUND");
+      return;
+    }
+    throw new Error("Expected audit to fail");
+  });
+  semver.lt(nodeVersion, "20.0.0") &&
+    it("fails with error code ECONNREFUSED on a live site with no registry", async () => {
+      try {
+        await auditWithFullConfig(
+          config({
+            directory: testDirectory("npm-low"),
+            levels: { low: true },
+            registry: "http://localhost",
+          })
+        );
+      } catch (error) {
+        expect((error as Error).message).to.include("ECONNREFUSED");
+        return;
+      }
+      throw new Error("Expected audit to fail");
     });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(

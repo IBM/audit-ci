@@ -1,11 +1,11 @@
-import { expect } from "chai";
-import Allowlist from "../lib/allowlist";
-import { report } from "../lib/pnpm-auditer";
+import { describe, expect, it } from "vitest";
+import Allowlist from "../lib/allowlist.js";
+import { report } from "../lib/pnpm-auditer.js";
 import {
   config as baseConfig,
   summaryWithDefault,
   testDirectory,
-} from "./common";
+} from "./common.js";
 
 import reportPnpmAllowlistedPath from "./pnpm-allowlisted-path/pnpm-output.json";
 import reportPnpmCritical from "./pnpm-critical/pnpm-output.json";

@@ -2,13 +2,13 @@ import { GitHubAdvisoryId } from "audit-types";
 import { SpawnOptionsWithoutStdio } from "child_process";
 import { spawn } from "cross-spawn";
 import escapeStringRegexp from "escape-string-regexp";
-import * as eventStream from "event-stream";
-import * as JSONStream from "JSONStream";
+import eventStream from "event-stream";
+import * as JSONStream from "jsonstream-next";
 import ReadlineTransform from "readline-transform";
-import Allowlist from "./allowlist";
-import { blue, yellow } from "./colors";
-import { AuditCiConfig } from "./config";
-import { Summary } from "./model";
+import Allowlist from "./allowlist.js";
+import { blue, yellow } from "./colors.js";
+import { AuditCiConfig } from "./config.js";
+import { Summary } from "./model.js";
 
 export function partition<T>(a: T[], fun: (parameter: T) => boolean) {
   const returnValue: { truthy: T[]; falsy: T[] } = { truthy: [], falsy: [] };
@@ -49,7 +49,7 @@ export function reportAudit(summary: Summary, config: ReportConfig) {
     if (allowlist.modules.length > 0) {
       console.log(
         blue,
-        `Modules to allowlist: ${allowlist.modules.join(", ")}.`
+        `Modules to allowlist: ${allowlist.modules.join(", ")}.`,
       );
     }
 
@@ -62,7 +62,7 @@ export function reportAudit(summary: Summary, config: ReportConfig) {
         const found = allowlistedAdvisoriesFound.join(", ");
         console.warn(
           yellow,
-          `Found vulnerable allowlisted advisories: ${found}.`
+          `Found vulnerable allowlisted advisories: ${found}.`,
         );
       }
     }
@@ -110,10 +110,10 @@ export function reportAudit(summary: Summary, config: ReportConfig) {
     // Get the levels that have failed by filtering the keys with true values
     throw new Error(
       `Failed security audit due to ${failedLevelsFound.join(
-        ", "
+        ", ",
       )} vulnerabilities.\nVulnerable advisories are:\n${advisoriesFound
         .map((element) => gitHubAdvisoryIdToUrl(element))
-        .join("\n")}`
+        .join("\n")}`,
     );
   }
   return summary;
@@ -124,7 +124,7 @@ function hasMessage(value: unknown): value is { message: unknown } {
 }
 
 function hasStatusCode(
-  value: unknown
+  value: unknown,
 ): value is { statusCode: unknown; message: unknown } {
   return (
     typeof value === "object" && value != undefined && "statusCode" in value
@@ -135,9 +135,13 @@ export function runProgram(
   command: string,
   arguments_: readonly string[],
   options: SpawnOptionsWithoutStdio,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stdoutListener: (data: any) => void,
-  stderrListener: (data: any) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stderrListener: (data: any) => void,
 ) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const transform = new ReadlineTransform({ skipEmpty: true });
   const proc = spawn(command, arguments_, options);
   let recentMessage: string;
@@ -145,23 +149,23 @@ export function runProgram(
   proc.stdout.setEncoding("utf8");
   proc.stdout
     .pipe(
-      transform.on("error", (error) => {
+      transform.on("error", (error: unknown) => {
         throw error;
-      })
+      }),
     )
     .pipe(
       eventStream.mapSync((data: string) => {
         recentMessage = data;
         return data;
-      })
+      }),
     )
     .pipe(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore -- JSONStream.parse() accepts (pattern: any) when it should accept (pattern?: any)
+      // @ts-expect-error -- JSONStream.parse() accepts (pattern: any) when it should accept (pattern?: any)
       JSONStream.parse().on("error", () => {
         errorMessage = recentMessage;
         throw new Error(errorMessage);
-      })
+      }),
     )
     .pipe(
       eventStream.mapSync((data: unknown) => {
@@ -186,7 +190,7 @@ export function runProgram(
         } catch (error) {
           stderrListener(error);
         }
-      })
+      }),
     );
   return new Promise<void>((resolve, reject) => {
     proc.on("close", () => {
@@ -196,7 +200,7 @@ export function runProgram(
       return resolve();
     });
     proc.on("error", (error) =>
-      reject(errorMessage ? new Error(errorMessage) : error)
+      reject(errorMessage ? new Error(errorMessage) : error),
     );
   });
 }
@@ -224,7 +228,7 @@ export function gitHubAdvisoryUrlToAdvisoryId(url: string): GitHubAdvisoryId {
 }
 
 export function gitHubAdvisoryIdToUrl<T extends string>(
-  id: T
+  id: T,
 ): `https://github.com/advisories/${T}` {
   return `https://github.com/advisories/${id}`;
 }

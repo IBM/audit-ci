@@ -1,19 +1,19 @@
 import type { GitHubAdvisoryId, PNPMAuditReport } from "audit-types";
-import { blue, yellow } from "./colors";
-import { reportAudit, ReportConfig, runProgram } from "./common";
+import { execSync } from "child_process";
+import * as semver from "semver";
+import { blue, yellow } from "./colors.js";
+import { ReportConfig, reportAudit, runProgram } from "./common.js";
 import {
   AuditCiConfig,
   AuditCiFullConfig,
   mapAuditCiConfigToAuditCiFullConfig,
-} from "./config";
-import Model, { type Summary } from "./model";
-import * as semver from "semver";
-import { execSync } from "child_process";
+} from "./config.js";
+import Model, { type Summary } from "./model.js";
 
 const MINIMUM_PNPM_AUDIT_REGISTRY_VERSION = "5.4.0";
 
 async function runPnpmAudit(
-  config: AuditCiFullConfig
+  config: AuditCiFullConfig,
 ): Promise<PNPMAuditReport.AuditResponse> {
   const {
     directory,
@@ -24,14 +24,15 @@ async function runPnpmAudit(
   } = config;
   const pnpmExec = _pnpm || "pnpm";
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stdoutBuffer: any = {};
-  function outListener(data: any) {
+  function outListener(data: unknown) {
     // Object.assign is used here instead of the spread operator for minor performance gains.
     Object.assign(stdoutBuffer, data);
   }
 
-  const stderrBuffer: any[] = [];
-  function errorListener(line: any) {
+  const stderrBuffer: unknown[] = [];
+  function errorListener(line: unknown) {
     stderrBuffer.push(line);
   }
 
@@ -44,7 +45,7 @@ async function runPnpmAudit(
     } else {
       console.warn(
         yellow,
-        `Update PNPM to version >=${MINIMUM_PNPM_AUDIT_REGISTRY_VERSION} to use the --registry flag`
+        `Update PNPM to version >=${MINIMUM_PNPM_AUDIT_REGISTRY_VERSION} to use the --registry flag`,
       );
     }
   }
@@ -58,7 +59,7 @@ async function runPnpmAudit(
   await runProgram(pnpmExec, arguments_, options, outListener, errorListener);
   if (stderrBuffer.length > 0) {
     throw new Error(
-      `Invocation of pnpm audit failed:\n${stderrBuffer.join("\n")}`
+      `Invocation of pnpm audit failed:\n${stderrBuffer.join("\n")}`,
     );
   }
   return stdoutBuffer;
@@ -68,7 +69,7 @@ function printReport(
   parsedOutput: PNPMAuditReport.Audit,
   levels: AuditCiFullConfig["levels"],
   reportType: "full" | "important" | "summary",
-  outputFormat: "text" | "json"
+  outputFormat: "text" | "json",
 ) {
   const printReportObject = (text: string, object: unknown) => {
     if (outputFormat === "text") {
@@ -77,9 +78,10 @@ function printReport(
     console.log(JSON.stringify(object, undefined, 2));
   };
   switch (reportType) {
-    case "full":
+    case "full": {
       printReportObject("PNPM audit report JSON:", parsedOutput);
       break;
+    }
     case "important": {
       const { advisories, metadata } = parsedOutput;
 
@@ -102,13 +104,15 @@ function printReport(
       printReportObject("PNPM audit report results:", keyFindings);
       break;
     }
-    case "summary":
+    case "summary": {
       printReportObject("PNPM audit report summary:", parsedOutput.metadata);
       break;
-    default:
+    }
+    default: {
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`
+        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
       );
+    }
   }
 }
 
@@ -118,8 +122,8 @@ export function report(
   reporter: (
     summary: Summary,
     config: ReportConfig,
-    audit?: PNPMAuditReport.Audit
-  ) => Summary
+    audit?: PNPMAuditReport.Audit,
+  ) => Summary,
 ) {
   const {
     levels,
@@ -139,7 +143,7 @@ export function report(
  */
 export async function auditWithFullConfig(
   config: AuditCiFullConfig,
-  reporter = reportAudit
+  reporter = reportAudit,
 ) {
   const parsedOutput = await runPnpmAudit(config);
   if ("error" in parsedOutput) {
@@ -158,7 +162,7 @@ export async function audit(config: AuditCiConfig, reporter = reportAudit) {
 }
 
 function pnpmAuditSupportsRegistry(
-  pnpmVersion: string | semver.SemVer
+  pnpmVersion: string | semver.SemVer,
 ): boolean {
   return semver.gte(pnpmVersion, MINIMUM_PNPM_AUDIT_REGISTRY_VERSION);
 }

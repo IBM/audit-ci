@@ -1,9 +1,9 @@
-import { expect } from "chai";
+import { describe, expect, it } from "vitest";
 import {
   getAllowlistId,
   getNSPContent,
   isNSPRecordActive,
-} from "../lib/nsp-record";
+} from "../lib/nsp-record.js";
 
 describe("getAllowlistId", () => {
   it("should get the allowlist id", () => {
@@ -63,7 +63,7 @@ describe("isNSPRecordActive", () => {
           expiry: "November 20, 2022 11:00:00",
         },
       },
-      now
+      now,
     );
 
     expect(active).to.eql(true);
@@ -77,7 +77,7 @@ describe("isNSPRecordActive", () => {
           expiry: "November 10, 2022 11:00:00",
         },
       },
-      now
+      now,
     );
 
     expect(active).to.eql(false);
@@ -91,7 +91,7 @@ describe("isNSPRecordActive", () => {
           expiry: "INVALID",
         },
       },
-      now
+      now,
     );
 
     expect(active).to.eql(false);
@@ -132,8 +132,8 @@ describe("isNSPRecordActive", () => {
               expiry,
             },
           },
-          now
-        )
+          now,
+        ),
       ).to.eql(true);
     }
 
@@ -146,8 +146,8 @@ describe("isNSPRecordActive", () => {
               expiry,
             },
           },
-          now
-        )
+          now,
+        ),
       ).to.eql(false);
     }
   });

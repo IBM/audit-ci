@@ -1,8 +1,8 @@
 import path from "path";
-import Allowlist from "../lib/allowlist";
-import { AuditCiFullConfig } from "../lib/config";
-import { mapVulnerabilityLevelInput } from "../lib/map-vulnerability";
-import { Summary } from "../lib/model";
+import Allowlist from "../lib/allowlist.js";
+import { AuditCiFullConfig } from "../lib/config.js";
+import { mapVulnerabilityLevelInput } from "../lib/map-vulnerability.js";
+import { Summary } from "../lib/model.js";
 
 export function summaryWithDefault(additions: Partial<Summary> = {}) {
   const summary = {
@@ -22,7 +22,7 @@ export function summaryWithDefault(additions: Partial<Summary> = {}) {
 export function config(
   additions: Omit<Partial<AuditCiFullConfig>, "levels"> & {
     levels?: Partial<AuditCiFullConfig["levels"]>;
-  } & Required<Pick<AuditCiFullConfig, "package-manager">>
+  } & Required<Pick<AuditCiFullConfig, "package-manager">>,
 ): AuditCiFullConfig {
   const defaultConfig = {
     levels: {
@@ -52,6 +52,8 @@ export function config(
     levels: { ...defaultConfig.levels, ...levels },
   };
 }
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 export function testDirectory(s: string) {
   return path.resolve(__dirname, s);

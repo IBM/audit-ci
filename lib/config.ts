@@ -1,32 +1,34 @@
 import { existsSync, readFileSync } from "fs";
-import { parse } from "jju";
+import jju from "jju";
 // eslint-disable-next-line unicorn/import-style
 import * as path from "path";
-import { config } from "yargs";
-import Allowlist, { type AllowlistRecord } from "./allowlist";
+import yargs from "yargs/yargs";
+import Allowlist, { type AllowlistRecord } from "./allowlist.js";
 import {
   mapVulnerabilityLevelInput,
   type VulnerabilityLevels,
-} from "./map-vulnerability";
+} from "./map-vulnerability.js";
 
 function mapReportTypeInput(
-  config: Pick<AuditCiPreprocessedConfig, "report-type">
+  config: Pick<AuditCiPreprocessedConfig, "report-type">,
 ) {
   const { "report-type": reportType } = config;
   switch (reportType) {
     case "full":
     case "important":
-    case "summary":
+    case "summary": {
       return reportType;
-    default:
+    }
+    default: {
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`
+        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
       );
+    }
   }
 }
 
 function mapExtraArgumentsInput(
-  config: Pick<AuditCiPreprocessedConfig, "extra-args">
+  config: Pick<AuditCiPreprocessedConfig, "extra-args">,
 ) {
   // These args will often be flags for another command, so we
   // want to have some way of escaping args that start with a -.
@@ -164,13 +166,14 @@ export type AuditCiConfig = {
  */
 function resolvePackageManagerType(
   pmArgument: "auto" | "npm" | "yarn" | "pnpm",
-  directory: string
+  directory: string,
 ): "npm" | "yarn" | "pnpm" {
   switch (pmArgument) {
     case "npm":
     case "pnpm":
-    case "yarn":
+    case "yarn": {
       return pmArgument;
+    }
     case "auto": {
       const getPath = (file: string) => path.resolve(directory, file);
       // TODO: Consider prioritizing `package.json#packageManager` for determining the package manager.
@@ -183,11 +186,12 @@ function resolvePackageManagerType(
       const pnpmLockExists = existsSync(getPath("pnpm-lock.yaml"));
       if (pnpmLockExists) return "pnpm";
       throw new Error(
-        "Cannot establish package-manager type, missing package-lock.json, yarn.lock, and pnpm-lock.yaml."
+        "Cannot establish package-manager type, missing package-lock.json, yarn.lock, and pnpm-lock.yaml.",
       );
     }
-    default:
+    default: {
       throw new Error(`Unexpected package manager argument: ${pmArgument}`);
+    }
   }
 }
 
@@ -226,7 +230,7 @@ function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
 
   const resolvedPackageManager = resolvePackageManagerType(
     packageManager,
-    directory
+    directory,
   );
 
   const result: AuditCiFullConfig = {
@@ -246,7 +250,7 @@ function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
 }
 
 export function mapAuditCiConfigToAuditCiFullConfig(
-  config: AuditCiConfig
+  config: AuditCiConfig,
 ): AuditCiFullConfig {
   const packageManager =
     config["package-manager"] ?? defaults["package-manager"];
@@ -254,7 +258,7 @@ export function mapAuditCiConfigToAuditCiFullConfig(
 
   const resolvedPackageManager = resolvePackageManagerType(
     packageManager,
-    directory
+    directory,
   );
 
   const allowlist = Allowlist.mapConfigToAllowlist({
@@ -289,14 +293,14 @@ export function mapAuditCiConfigToAuditCiFullConfig(
 }
 
 export async function runYargs(): Promise<AuditCiFullConfig> {
-  const { argv } = config("config", (configPath) =>
-    // Supports JSON, JSONC, & JSON5
-    parse(readFileSync(configPath, "utf8"), {
-      // When passing an allowlist using NSRecord syntax, yargs will throw an error
-      // "Invalid JSON config file". We need to add this flag to prevent that.
-      null_prototype: false,
-    })
-  )
+  const { argv } = yargs().config("config", (configPath) =>
+      // Supports JSON, JSONC, & JSON5
+      jju.parse(readFileSync(configPath, "utf8"), {
+        // When passing an allowlist using NSRecord syntax, yargs will throw an error
+        // "Invalid JSON config file". We need to add this flag to prevent that.
+        null_prototype: false,
+      }),
+    )
     .options({
       l: {
         alias: "low",

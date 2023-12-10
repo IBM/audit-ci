@@ -1,12 +1,12 @@
 import { NPMAuditReportV1 } from "audit-types";
-import { expect } from "chai";
-import Allowlist from "../lib/allowlist";
-import { auditWithFullConfig, report } from "../lib/npm-auditer";
+import { describe, expect, it } from "vitest";
+import Allowlist from "../lib/allowlist.js";
+import { auditWithFullConfig, report } from "../lib/npm-auditer.js";
 import {
   config as baseConfig,
   summaryWithDefault,
   testDirectory,
-} from "./common";
+} from "./common.js";
 
 import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm-output.json";
 import untypedReportNpmCritical from "./npm-critical/npm-output.json";
@@ -396,17 +396,20 @@ describe("npm-auditer", () => {
     );
     expect(summary).to.eql(summaryWithDefault());
   });
-  it("fails with error code ENOTFOUND on a non-existent site", (done) => {
-    auditWithFullConfig(
-      config({
-        directory: testDirectory("npm-low"),
-        levels: { low: true },
-        registry: "https://registry.nonexistentdomain0000000000.com",
-      })
-    ).catch((error) => {
-      expect(error.message).to.include("ENOTFOUND");
-      done();
-    });
+  it("fails with error code ENOTFOUND on a non-existent site", async () => {
+    try {
+      await auditWithFullConfig(
+        config({
+          directory: testDirectory("npm-low"),
+          levels: { low: true },
+          registry: "https://registry.nonexistentdomain0000000000.com",
+        })
+      );
+    } catch (error) {
+      expect((error as Error).message).to.include("ENOTFOUND");
+      return;
+    }
+    throw new Error("Expected an error to be thrown");
   });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(
