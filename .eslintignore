@@ -1,2 +1,3 @@
 test/yarn-berry.cjs
 dist
+coverage
