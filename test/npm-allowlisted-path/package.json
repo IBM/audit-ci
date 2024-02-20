@@ -1,7 +1,7 @@
 {
   "name": "audit-ci-npm-allowlisted-path",
   "dependencies": {
-    "axios": "^0.15.3",
+    "axios": "^0.28.0",
     "github-build": "^1.2.0"
   }
 }
