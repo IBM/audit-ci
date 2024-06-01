@@ -6,7 +6,7 @@
 [![CodeQL](https://github.com/IBM/audit-ci/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/IBM/audit-ci/actions/workflows/codeql-analysis.yml)
 
 This module is intended to be consumed by your favourite continuous integration tool to
-halt execution if `npm audit`, `yarn audit` or `pnpm audit` finds vulnerabilities at or above the specified
+halt execution if `npm audit`, `yarn audit`, or `pnpm audit` finds vulnerabilities at or above the specified
 threshold while ignoring allowlisted advisories.
 
 > Note: Use our [codemod](#codemod) to update to [`audit-ci` v6.0.0](https://github.com/IBM/audit-ci/releases/tag/v6.0.0)
@@ -23,8 +23,9 @@ threshold while ignoring allowlisted advisories.
 - Yarn Classic workspaces does not audit `devDependencies`. See [this issue](https://github.com/yarnpkg/yarn/issues/7047) for more information.
 - Yarn v4 is not supported because it provides similar functionality to `audit-ci`.
   For more information, see the [documentation on `yarn npm audit`](https://yarnpkg.com/cli/npm/audit#options).
+  If you'd like `audit-ci` to support Yarn v4, voice your opinion on [this issue](https://github.com/IBM/audit-ci/issues/332).
 - Bun is supported by exporting the `bun.lockb` into a Yarn v1 `yarn.lock` file.
-  Accordingly, it requires Yarn v1 to run `audit-ci` and it has the same limitations as Yarn v1.
+  Accordingly, auditing a `bun.lockb` file with `audit-ci` requires Yarn v1.
 
 ## Set up
 
@@ -49,7 +50,7 @@ bun install -D audit-ci
 ```
 
 The next section gives examples using `audit-ci` in various CI environments.
-It assumes that moderate, high, and critical severity vulnerabilities prevent build continuation.
+It assumes moderate, high, and critical severity vulnerabilities prevent build continuation.
 Also, it suppresses an advisory of `axios` and a transitive advisory of `react-scripts`.
 
 ```jsonc
