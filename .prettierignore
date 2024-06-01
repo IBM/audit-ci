@@ -3,3 +3,4 @@ test/yarn-*.cjs
 **/pnpm-lock.yaml
 **/*-output.json
 **/.pnp.cjs
+test/*/*.json
