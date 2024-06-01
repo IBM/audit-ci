@@ -293,7 +293,8 @@ export function mapAuditCiConfigToAuditCiFullConfig(
 }
 
 export async function runYargs(): Promise<AuditCiFullConfig> {
-  const { argv } = yargs().config("config", (configPath) =>
+  const { argv } = yargs()
+    .config("config", (configPath) =>
       // Supports JSON, JSONC, & JSON5
       jju.parse(readFileSync(configPath, "utf8"), {
         // When passing an allowlist using NSRecord syntax, yargs will throw an error

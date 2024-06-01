@@ -3,6 +3,6 @@
   "low": "true",
   "allowlist": [
     /** JSON comment */
-    "open"
-  ]
+    "open",
+  ],
 }

@@ -1,0 +1,8 @@
+{
+  "name": "audit-ci-yarn-4-critical-vulnerability",
+  "description": "Test package.json with critical vulnerability",
+  "dependencies": {
+    "open": "0.0.5"
+  },
+  "packageManager": "yarn@4.2.2"
+}

@@ -1,1 +1,1 @@
-test/yarn-berry.cjs linguist-vendored
+test/yarn-*.cjs linguist-vendored

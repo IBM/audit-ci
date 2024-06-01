@@ -1,0 +1,1 @@
+{"value":"chownr","children":{"ID":1091617,"Issue":"Time-of-check Time-of-use (TOCTOU) Race Condition in chownr","URL":"https://github.com/advisories/GHSA-c6rq-rjc2-86v2","Severity":"low","Vulnerable Versions":"<1.1.0","Tree Versions":["1.0.0"],"Dependents":["audit-ci-yarn-4-low-vulnerability@workspace:."]}}

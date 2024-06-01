@@ -1,0 +1,8 @@
+{
+  "name": "audit-ci-yarn-3-low-vulnerability",
+  "description": "Test package.json with low vulnerability",
+  "dependencies": {
+    "chownr": "1.0.0"
+  },
+  "packageManager": "yarn@3.7.0"
+}

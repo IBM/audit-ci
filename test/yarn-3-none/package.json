@@ -1,0 +1,7 @@
+{
+  "name": "audit-ci-yarn-3-no-vulnerability",
+  "description": "Test package.json with no vulnerability",
+  "dependencies": {
+    "node-noop": "1.0.0"
+  }
+}

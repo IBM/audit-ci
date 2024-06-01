@@ -14,12 +14,17 @@ threshold while ignoring allowlisted advisories.
 ## Requirements
 
 - Node >=16
-- _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
+- _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0 && <4.0.0
 - _(Optional)_ PNPM >=4.3.0
+- _(Optional)_ Bun
 
 ## Limitations
 
 - Yarn Classic workspaces does not audit `devDependencies`. See [this issue](https://github.com/yarnpkg/yarn/issues/7047) for more information.
+- Yarn v4 is not supported because it provides similar functionality to `audit-ci`.
+  For more information, see the [documentation on `yarn npm audit`](https://yarnpkg.com/cli/npm/audit#options).
+- Bun is supported by exporting the `bun.lockb` into a Yarn v1 `yarn.lock` file.
+  Accordingly, it requires Yarn v1 to run `audit-ci` and it has the same limitations as Yarn v1.
 
 ## Set up
 
@@ -40,6 +45,7 @@ The downside of this approach is that the CI may run a `postinstall` script of a
 npm install -D audit-ci
 yarn add -D audit-ci
 pnpm install -D audit-ci
+bun install -D audit-ci
 ```
 
 The next section gives examples using `audit-ci` in various CI environments.
@@ -59,10 +65,20 @@ Also, it suppresses an advisory of `axios` and a transitive advisory of `react-s
     // https://github.com/advisories/GHSA-rp65-9cf3-cjxr
     // Alternatively, allowlist "GHSA-rp65-9cf3-cjxr" to suppress this nth-check advisory across all paths
     // or "*|react-scripts>*" to suppress advisories for all transitive dependencies of "react-scripts".
-    "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check"
-  ]
+    "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check",
+  ],
 }
 ```
+
+### Bun
+
+Bun supports exporting the `bun.lockb` into a Yarn v1 `yarn.lock` file.
+
+```sh
+bun install -y
+```
+
+Afterwards, you can run `audit-ci` with the `yarn` package manager.
 
 ### Allowlisting
 
@@ -320,8 +336,8 @@ With a `JSONC` config file, execute with `npx audit-ci --config ./audit-ci.jsonc
     // https://github.com/advisories/GHSA-rp65-9cf3-cjxr
     // Alternatively, allowlist "GHSA-rp65-9cf3-cjxr" to suppress this nth-check advisory across all paths
     // or "*|react-scripts>*" to suppress advisories for all transitive dependencies of "react-scripts".
-    "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check"
-  ]
+    "GHSA-rp65-9cf3-cjxr|react-scripts>@svgr/webpack>@svgr/plugin-svgo>svgo>css-select>nth-check",
+  ],
 }
 ```
 
@@ -359,7 +375,7 @@ With a `JSONC` config file:
 {
   "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   "critical": true,
-  "report-type": "full"
+  "report-type": "full",
 }
 ```
 
@@ -376,7 +392,7 @@ With a `JSONC` config file:
 ```jsonc
 {
   "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
-  "report-type": "summary"
+  "report-type": "summary",
 }
 ```
 
@@ -393,7 +409,7 @@ With a `JSONC` config file, in a project on Yarn Berry v3.3.0 or later:
 ```jsonc
 {
   "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
-  "extra-args": ["--exclude", "example"]
+  "extra-args": ["--exclude", "example"],
 }
 ```
 
@@ -420,9 +436,9 @@ npx audit-ci@^7 --extra-args '\--exclude' example
     "GHSA-6354-6mhv-mvv5|example3",
     "GHSA-42xw-2xvc-qx8m|example4",
     "GHSA-42xw-2xvc-qx8m|example5>example4",
-    "*|example6>*"
+    "*|example6>*",
   ],
-  "registry": "https://registry.npmjs.org"
+  "registry": "https://registry.npmjs.org",
 }
 ```
 

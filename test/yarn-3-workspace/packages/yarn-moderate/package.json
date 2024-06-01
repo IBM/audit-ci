@@ -1,0 +1,8 @@
+{
+  "version": "0.1.0",
+  "name": "audit-ci-yarn-3-workspace-moderate-vulnerability",
+  "description": "Test package.json with moderate vulnerability",
+  "dependencies": {
+    "base64url": "2.0.0"
+  }
+}

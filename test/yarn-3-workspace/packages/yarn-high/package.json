@@ -1,0 +1,8 @@
+{
+  "version": "0.1.0",
+  "name": "audit-ci-yarn-3-workspace-high-vulnerability",
+  "description": "Test package.json with high vulnerability",
+  "dependencies": {
+    "qs": "6.10.2"
+  }
+}

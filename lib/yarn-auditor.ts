@@ -1,6 +1,4 @@
-import type { YarnAudit, YarnBerryAuditReport } from "audit-types";
-import { execSync } from "child_process";
-import * as semver from "semver";
+import type { YarnAudit, Yarn2And3AuditReport } from "audit-types";
 import { blue, red, yellow } from "./colors.js";
 import { reportAudit, runProgram } from "./common.js";
 import {
@@ -9,38 +7,14 @@ import {
   type AuditCiFullConfig,
 } from "./config.js";
 import Model, { type Summary } from "./model.js";
-
-const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
-const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
-/**
- * Change this to the appropriate version when
- * yarn audit --registry is supported:
- * @see https://github.com/yarnpkg/yarn/issues/7012
- */
-const MINIMUM_YARN_AUDIT_REGISTRY_VERSION = "99.99.99";
-
-function getYarnVersion(cwd?: string) {
-  const version = execSync("yarn -v", { cwd }).toString().replace("\n", "");
-  return version;
-}
-
-function yarnSupportsClassicAudit(yarnVersion: string | semver.SemVer) {
-  return semver.satisfies(yarnVersion, `^${MINIMUM_YARN_CLASSIC_VERSION}`);
-}
-
-function yarnSupportsBerryAudit(yarnVersion: string | semver.SemVer) {
-  return semver.gte(yarnVersion, MINIMUM_YARN_BERRY_VERSION);
-}
-
-function yarnSupportsAudit(yarnVersion: string | semver.SemVer) {
-  return (
-    yarnSupportsClassicAudit(yarnVersion) || yarnSupportsBerryAudit(yarnVersion)
-  );
-}
-
-function yarnAuditSupportsRegistry(yarnVersion: string | semver.SemVer) {
-  return semver.gte(yarnVersion, MINIMUM_YARN_AUDIT_REGISTRY_VERSION);
-}
+import {
+  MINIMUM_YARN_BERRY_VERSION,
+  MINIMUM_YARN_CLASSIC_VERSION,
+  getYarnVersion,
+  yarnAuditSupportsRegistry,
+  yarnSupportsAudit,
+  yarnSupportsClassicAudit,
+} from "./yarn-version.js";
 
 const printJson = (data: unknown) => {
   console.log(JSON.stringify(data, undefined, 2));
@@ -83,7 +57,7 @@ export async function auditWithFullConfig(
   let missingLockFile = false;
   const model = new Model(config);
 
-  const yarnVersion = getYarnVersion(directory);
+  const yarnVersion = getYarnVersion(yarnExec, directory);
   const isYarnVersionSupported = yarnSupportsAudit(yarnVersion);
   if (!isYarnVersionSupported) {
     throw new Error(
@@ -94,7 +68,7 @@ export async function auditWithFullConfig(
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
 
   function isClassicGuard(
-    response: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse,
+    response: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse,
   ): response is YarnAudit.AuditResponse {
     return isYarnClassic;
   }
@@ -147,7 +121,7 @@ export async function auditWithFullConfig(
               printJson(data);
             }
           }
-        : ({ metadata }: { metadata: YarnBerryAuditReport.AuditMetadata }) => {
+        : ({ metadata }: { metadata: Yarn2And3AuditReport.AuditMetadata }) => {
             printJson(metadata);
           };
       break;
@@ -159,7 +133,7 @@ export async function auditWithFullConfig(
               printJson(data);
             }
           }
-        : ({ metadata }: { metadata: YarnBerryAuditReport.AuditMetadata }) => {
+        : ({ metadata }: { metadata: Yarn2And3AuditReport.AuditMetadata }) => {
             printJson(metadata);
           };
       break;
@@ -172,7 +146,7 @@ export async function auditWithFullConfig(
   }
 
   function outListener(
-    line: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse,
+    line: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse,
   ) {
     try {
       if (isClassicGuard(line)) {
@@ -193,7 +167,7 @@ export async function auditWithFullConfig(
         printAuditData(line);
 
         if ("advisories" in line) {
-          for (const advisory of Object.values<YarnBerryAuditReport.Advisory>(
+          for (const advisory of Object.values<Yarn2And3AuditReport.Advisory>(
             line.advisories,
           )) {
             model.process(advisory);

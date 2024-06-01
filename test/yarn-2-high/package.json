@@ -1,0 +1,7 @@
+{
+  "name": "audit-ci-yarn-2-high-vulnerability",
+  "description": "Test package.json with high vulnerability",
+  "dependencies": {
+    "qs": "6.10.2"
+  }
+}
