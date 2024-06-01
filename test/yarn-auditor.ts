@@ -7,6 +7,49 @@ import {
   summaryWithDefault,
   testDirectory,
 } from "./common.js";
+// import untypedReportYarn2Critical from "./yarn-2-critical/output.json";
+// import untypedReportYarn2High from "./yarn-2-high/output.json";
+// import untypedReportYarn2Low from "./yarn-2-low/output.json";
+// import untypedReportYarn2Moderate from "./yarn-2-moderate/output.json";
+// import untypedReportYarn2SkipDevelopment from "./yarn-2-skip-dev/output.json";
+// import untypedReportYarn2Workspace from "./yarn-2-workspace/output.json";
+// import untypedReportYarn2WorkspaceEmpty from "./yarn-2-workspace-empty/output.json";
+// import untypedReportYarn3Critical from "./yarn-3-critical/output.json";
+// import untypedReportYarn3High from "./yarn-3-high/output.json";
+// import untypedReportYarn3Low from "./yarn-3-low/output.json";
+// import untypedReportYarn3Moderate from "./yarn-3-moderate/output.json";
+// import untypedReportYarn3SkipDevelopment from "./yarn-3-skip-dev/output.json";
+// import untypedReportYarn3Workspace from "./yarn-3-workspace/output.json";
+// import untypedReportYarn3WorkspaceEmpty from "./yarn-3-workspace-empty/output.json";
+
+// const reportYarn2Critical =
+//   untypedReportYarn2Critical as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn2High =
+//   untypedReportYarn2High as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn2Low =
+//   untypedReportYarn2Low as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn2Moderate =
+//   untypedReportYarn2Moderate as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn2SkipDevelopment =
+//   untypedReportYarn2SkipDevelopment as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn2Workspace =
+//   untypedReportYarn2Workspace as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn2WorkspaceEmpty =
+//   untypedReportYarn2WorkspaceEmpty as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn3Critical =
+//   untypedReportYarn3Critical as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn3High =
+//   untypedReportYarn3High as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn3Low =
+//   untypedReportYarn3Low as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn3Moderate =
+//   untypedReportYarn3Moderate as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn3SkipDevelopment =
+//   untypedReportYarn3SkipDevelopment as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn3Workspace =
+//   untypedReportYarn3Workspace as Yarn2And3AuditReport.AuditResponse;
+// const reportYarn3WorkspaceEmpty =
+//   untypedReportYarn3WorkspaceEmpty as Yarn2And3AuditReport.AuditResponse;
 
 const nodeVersion = process.version;
 
@@ -79,8 +122,8 @@ export function performAuditTests({
         expect(summary).to.eql(
           summaryWithDefault({
             failedLevelsFound: ["high"],
-            advisoriesFound: ["GHSA-38f5-ghc2-fcmv"],
-            advisoryPathsFound: ["GHSA-38f5-ghc2-fcmv|cryo"],
+            advisoriesFound: ["GHSA-hrpp-h998-j3pp"],
+            advisoryPathsFound: ["GHSA-hrpp-h998-j3pp|qs"],
           }),
         );
       });
@@ -88,10 +131,7 @@ export function performAuditTests({
         const summary = await audit(
           config({
             directory: testDirectory(`yarn-${majorVersion}-moderate`),
-            allowlist: new Allowlist([
-              "GHSA-9wf9-qvvp-2929",
-              "GHSA-hm7f-rq7q-j9xp",
-            ]),
+            allowlist: new Allowlist([]),
             levels: { moderate: true },
             "report-type": "important",
           }),
@@ -100,15 +140,9 @@ export function performAuditTests({
         expect(summary).to.eql(
           summaryWithDefault({
             failedLevelsFound: ["moderate"],
-            allowlistedAdvisoriesFound: [
-              "GHSA-9wf9-qvvp-2929",
-              "GHSA-hm7f-rq7q-j9xp",
-            ],
-            advisoriesFound: ["GHSA-9wf9-qvvp-2929", "GHSA-rvg8-pwq2-xj7q"],
-            advisoryPathsFound: [
-              "GHSA-9wf9-qvvp-2929|@builder.io/qwik",
-              "GHSA-rvg8-pwq2-xj7q|base64url",
-            ],
+            allowlistedAdvisoriesFound: [],
+            advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+            advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
           }),
         );
       });
@@ -127,18 +161,13 @@ export function performAuditTests({
           config({
             directory: testDirectory(`yarn-${majorVersion}-moderate`),
             levels: { moderate: true },
-            allowlist: new Allowlist([
-              "GHSA-9wf9-qvvp-2929",
-              "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
-              "GHSA-rvg8-pwq2-xj7q",
-            ]),
+            allowlist: new Allowlist(["GHSA-rvg8-pwq2-xj7q"]),
           }),
           (_summary) => _summary,
         );
         expect(summary).to.eql(
           summaryWithDefault({
             allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-            allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
           }),
         );
       });
@@ -148,11 +177,6 @@ export function performAuditTests({
             directory: testDirectory(`yarn-${majorVersion}-moderate`),
             levels: { moderate: true },
             allowlist: new Allowlist([
-              {
-                "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik": {
-                  active: true,
-                },
-              },
               {
                 "GHSA-rvg8-pwq2-xj7q": {
                   active: true,
@@ -165,7 +189,6 @@ export function performAuditTests({
         expect(summary).to.eql(
           summaryWithDefault({
             allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-            allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
           }),
         );
       });
@@ -182,11 +205,8 @@ export function performAuditTests({
           summaryWithDefault({
             allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
             failedLevelsFound: ["moderate"],
-            advisoriesFound: ["GHSA-hm7f-rq7q-j9xp", "GHSA-rvg8-pwq2-xj7q"],
-            advisoryPathsFound: [
-              "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
-              "GHSA-rvg8-pwq2-xj7q|base64url",
-            ],
+            advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+            advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
           }),
         );
       });
@@ -210,11 +230,8 @@ export function performAuditTests({
           summaryWithDefault({
             allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
             failedLevelsFound: ["moderate"],
-            advisoriesFound: ["GHSA-hm7f-rq7q-j9xp", "GHSA-rvg8-pwq2-xj7q"],
-            advisoryPathsFound: [
-              "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
-              "GHSA-rvg8-pwq2-xj7q|base64url",
-            ],
+            advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+            advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
           }),
         );
       });
@@ -225,13 +242,7 @@ export function performAuditTests({
             levels: { moderate: true },
             allowlist: new Allowlist([
               {
-                "GHSA-rvg8-pwq2-xj7q": {
-                  active: true,
-                  expiry: new Date(Date.now() + 9000).toISOString(),
-                },
-              },
-              {
-                "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik": {
+                "GHSA-rvg8-pwq2-xj7q|base64url": {
                   active: true,
                   expiry: new Date(Date.now() + 9000).toISOString(),
                 },
@@ -242,8 +253,7 @@ export function performAuditTests({
         );
         expect(summary).to.eql(
           summaryWithDefault({
-            allowlistedAdvisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
-            allowlistedPathsFound: ["GHSA-hm7f-rq7q-j9xp|@builder.io/qwik"],
+            allowlistedPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
           }),
         );
       });
@@ -260,12 +270,6 @@ export function performAuditTests({
                   expiry: new Date(Date.now() - 9000).toISOString(),
                 },
               },
-              {
-                "*|@builder.io/qwik": {
-                  active: true,
-                  expiry: new Date(Date.now() - 9000).toISOString(),
-                },
-              },
             ]),
           }),
           (_summary) => _summary,
@@ -274,11 +278,8 @@ export function performAuditTests({
           summaryWithDefault({
             allowlistedAdvisoriesNotFound: ["GHSA-cff4-rrq6-h78w"],
             failedLevelsFound: ["moderate"],
-            advisoriesFound: ["GHSA-hm7f-rq7q-j9xp", "GHSA-rvg8-pwq2-xj7q"],
-            advisoryPathsFound: [
-              "GHSA-hm7f-rq7q-j9xp|@builder.io/qwik",
-              "GHSA-rvg8-pwq2-xj7q|base64url",
-            ],
+            advisoriesFound: ["GHSA-rvg8-pwq2-xj7q"],
+            advisoryPathsFound: ["GHSA-rvg8-pwq2-xj7q|base64url"],
           }),
         );
       });
