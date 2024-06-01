@@ -1,4 +1,4 @@
-import type { YarnAudit, YarnBerryAuditReport } from "audit-types";
+import type { YarnAudit, Yarn2And3AuditReport } from "audit-types";
 import { blue, red, yellow } from "./colors.js";
 import { reportAudit, runProgram } from "./common.js";
 import {
@@ -68,7 +68,7 @@ export async function auditWithFullConfig(
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
 
   function isClassicGuard(
-    response: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse,
+    response: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse,
   ): response is YarnAudit.AuditResponse {
     return isYarnClassic;
   }
@@ -121,7 +121,7 @@ export async function auditWithFullConfig(
               printJson(data);
             }
           }
-        : ({ metadata }: { metadata: YarnBerryAuditReport.AuditMetadata }) => {
+        : ({ metadata }: { metadata: Yarn2And3AuditReport.AuditMetadata }) => {
             printJson(metadata);
           };
       break;
@@ -133,7 +133,7 @@ export async function auditWithFullConfig(
               printJson(data);
             }
           }
-        : ({ metadata }: { metadata: YarnBerryAuditReport.AuditMetadata }) => {
+        : ({ metadata }: { metadata: Yarn2And3AuditReport.AuditMetadata }) => {
             printJson(metadata);
           };
       break;
@@ -146,7 +146,7 @@ export async function auditWithFullConfig(
   }
 
   function outListener(
-    line: YarnAudit.AuditResponse | YarnBerryAuditReport.AuditResponse,
+    line: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse,
   ) {
     try {
       if (isClassicGuard(line)) {
@@ -167,7 +167,7 @@ export async function auditWithFullConfig(
         printAuditData(line);
 
         if ("advisories" in line) {
-          for (const advisory of Object.values<YarnBerryAuditReport.Advisory>(
+          for (const advisory of Object.values<Yarn2And3AuditReport.Advisory>(
             line.advisories,
           )) {
             model.process(advisory);
