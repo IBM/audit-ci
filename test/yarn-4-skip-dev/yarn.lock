@@ -2,8 +2,8 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 7
-  cacheKey: 9
+  version: 8
+  cacheKey: 10
 
 "audit-ci-yarn-4-skip-dev@workspace:.":
   version: 0.0.0-use.local
@@ -17,13 +17,13 @@ __metadata:
 "node-noop@npm:1.0.0":
   version: 1.0.0
   resolution: "node-noop@npm:1.0.0"
-  checksum: 047e0a8678508ba6ee22625dd824c6d0bdf3ca7f8f7997e7e03f81ae0660ae53bfdfdc28860a9c9f766d75497334b4bce916b2adb6471945a13c26d55fcc1ac5
+  checksum: 10/7a150b352380bdd734bc1b727399132d8f2dc6b8a92974b8aeaf4f5c965d54c9e9320f8af9d4ba8396d520830c60e123ce0c714ad55be73d47157b272ec4354e
   languageName: node
   linkType: hard
 
 "open@npm:0.0.5":
   version: 0.0.5
   resolution: "open@npm:0.0.5"
-  checksum: 0eb72096c395ef9a8f9540cf83d120f87920ba67c7c7efebe1e581f740bf43e27b16d7ab922379fc7afa5662ea941ee9ee7cbb51a459dc8092eec9f3949b057d
+  checksum: 10/e7765b78f161f1b7ccc8cf48eb64c0529639c9886fdc6ba94a61e5e5d16fac128e26cf81a674cb79b9cc596f3703c42f435faf6797590424d5aef8f490a3bd33
   languageName: node
   linkType: hard

@@ -2,7 +2,6 @@
   "name": "audit-ci-yarn-moderate-vulnerability",
   "description": "Test package.json with moderate vulnerability",
   "dependencies": {
-    "@builder.io/qwik": "0.16.1",
     "base64url": "2.0.0"
   }
 }

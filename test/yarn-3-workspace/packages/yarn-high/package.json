@@ -3,6 +3,6 @@
   "name": "audit-ci-yarn-3-workspace-high-vulnerability",
   "description": "Test package.json with high vulnerability",
   "dependencies": {
-    "cryo": "0.0.6"
+    "qs": "6.10.2"
   }
 }

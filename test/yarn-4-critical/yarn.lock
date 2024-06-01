@@ -2,8 +2,8 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 7
-  cacheKey: 9
+  version: 8
+  cacheKey: 10
 
 "audit-ci-yarn-4-critical-vulnerability@workspace:.":
   version: 0.0.0-use.local
@@ -16,6 +16,6 @@ __metadata:
 "open@npm:0.0.5":
   version: 0.0.5
   resolution: "open@npm:0.0.5"
-  checksum: 0eb72096c395ef9a8f9540cf83d120f87920ba67c7c7efebe1e581f740bf43e27b16d7ab922379fc7afa5662ea941ee9ee7cbb51a459dc8092eec9f3949b057d
+  checksum: 10/e7765b78f161f1b7ccc8cf48eb64c0529639c9886fdc6ba94a61e5e5d16fac128e26cf81a674cb79b9cc596f3703c42f435faf6797590424d5aef8f490a3bd33
   languageName: node
   linkType: hard

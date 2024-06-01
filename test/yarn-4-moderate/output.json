@@ -1,0 +1,1 @@
+{"value":"base64url","children":{"ID":1091792,"Issue":"Out-of-bounds Read in base64url","URL":"https://github.com/advisories/GHSA-rvg8-pwq2-xj7q","Severity":"moderate","Vulnerable Versions":"<3.0.0","Tree Versions":["2.0.0"],"Dependents":["audit-ci-yarn-4-moderate-vulnerability@workspace:."]}}

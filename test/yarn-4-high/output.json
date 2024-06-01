@@ -1,0 +1,1 @@
+{"value":"qs","children":{"ID":1096475,"Issue":"qs vulnerable to Prototype Pollution","URL":"https://github.com/advisories/GHSA-hrpp-h998-j3pp","Severity":"high","Vulnerable Versions":">=6.10.0 <6.10.3","Tree Versions":["6.10.2"],"Dependents":["audit-ci-yarn-4-high-vulnerability@workspace:."]}}

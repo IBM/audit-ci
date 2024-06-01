@@ -1,0 +1,1 @@
+{"value":"open","children":{"ID":1090848,"Issue":"Command Injection in open","URL":"https://github.com/advisories/GHSA-28xh-wpgr-7fm8","Severity":"critical","Vulnerable Versions":"<6.0.0","Tree Versions":["0.0.5"],"Dependents":["audit-ci-yarn-4-skip-dev@workspace:."]}}
