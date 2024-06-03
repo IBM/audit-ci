@@ -9,13 +9,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "audit-ci-yarn-4-low-vulnerability@workspace:."
   dependencies:
-    chownr: "npm:1.0.0"
+    chownr: "npm:1.1.0"
   languageName: unknown
   linkType: soft
 
-"chownr@npm:1.0.0":
-  version: 1.0.0
-  resolution: "chownr@npm:1.0.0"
-  checksum: 10/dc383f4bf81a8a6562ede3575a7ba2268c7b62a85e35dd3469baa56284f6f6217a572b62b25968fb6137b210e831984ba3f6c67c209aa649207fee5059cbf5f1
+"chownr@npm:1.1.0":
+  version: 1.1.0
+  resolution: "chownr@npm:1.1.0"
+  checksum: 10/afc8c544be1b4f0c17fbee38cbd8c1eccde77ea0fbffaf0e1da8aedf7e11875bcfa065dd1e1b37c5a9bb910b59d3cb301e706c358de5fe0534e91c01919d9131
   languageName: node
   linkType: hard
