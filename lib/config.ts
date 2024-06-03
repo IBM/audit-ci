@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "fs";
 import jju from "jju";
 // eslint-disable-next-line unicorn/import-style
 import * as path from "path";
+import { hideBin } from "yargs/helpers";
 import yargs from "yargs/yargs";
 import Allowlist, { type AllowlistRecord } from "./allowlist.js";
 import {
@@ -293,7 +294,7 @@ export function mapAuditCiConfigToAuditCiFullConfig(
 }
 
 export async function runYargs(): Promise<AuditCiFullConfig> {
-  const { argv } = yargs()
+  const { argv } = yargs(hideBin(process.argv))
     .config("config", (configPath) =>
       // Supports JSON, JSONC, & JSON5
       jju.parse(readFileSync(configPath, "utf8"), {
