@@ -3,7 +3,7 @@ import jju from "jju";
 // eslint-disable-next-line unicorn/import-style
 import * as path from "path";
 import { hideBin } from "yargs/helpers";
-import yargs from "yargs/yargs";
+import yargs from "yargs";
 import Allowlist, { type AllowlistRecord } from "./allowlist.js";
 import {
   mapVulnerabilityLevelInput,
