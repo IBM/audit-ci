@@ -37,7 +37,7 @@ export interface Summary {
   advisoryPathsFound: string[];
 }
 
-interface ProcessedAdvisory {
+export interface ProcessedAdvisory {
   id: number;
   github_advisory_id: GitHubAdvisoryId;
   severity: "critical" | "high" | "moderate" | "low" | "info";

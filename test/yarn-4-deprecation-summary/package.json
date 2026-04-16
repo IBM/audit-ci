@@ -1,0 +1,9 @@
+{
+  "name": "audit-ci-yarn-4-deprecation-summary",
+  "description": "Test package.json with deprecation and critical findings",
+  "dependencies": {
+    "inflight": "1.0.6",
+    "open": "0.0.5"
+  },
+  "packageManager": "yarn@4.2.2"
+}
