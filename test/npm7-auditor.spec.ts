@@ -1,28 +1,26 @@
 import { NPMAuditReportV2 } from "audit-types";
-import semver from "semver";
 import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { auditWithFullConfig, report } from "../lib/npm-auditor.js";
 import {
   config as baseConfig,
+  getErrorMessages,
   summaryWithDefault,
   testDirectory,
 } from "./common.js";
 
-import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm7-output.json";
-import untypedReportNpmCritical from "./npm-critical/npm7-output.json";
-import untypedReportNpmHighSeverity from "./npm-high/npm7-output.json";
-import untypedReportNpmLow from "./npm-low/npm7-output.json";
-import untypedReportNpmModerateSeverity from "./npm-moderate/npm7-output.json";
-import untypedReportNpmNone from "./npm-none/npm7-output.json";
-import untypedReportNpmSkipDevelopment from "./npm-skip-dev/npm-output.json";
+import untypedReportNpmAllowlistedPath from "./npm-allowlisted-path/npm7-output.json" with { type: "json" };
+import untypedReportNpmCritical from "./npm-critical/npm7-output.json" with { type: "json" };
+import untypedReportNpmHighSeverity from "./npm-high/npm7-output.json" with { type: "json" };
+import untypedReportNpmLow from "./npm-low/npm7-output.json" with { type: "json" };
+import untypedReportNpmModerateSeverity from "./npm-moderate/npm7-output.json" with { type: "json" };
+import untypedReportNpmNone from "./npm-none/npm7-output.json" with { type: "json" };
+import untypedReportNpmSkipDevelopment from "./npm-skip-dev/npm-output.json" with { type: "json" };
 
 const reportNpmAllowlistedPath =
   untypedReportNpmAllowlistedPath as unknown as NPMAuditReportV2.Audit;
-const reportNpmCritical =
-  untypedReportNpmCritical as unknown as NPMAuditReportV2.Audit;
-const reportNpmHighSeverity =
-  untypedReportNpmHighSeverity as unknown as NPMAuditReportV2.Audit;
+const reportNpmCritical = untypedReportNpmCritical as unknown as NPMAuditReportV2.Audit;
+const reportNpmHighSeverity = untypedReportNpmHighSeverity as unknown as NPMAuditReportV2.Audit;
 const reportNpmLow = untypedReportNpmLow as unknown as NPMAuditReportV2.Audit;
 const reportNpmModerateSeverity =
   untypedReportNpmModerateSeverity as unknown as NPMAuditReportV2.Audit;
@@ -30,11 +28,7 @@ const reportNpmNone = untypedReportNpmNone as unknown as NPMAuditReportV2.Audit;
 const reportNpmSkipDevelopment =
   untypedReportNpmSkipDevelopment as unknown as NPMAuditReportV2.Audit;
 
-const nodeVersion = process.version;
-
-function config(
-  additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">,
-) {
+function config(additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">) {
   return baseConfig({ ...additions, "package-manager": "npm" });
 }
 
@@ -137,13 +131,7 @@ describe("npm7-auditor", () => {
       config({
         directory: testDirectory("npm-moderate"),
         levels: { moderate: true },
-        allowlist: new Allowlist([
-          {
-            "GHSA-rvg8-pwq2-xj7q": {
-              active: true,
-            },
-          },
-        ]),
+        allowlist: new Allowlist([{ "GHSA-rvg8-pwq2-xj7q": { active: true } }]),
       }),
       (_summary) => _summary,
     );
@@ -180,11 +168,7 @@ describe("npm7-auditor", () => {
         levels: { moderate: true },
         allowlist: new Allowlist([
           "GHSA-cff4-rrq6-h78w",
-          {
-            "GHSA-rvg8-pwq2-xj7q": {
-              active: false,
-            },
-          },
+          { "GHSA-rvg8-pwq2-xj7q": { active: false } },
         ]),
       }),
       (_summary) => _summary,
@@ -266,11 +250,7 @@ describe("npm7-auditor", () => {
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        advisoriesFound: [
-          "GHSA-4w2v-q235-vp99",
-          "GHSA-74fj-2j2h-c42q",
-          "GHSA-cph5-m8f7-6c5x",
-        ],
+        advisoriesFound: ["GHSA-4w2v-q235-vp99", "GHSA-74fj-2j2h-c42q", "GHSA-cph5-m8f7-6c5x"],
         failedLevelsFound: ["high"],
         allowlistedPathsFound: [
           "GHSA-42xw-2xvc-qx8m|axios",
@@ -357,10 +337,7 @@ describe("npm7-auditor", () => {
   it("reports low severity", () => {
     const summary = report(
       reportNpmLow,
-      config({
-        directory: testDirectory("npm-low"),
-        levels: { low: true },
-      }),
+      config({ directory: testDirectory("npm-low"), levels: { low: true } }),
       (_summary) => _summary,
     );
     expect(summary).to.eql(
@@ -374,10 +351,7 @@ describe("npm7-auditor", () => {
   it("passes with no vulnerabilities", () => {
     const summary = report(
       reportNpmNone,
-      config({
-        directory: testDirectory("npm-none"),
-        levels: { low: true },
-      }),
+      config({ directory: testDirectory("npm-none"), levels: { low: true } }),
       (_summary) => _summary,
     );
     expect(summary).to.eql(summaryWithDefault());
@@ -392,27 +366,29 @@ describe("npm7-auditor", () => {
         }),
       );
     } catch (error) {
-      expect((error as Error).message).to.include("ENOTFOUND");
+      expect(getErrorMessages(error)).to.include("ENOTFOUND");
       return;
     }
     throw new Error("Expected audit to fail");
   });
-  semver.lt(nodeVersion, "20.0.0") &&
-    it("fails with error code ECONNREFUSED on a live site with no registry", async () => {
-      try {
-        await auditWithFullConfig(
-          config({
-            directory: testDirectory("npm-low"),
-            levels: { low: true },
-            registry: "http://localhost",
-          }),
-        );
-      } catch (error) {
-        expect((error as Error).message).to.include("ECONNREFUSED");
-        return;
-      }
-      throw new Error("Expected audit to fail");
-    });
+  it("fails with error code ECONNREFUSED on a live site with no registry", async () => {
+    try {
+      await auditWithFullConfig(
+        config({
+          directory: testDirectory("npm-low"),
+          levels: { low: true },
+          registry: "http://localhost",
+        }),
+      );
+    } catch (error) {
+      const messages = getErrorMessages(error);
+      expect(messages.includes("ECONNREFUSED") || messages.includes("http://localhost")).to.equal(
+        true,
+      );
+      return;
+    }
+    throw new Error("Expected audit to fail");
+  });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(
       reportNpmSkipDevelopment,

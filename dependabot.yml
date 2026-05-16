@@ -5,10 +5,3 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    ignore:
-      - dependency-name: "mocha"
-        # Drops support for Node 12
-        versions: ["10.x"]
-      - dependency-name: "sinon"
-        # Drops support for Node 12
-        versions: ["14.x"]

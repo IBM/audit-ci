@@ -1,4 +1,6 @@
-import path from "path";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import type { YarnAudit, Yarn2And3AuditReport } from "audit-types";
 import Allowlist from "../lib/allowlist.js";
 import { AuditCiFullConfig } from "../lib/config.js";
 import { mapVulnerabilityLevelInput } from "../lib/map-vulnerability.js";
@@ -25,12 +27,7 @@ export function config(
   } & Required<Pick<AuditCiFullConfig, "package-manager">>,
 ): AuditCiFullConfig {
   const defaultConfig = {
-    levels: {
-      low: false,
-      moderate: false,
-      high: false,
-      critical: false,
-    },
+    levels: { low: false, moderate: false, high: false, critical: false },
     "report-type": "important",
     allowlist: new Allowlist(),
     "show-not-found": false,
@@ -57,4 +54,33 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 export function testDirectory(s: string) {
   return path.resolve(__dirname, s);
+}
+
+export function readYarnClassicAuditOutput(directoryName: string): YarnAudit.AuditResponse[] {
+  const filePath = path.join(testDirectory(directoryName), "output.jsonl");
+  return readFileSync(filePath, "utf8")
+    .trim()
+    .split("\n")
+    .filter((line) => line.length > 0)
+    .map((line) => JSON.parse(line) as YarnAudit.AuditResponse);
+}
+
+export function readYarnBerryAuditOutput(
+  directoryName: string,
+): Yarn2And3AuditReport.AuditResponse {
+  const filePath = path.join(testDirectory(directoryName), "output.json");
+  return JSON.parse(readFileSync(filePath, "utf8")) as Yarn2And3AuditReport.AuditResponse;
+}
+
+export function getErrorMessages(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return String(error);
+  }
+  const messages = [error.message];
+  let cause: unknown = error.cause;
+  while (cause instanceof Error) {
+    messages.push(cause.message);
+    cause = cause.cause;
+  }
+  return messages.join(" ");
 }

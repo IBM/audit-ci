@@ -4,7 +4,7 @@ import Allowlist from "../lib/allowlist.js";
 import Model from "../lib/model.js";
 import { summaryWithDefault } from "./common.js";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Intentionally any to pass bad values
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any -- Intentionally any to pass bad values
 function config(additions: any) {
   return { ...additions };
 }
@@ -32,10 +32,9 @@ describe("Model", () => {
     expect(() => new Model(config({ levels: { critical_: true } }))).to.throw(
       "Unsupported severity levels found: critical_",
     );
-    expect(
-      () =>
-        new Model(config({ levels: { Low: true, hgih: true, mdrate: true } })),
-    ).to.throw("Unsupported severity levels found: Low, hgih, mdrate");
+    expect(() => new Model(config({ levels: { Low: true, hgih: true, mdrate: true } }))).to.throw(
+      "Unsupported severity levels found: Low, hgih, mdrate",
+    );
     expect(
       () =>
         new Model(
@@ -160,13 +159,7 @@ describe("Model", () => {
     expect(summary).to.eql(
       summaryWithDefault({
         failedLevelsFound: ["critical", "low"],
-        advisoriesFound: [
-          "GHSA-a-a-a",
-          "GHSA-a-a-b",
-          "GHSA-a-a-e",
-          "GHSA-a-a-f",
-          "GHSA-a-a-g",
-        ],
+        advisoriesFound: ["GHSA-a-a-a", "GHSA-a-a-b", "GHSA-a-a-e", "GHSA-a-a-f", "GHSA-a-a-g"],
         advisoryPathsFound: [
           "GHSA-a-a-a|M_A",
           "GHSA-a-a-b|M_B",
@@ -250,13 +243,7 @@ describe("Model", () => {
       summaryWithDefault({
         allowlistedModulesFound: ["M_A", "M_D"],
         failedLevelsFound: ["critical", "low", "moderate"],
-        advisoriesFound: [
-          "GHSA-a-a-b",
-          "GHSA-a-a-c",
-          "GHSA-a-a-e",
-          "GHSA-a-a-f",
-          "GHSA-a-a-g",
-        ],
+        advisoriesFound: ["GHSA-a-a-b", "GHSA-a-a-c", "GHSA-a-a-e", "GHSA-a-a-f", "GHSA-a-a-g"],
         advisoryPathsFound: [
           "GHSA-a-a-b|M_B",
           "GHSA-a-a-c|M_C",
@@ -348,12 +335,7 @@ describe("Model", () => {
       summaryWithDefault({
         allowlistedAdvisoriesFound: ["GHSA-a-a-b", "GHSA-a-a-c", "GHSA-a-a-f"],
         failedLevelsFound: ["critical", "high", "low"],
-        advisoriesFound: [
-          "GHSA-a-a-a",
-          "GHSA-a-a-d",
-          "GHSA-a-a-e",
-          "GHSA-a-a-g",
-        ],
+        advisoriesFound: ["GHSA-a-a-a", "GHSA-a-a-d", "GHSA-a-a-e", "GHSA-a-a-g"],
         advisoryPathsFound: [
           "GHSA-a-a-a|M_A",
           "GHSA-a-a-d|M_D",
@@ -404,11 +386,7 @@ describe("Model", () => {
       summaryWithDefault({
         failedLevelsFound: ["critical", "low"],
         advisoriesFound: ["GHSA-a-a-a", "GHSA-a-a-b"],
-        advisoryPathsFound: [
-          "GHSA-a-a-a|M_A",
-          "GHSA-a-a-b|M_B_1",
-          "GHSA-a-a-b|M_B_2",
-        ],
+        advisoryPathsFound: ["GHSA-a-a-a|M_A", "GHSA-a-a-b|M_B_1", "GHSA-a-a-b|M_B_2"],
       }),
     );
   });

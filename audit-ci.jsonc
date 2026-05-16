@@ -9,8 +9,8 @@
       "GHSA-9c47-m6qq-7p4h|eslint-plugin-import>tsconfig-paths>json5": {
         "active": true, // This field is optional and defaults to true.
         "expiry": "", // There's no need to set an expiry date because we are unaffected.
-        "notes": "Transitive development-only dependency for linting doesn't impact the security of this application in production or for developers."
-      }
-    }
-  ]
+        "notes": "Transitive development-only dependency for linting doesn't impact the security of this application in production or for developers.",
+      },
+    },
+  ],
 }

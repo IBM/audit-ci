@@ -1,20 +1,14 @@
 import type { GitHubAdvisoryId, PNPMAuditReport } from "audit-types";
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import * as semver from "semver";
 import { blue, yellow } from "./colors.js";
 import { ReportConfig, reportAudit, runProgram } from "./common.js";
-import {
-  AuditCiConfig,
-  AuditCiFullConfig,
-  mapAuditCiConfigToAuditCiFullConfig,
-} from "./config.js";
+import { AuditCiConfig, AuditCiFullConfig, mapAuditCiConfigToAuditCiFullConfig } from "./config.js";
 import Model, { type Summary } from "./model.js";
 
 const MINIMUM_PNPM_AUDIT_REGISTRY_VERSION = "5.4.0";
 
-async function runPnpmAudit(
-  config: AuditCiFullConfig,
-): Promise<PNPMAuditReport.AuditResponse> {
+async function runPnpmAudit(config: AuditCiFullConfig): Promise<PNPMAuditReport.AuditResponse> {
   const {
     directory,
     registry,
@@ -24,7 +18,7 @@ async function runPnpmAudit(
   } = config;
   const pnpmExec = _pnpm || "pnpm";
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   const stdoutBuffer: any = {};
   function outListener(data: unknown) {
     // Object.assign is used here instead of the spread operator for minor performance gains.
@@ -58,9 +52,7 @@ async function runPnpmAudit(
   const options = { cwd: directory };
   await runProgram(pnpmExec, arguments_, options, outListener, errorListener);
   if (stderrBuffer.length > 0) {
-    throw new Error(
-      `Invocation of pnpm audit failed:\n${stderrBuffer.join("\n")}`,
-    );
+    throw new Error(`Invocation of pnpm audit failed:\n${stderrBuffer.join("\n")}`);
   }
   return stdoutBuffer;
 }
@@ -109,8 +101,9 @@ function printReport(
       break;
     }
     default: {
+      reportType satisfies never;
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
+        `Invalid report type: ${reportType as string}. Should be \`['important', 'full', 'summary']\`.`,
       );
     }
   }
@@ -119,17 +112,9 @@ function printReport(
 export function report(
   parsedOutput: PNPMAuditReport.Audit,
   config: AuditCiFullConfig,
-  reporter: (
-    summary: Summary,
-    config: ReportConfig,
-    audit?: PNPMAuditReport.Audit,
-  ) => Summary,
+  reporter: (summary: Summary, config: ReportConfig, audit?: PNPMAuditReport.Audit) => Summary,
 ) {
-  const {
-    levels,
-    "report-type": reportType,
-    "output-format": outputFormat,
-  } = config;
+  const { levels, "report-type": reportType, "output-format": outputFormat } = config;
   printReport(parsedOutput, levels, reportType, outputFormat);
   const model = new Model(config);
   const summary = model.load(parsedOutput);
@@ -141,10 +126,7 @@ export function report(
  *
  * @returns Returns the audit report summary on resolve, `Error` on rejection.
  */
-export async function auditWithFullConfig(
-  config: AuditCiFullConfig,
-  reporter = reportAudit,
-) {
+export async function auditWithFullConfig(config: AuditCiFullConfig, reporter = reportAudit) {
   const parsedOutput = await runPnpmAudit(config);
   if ("error" in parsedOutput) {
     const { code, summary } = parsedOutput.error;
@@ -161,9 +143,7 @@ export async function audit(config: AuditCiConfig, reporter = reportAudit) {
   return await auditWithFullConfig(fullConfig, reporter);
 }
 
-function pnpmAuditSupportsRegistry(
-  pnpmVersion: string | semver.SemVer,
-): boolean {
+function pnpmAuditSupportsRegistry(pnpmVersion: string | semver.SemVer): boolean {
   return semver.gte(pnpmVersion, MINIMUM_PNPM_AUDIT_REGISTRY_VERSION);
 }
 

@@ -8,18 +8,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ["18", "20", "21"]
+        node: ["22", "24"]
     name: Build and test with Node ${{ matrix.node }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
-          registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm run build
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
       # Have audit-ci run audit-ci to audit itself :)
       - run: node ./dist/bin.js --config ./audit-ci.jsonc
-      - run: npm run coverage
-      - run: npm run lint
-      - run: npm run format -- --check
+      - run: pnpm run coverage
+      - run: pnpm run lint
+      - run: pnpm oxfmt --check

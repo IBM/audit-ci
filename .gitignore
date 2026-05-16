@@ -1,4 +1,5 @@
 node_modules
+.pnpm-store
 .tmp
 npm-debug.log
 yarn-error.log

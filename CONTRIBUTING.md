@@ -27,7 +27,7 @@ For a list of the maintainers, see the [MAINTAINERS.md](MAINTAINERS.md) page.
 
 1. `git clone git@github.com:IBM/audit-ci.git`
 1. `cd audit-ci`
-1. `npm install`
+1. `pnpm install`
 
 ## Testing
 

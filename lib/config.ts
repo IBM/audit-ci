@@ -1,18 +1,12 @@
-import { existsSync, readFileSync } from "fs";
+import { existsSync, readFileSync } from "node:fs";
 import jju from "jju";
-// eslint-disable-next-line unicorn/import-style
-import * as path from "path";
+import path from "node:path";
 import { hideBin } from "yargs/helpers";
 import yargs from "yargs";
 import Allowlist, { type AllowlistRecord } from "./allowlist.js";
-import {
-  mapVulnerabilityLevelInput,
-  type VulnerabilityLevels,
-} from "./map-vulnerability.js";
+import { mapVulnerabilityLevelInput, type VulnerabilityLevels } from "./map-vulnerability.js";
 
-function mapReportTypeInput(
-  config: Pick<AuditCiPreprocessedConfig, "report-type">,
-) {
+function mapReportTypeInput(config: Pick<AuditCiPreprocessedConfig, "report-type">) {
   const { "report-type": reportType } = config;
   switch (reportType) {
     case "full":
@@ -21,16 +15,15 @@ function mapReportTypeInput(
       return reportType;
     }
     default: {
+      reportType satisfies never;
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
+        `Invalid report type: ${reportType as string}. Should be \`['important', 'full', 'summary']\`.`,
       );
     }
   }
 }
 
-function mapExtraArgumentsInput(
-  config: Pick<AuditCiPreprocessedConfig, "extra-args">,
-) {
+function mapExtraArgumentsInput(config: Pick<AuditCiPreprocessedConfig, "extra-args">) {
   // These args will often be flags for another command, so we
   // want to have some way of escaping args that start with a -.
   // We'll look for and remove a single backslash at the start, if present.
@@ -145,10 +138,7 @@ export type AuditCiFullConfig = {
   [K in keyof ComplexConfig]: ComplexConfig[K];
 };
 
-type AuditCiConfigComplex = Omit<
-  Partial<AuditCiFullConfig>,
-  "levels" | "allowlist"
-> & {
+type AuditCiConfigComplex = Omit<Partial<AuditCiFullConfig>, "levels" | "allowlist"> & {
   allowlist?: AllowlistRecord[];
   low?: boolean;
   moderate?: boolean;
@@ -160,6 +150,55 @@ export type AuditCiConfig = {
   [K in keyof AuditCiConfigComplex]: AuditCiConfigComplex[K];
 };
 
+type SupportedPackageManager = "npm" | "yarn" | "pnpm";
+
+const PACKAGE_MANAGER_FIELD_PATTERN = /^(npm|yarn|pnpm)@/;
+
+function parsePackageManagerField(
+  packageManagerField: string,
+): SupportedPackageManager | undefined {
+  const match = PACKAGE_MANAGER_FIELD_PATTERN.exec(packageManagerField.trim());
+  return match ? (match[1] as SupportedPackageManager) : undefined;
+}
+
+function readPackageManagerFromPackageJson(directory: string): SupportedPackageManager | undefined {
+  const packageJsonPath = path.resolve(directory, "package.json");
+  if (!existsSync(packageJsonPath)) {
+    return undefined;
+  }
+
+  try {
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8")) as {
+      packageManager?: string;
+    };
+    if (typeof packageJson.packageManager !== "string") {
+      return undefined;
+    }
+    return parsePackageManagerField(packageJson.packageManager);
+  } catch {
+    return undefined;
+  }
+}
+
+function detectPackageManagerFromLockfiles(directory: string): SupportedPackageManager | undefined {
+  const getPath = (file: string) => path.resolve(directory, file);
+
+  if (existsSync(getPath("yarn.lock"))) {
+    return "yarn";
+  }
+  if (existsSync(getPath("pnpm-lock.yaml"))) {
+    return "pnpm";
+  }
+  if (existsSync(getPath("package-lock.json"))) {
+    return "npm";
+  }
+  if (existsSync(getPath("npm-shrinkwrap.json"))) {
+    return "npm";
+  }
+
+  return undefined;
+}
+
 /**
  * @param pmArgument the package manager (including the `auto` option)
  * @param directory the directory where the package manager files exist
@@ -168,7 +207,7 @@ export type AuditCiConfig = {
 function resolvePackageManagerType(
   pmArgument: "auto" | "npm" | "yarn" | "pnpm",
   directory: string,
-): "npm" | "yarn" | "pnpm" {
+): SupportedPackageManager {
   switch (pmArgument) {
     case "npm":
     case "pnpm":
@@ -176,22 +215,23 @@ function resolvePackageManagerType(
       return pmArgument;
     }
     case "auto": {
-      const getPath = (file: string) => path.resolve(directory, file);
-      // TODO: Consider prioritizing `package.json#packageManager` for determining the package manager.
-      const packageLockExists = existsSync(getPath("package-lock.json"));
-      if (packageLockExists) return "npm";
-      const shrinkwrapExists = existsSync(getPath("npm-shrinkwrap.json"));
-      if (shrinkwrapExists) return "npm";
-      const yarnLockExists = existsSync(getPath("yarn.lock"));
-      if (yarnLockExists) return "yarn";
-      const pnpmLockExists = existsSync(getPath("pnpm-lock.yaml"));
-      if (pnpmLockExists) return "pnpm";
+      const packageManagerFromManifest = readPackageManagerFromPackageJson(directory);
+      if (packageManagerFromManifest) {
+        return packageManagerFromManifest;
+      }
+
+      const packageManagerFromLockfiles = detectPackageManagerFromLockfiles(directory);
+      if (packageManagerFromLockfiles) {
+        return packageManagerFromLockfiles;
+      }
+
       throw new Error(
-        "Cannot establish package-manager type, missing package-lock.json, yarn.lock, and pnpm-lock.yaml.",
+        "Cannot establish package-manager type. Set package.json#packageManager or add yarn.lock, pnpm-lock.yaml, or package-lock.json.",
       );
     }
     default: {
-      throw new Error(`Unexpected package manager argument: ${pmArgument}`);
+      pmArgument satisfies never;
+      throw new Error(`Unexpected package manager argument: ${pmArgument as string}`);
     }
   }
 }
@@ -217,32 +257,17 @@ const defaults = {
   "extra-args": [] as string[],
 };
 
-function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
+export function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
   const allowlist = Allowlist.mapConfigToAllowlist(argv);
 
-  const {
-    low,
-    moderate,
-    high,
-    critical,
-    "package-manager": packageManager,
-    directory,
-  } = argv;
+  const { low, moderate, high, critical, "package-manager": packageManager, directory } = argv;
 
-  const resolvedPackageManager = resolvePackageManagerType(
-    packageManager,
-    directory,
-  );
+  const resolvedPackageManager = resolvePackageManagerType(packageManager, directory);
 
   const result: AuditCiFullConfig = {
     ...argv,
     "package-manager": resolvedPackageManager,
-    levels: mapVulnerabilityLevelInput({
-      low,
-      moderate,
-      high,
-      critical,
-    }),
+    levels: mapVulnerabilityLevelInput({ low, moderate, high, critical }),
     "report-type": mapReportTypeInput(argv),
     allowlist: allowlist,
     "extra-args": mapExtraArgumentsInput(argv),
@@ -251,16 +276,14 @@ function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
 }
 
 export function mapAuditCiConfigToAuditCiFullConfig(
-  config: AuditCiConfig,
+  config: Omit<AuditCiConfig, "package-manager"> & {
+    ["package-manager"]?: "auto" | "npm" | "yarn" | "pnpm";
+  },
 ): AuditCiFullConfig {
-  const packageManager =
-    config["package-manager"] ?? defaults["package-manager"];
+  const packageManager = config["package-manager"] ?? defaults["package-manager"];
   const directory = config.directory ?? defaults.directory;
 
-  const resolvedPackageManager = resolvePackageManagerType(
-    packageManager,
-    directory,
-  );
+  const resolvedPackageManager = resolvePackageManagerType(packageManager, directory);
 
   const allowlist = Allowlist.mapConfigToAllowlist({
     allowlist: config.allowlist ?? defaults.allowlist,
@@ -289,6 +312,9 @@ export function mapAuditCiConfigToAuditCiFullConfig(
     allowlist,
     levels,
     "extra-args": config["extra-args"] ?? defaults["extra-args"],
+    _npm: config._npm,
+    _pnpm: config._pnpm,
+    _yarn: config._yarn,
   };
   return fullConfig;
 }
@@ -388,14 +414,12 @@ export async function runYargs(): Promise<AuditCiFullConfig> {
       },
       "retry-count": {
         default: defaults["retry-count"],
-        describe:
-          "The number of attempts audit-ci calls an unavailable registry before failing",
+        describe: "The number of attempts audit-ci calls an unavailable registry before failing",
         type: "number",
       },
       "pass-enoaudit": {
         default: defaults["pass-enoaudit"],
-        describe:
-          "Pass if no audit is performed due to the registry returning ENOAUDIT",
+        describe: "Pass if no audit is performed due to the registry returning ENOAUDIT",
         type: "boolean",
       },
       "skip-dev": {

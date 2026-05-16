@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error"
+  },
+  "options": {
+    "typeAware": true
+  },
+  "rules": {},
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "coverage",
+    "test/yarn-*.cjs",
+    "**/pnpm-lock.yaml",
+    "**/*-output.json",
+    "**/.pnp.cjs",
+    "test/*/*.json"
+  ]
+}

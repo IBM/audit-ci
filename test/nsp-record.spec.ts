@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  getAllowlistId,
-  getNSPContent,
-  isNSPRecordActive,
-} from "../lib/nsp-record.js";
+import { getAllowlistId, getNSPContent, isNSPRecordActive } from "../lib/nsp-record.js";
 
 describe("getAllowlistId", () => {
   it("should get the allowlist id", () => {
@@ -17,6 +13,10 @@ describe("getAllowlistId", () => {
 });
 
 describe("getNSPContent", () => {
+  it("throws when the record is empty", () => {
+    expect(() => getNSPContent({})).toThrow("Empty NSPRecord is invalid");
+  });
+
   it("should get the content", () => {
     const content = getNSPContent({
       myid: {
@@ -107,7 +107,7 @@ describe("isNSPRecordActive", () => {
       "20 November 2022 11:00 am",
       "2022-11-20T11:00:00.000-08:00",
       "Sun, 20 Nov 2022 11:00:00 PST",
-      // eslint-disable-next-line unicorn/numeric-separators-style
+      // oxlint-disable-next-line unicorn/numeric-separators-style
       1668970800000,
     ];
     // These are variations of Nov 10, 2022.
@@ -119,7 +119,7 @@ describe("isNSPRecordActive", () => {
       "10 November 2022 11:00 am",
       "2022-11-10T11:00:00.000-08:00",
       "Thu, 10 Nov 2022 11:00:00 PST",
-      // eslint-disable-next-line unicorn/numeric-separators-style
+      // oxlint-disable-next-line unicorn/numeric-separators-style
       1668106800000,
     ];
 

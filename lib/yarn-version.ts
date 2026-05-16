@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import semver from "semver";
 
 export const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
@@ -19,9 +19,7 @@ export function yarnSupportsBerryAudit(yarnVersion: string | semver.SemVer) {
 }
 
 export function yarnSupportsAudit(yarnVersion: string | semver.SemVer) {
-  return (
-    yarnSupportsClassicAudit(yarnVersion) || yarnSupportsBerryAudit(yarnVersion)
-  );
+  return yarnSupportsClassicAudit(yarnVersion) || yarnSupportsBerryAudit(yarnVersion);
 }
 
 export function yarnAuditSupportsRegistry(yarnVersion: string | semver.SemVer) {
