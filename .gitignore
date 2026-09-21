@@ -20,3 +20,12 @@ coverage/
 !**/.yarn/releases
 !**/.yarn/sdks
 !**/.yarn/versions
+
+# Generated test fixtures: fixture manifests are committed as *.tmpl
+# templates (see test/fixture-setup.ts) and materialized at test time so
+# Dependabot never scans them. These must never be committed.
+test/**/package.json
+test/**/package-lock.json
+test/**/yarn.lock
+test/**/pnpm-lock.yaml
+test/**/.yarnrc.yml
