@@ -5,6 +5,13 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    # The test/ directory contains intentionally-vulnerable fixture projects.
+    # audit-ci's test suite verifies that vulnerabilities are detected, so
+    # these fixtures must keep their vulnerable dependencies. They are not
+    # shipped to users, so exclude them from Dependabot scans to avoid noise.
+    # See test/README.md for details.
+    exclude-paths:
+      - "test/**"
     ignore:
       - dependency-name: "mocha"
         # Drops support for Node 12
