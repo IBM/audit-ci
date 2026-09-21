@@ -54,7 +54,7 @@
     "schema": "ts-json-schema-generator -p ./docs/schema.d.ts -o ./docs/schema.json -t Schema"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "dependencies": {
     "cross-spawn": "^7.0.3",
