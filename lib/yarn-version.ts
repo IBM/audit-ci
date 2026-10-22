@@ -4,6 +4,15 @@ import semver from "semver";
 export const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
 export const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
 /**
+ * Yarn 4 changed `yarn npm audit --json` to an NDJSON
+ * tree-report stream (one advisory per line, shape
+ * `{value, children: {ID, URL, Severity, ...}}`), which is
+ * incompatible with the Yarn 2/3 aggregated report format.
+ * @see https://github.com/yarnpkg/berry/issues/5781
+ * @see https://github.com/IBM/audit-ci/issues/332
+ */
+export const MINIMUM_YARN_BERRY_TREE_REPORT_VERSION = "4.0.0";
+/**
  * Change this to the appropriate version when
  * yarn audit --registry is supported:
  * @see https://github.com/yarnpkg/yarn/issues/7012
@@ -16,6 +25,10 @@ export function yarnSupportsClassicAudit(yarnVersion: string | semver.SemVer) {
 
 export function yarnSupportsBerryAudit(yarnVersion: string | semver.SemVer) {
   return semver.gte(yarnVersion, MINIMUM_YARN_BERRY_VERSION);
+}
+
+export function yarnUsesBerryTreeReport(yarnVersion: string | semver.SemVer) {
+  return semver.gte(yarnVersion, MINIMUM_YARN_BERRY_TREE_REPORT_VERSION);
 }
 
 export function yarnSupportsAudit(yarnVersion: string | semver.SemVer) {

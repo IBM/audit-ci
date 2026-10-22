@@ -1,12 +1,16 @@
-import type { YarnAudit, Yarn2And3AuditReport } from "audit-types";
+import type { Severity, YarnAudit, Yarn2And3AuditReport } from "audit-types";
 import { blue, red, yellow } from "./colors.js";
-import { reportAudit, runProgram } from "./common.js";
+import {
+  gitHubAdvisoryUrlToAdvisoryId,
+  reportAudit,
+  runProgram,
+} from "./common.js";
 import {
   mapAuditCiConfigToAuditCiFullConfig,
   type AuditCiConfig,
   type AuditCiFullConfig,
 } from "./config.js";
-import Model, { type Summary } from "./model.js";
+import Model, { type ProcessedAdvisory, type Summary } from "./model.js";
 import {
   MINIMUM_YARN_BERRY_VERSION,
   MINIMUM_YARN_CLASSIC_VERSION,
@@ -14,7 +18,126 @@ import {
   yarnAuditSupportsRegistry,
   yarnSupportsAudit,
   yarnSupportsClassicAudit,
+  yarnUsesBerryTreeReport,
 } from "./yarn-version.js";
+
+/**
+ * Shape of each NDJSON line emitted by `yarn npm audit --json` on Yarn 4+.
+ * One object per advisory.
+ * @see https://github.com/yarnpkg/berry/issues/5781
+ */
+interface YarnBerryV4TreeReportLine {
+  value: string;
+  children: {
+    ID: number | string;
+    Issue?: string;
+    URL?: string;
+    Severity: Severity;
+    "Vulnerable Versions"?: string;
+    "Tree Versions"?: string[];
+    Dependents?: string[];
+  };
+}
+
+interface YarnBerryV4Summary {
+  vulnerabilities: Record<Severity, number>;
+}
+
+const BERRY_V4_LOCATOR_RE =
+  /^(?<name>(?:@[^/]+\/)?[^@]+)@(?<reference>.+)$/;
+
+function isYarnBerryV4Line(line: unknown): line is YarnBerryV4TreeReportLine {
+  if (typeof line !== "object" || line === null) return false;
+  const { value, children } = line as {
+    value?: unknown;
+    children?: unknown;
+  };
+  if (typeof value !== "string") return false;
+  if (typeof children !== "object" || children === null) return false;
+  const { Severity } = children as { Severity?: unknown };
+  return typeof Severity === "string";
+}
+
+function mapBerryV4LineToAdvisory(
+  line: YarnBerryV4TreeReportLine,
+): ProcessedAdvisory | undefined {
+  const { value: moduleName, children } = line;
+  const url = typeof children.URL === "string" ? children.URL : "";
+  if (!url.startsWith("https://github.com/advisories/")) {
+    // Yarn 4 also emits deprecation notices (e.g. `"ID": "<pkg> (deprecation)"`);
+    // they lack a GHSA URL. The exact prefix is also required because
+    // `gitHubAdvisoryUrlToAdvisoryId` reads the id from `split("/")[4]`.
+    return;
+  }
+  if (typeof children.ID !== "number") {
+    // Non-numeric IDs would collide on `0` inside Model's advisory maps.
+    return;
+  }
+  return {
+    id: children.ID,
+    module_name: moduleName,
+    severity: children.Severity,
+    github_advisory_id: gitHubAdvisoryUrlToAdvisoryId(url),
+    url: url as ProcessedAdvisory["url"],
+    findings: [
+      {
+        paths: mapBerryV4DependentsToPaths(moduleName, children.Dependents),
+      },
+    ],
+  };
+}
+
+function mapBerryV4DependentsToPaths(
+  moduleName: string,
+  dependents: string[] | undefined,
+): string[] {
+  if (!dependents || dependents.length === 0) {
+    return [moduleName];
+  }
+
+  const paths = new Set<string>();
+  for (const dependent of dependents) {
+    const parsedDependent = parseBerryV4Locator(dependent);
+    if (!parsedDependent) {
+      paths.add(`${dependent}>${moduleName}`);
+      continue;
+    }
+
+    if (parsedDependent.reference === "workspace:.") {
+      // Root workspace is the project itself — collapse to a bare module name
+      // so paths match single-package projects. Non-root workspaces keep their
+      // name as the path prefix so allowlist entries can target specific
+      // workspaces (e.g. `GHSA-…|my-workspace>qs`).
+      paths.add(moduleName);
+      continue;
+    }
+
+    paths.add(`${parsedDependent.name}>${moduleName}`);
+  }
+  return [...paths];
+}
+
+function parseBerryV4Locator(locator: string) {
+  const match = BERRY_V4_LOCATOR_RE.exec(locator);
+  return match?.groups
+    ? {
+        name: match.groups.name,
+        reference: match.groups.reference,
+      }
+    : undefined;
+}
+
+function createBerryV4Summary(): YarnBerryV4Summary {
+  return {
+    vulnerabilities: {
+      info: 0,
+      low: 0,
+      moderate: 0,
+      high: 0,
+      critical: 0,
+    },
+  };
+}
 
 const printJson = (data: unknown) => {
   console.log(JSON.stringify(data, undefined, 2));
@@ -65,7 +188,10 @@ export async function auditWithFullConfig(
     );
   }
   const isYarnClassic = yarnSupportsClassicAudit(yarnVersion);
+  const isYarnBerryV4 =
+    !isYarnClassic && yarnUsesBerryTreeReport(yarnVersion);
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
+  const berrySummary = isYarnBerryV4 ? createBerryV4Summary() : undefined;
 
   function isClassicGuard(
     response: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse,
@@ -109,33 +235,65 @@ export async function auditWithFullConfig(
       break;
     }
     case "important": {
-      printAuditData = isYarnClassic
-        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ({ type, data }: any) => {
-            if (isClassicAuditAdvisory(data, type)) {
-              const severity = data.advisory.severity;
-              if (severity !== "info" && levels[severity]) {
-                printJson(data);
-              }
-            } else if (isClassicAuditSummary(data, type)) {
+      if (isYarnClassic) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        printAuditData = ({ type, data }: any) => {
+          if (isClassicAuditAdvisory(data, type)) {
+            const severity = data.advisory.severity;
+            if (severity !== "info" && levels[severity]) {
               printJson(data);
             }
+          } else if (isClassicAuditSummary(data, type)) {
+            printJson(data);
           }
-        : ({ metadata }: { metadata: Yarn2And3AuditReport.AuditMetadata }) => {
-            printJson(metadata);
-          };
+        };
+      } else if (isYarnBerryV4) {
+        printAuditData = ({
+          line,
+          advisory,
+        }: {
+          line: YarnBerryV4TreeReportLine;
+          advisory: ProcessedAdvisory | undefined;
+        }) => {
+          if (advisory && advisory.severity !== "info" && levels[advisory.severity]) {
+            printJson(line);
+          }
+        };
+      } else {
+        printAuditData = ({
+          metadata,
+        }: {
+          metadata: Yarn2And3AuditReport.AuditMetadata;
+        }) => {
+          printJson(metadata);
+        };
+      }
       break;
     }
     case "summary": {
-      printAuditData = isYarnClassic
-        ? ({ type, data }: { type: unknown; data: unknown }) => {
-            if (isClassicAuditAdvisory(data, type)) {
-              printJson(data);
-            }
+      if (isYarnClassic) {
+        printAuditData = ({
+          type,
+          data,
+        }: {
+          type: unknown;
+          data: unknown;
+        }) => {
+          if (isClassicAuditAdvisory(data, type)) {
+            printJson(data);
           }
-        : ({ metadata }: { metadata: Yarn2And3AuditReport.AuditMetadata }) => {
-            printJson(metadata);
-          };
+        };
+      } else if (isYarnBerryV4) {
+        printAuditData = () => {};
+      } else {
+        printAuditData = ({
+          metadata,
+        }: {
+          metadata: Yarn2And3AuditReport.AuditMetadata;
+        }) => {
+          printJson(metadata);
+        };
+      }
       break;
     }
     default: {
@@ -163,6 +321,18 @@ export async function auditWithFullConfig(
         }
 
         model.process(data.advisory);
+      } else if (isYarnBerryV4 && isYarnBerryV4Line(line)) {
+        const advisory = mapBerryV4LineToAdvisory(line);
+
+        if (advisory && berrySummary) {
+          berrySummary.vulnerabilities[advisory.severity] += 1;
+        }
+
+        printAuditData(reportType === "important" ? { line, advisory } : line);
+
+        if (advisory) {
+          model.process(advisory);
+        }
       } else {
         printAuditData(line);
 
@@ -221,6 +391,12 @@ export async function auditWithFullConfig(
     arguments_.push(...extraArguments);
   }
   await runProgram(yarnExec, arguments_, options, outListener, errorListener);
+  if (
+    berrySummary &&
+    (reportType === "important" || reportType === "summary")
+  ) {
+    printJson(berrySummary);
+  }
   if (missingLockFile) {
     console.warn(
       yellow,
