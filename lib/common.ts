@@ -1,5 +1,5 @@
+import { SpawnOptionsWithoutStdio } from "node:child_process";
 import { GitHubAdvisoryId } from "audit-types";
-import { SpawnOptionsWithoutStdio } from "child_process";
 import { spawn } from "cross-spawn";
 import escapeStringRegexp from "escape-string-regexp";
 import eventStream from "event-stream";

@@ -1,4 +1,7 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "sortImports": {
+    "newlinesBetween": false
+  },
   "ignorePatterns": ["**/*output.json", "test/yarn-*.cjs", "dist", "coverage", "test/**/*.json"]
 }

@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import semver from "semver";
 
 export const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";

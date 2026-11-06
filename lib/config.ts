@@ -1,9 +1,8 @@
-import { existsSync, readFileSync } from "fs";
+import { existsSync, readFileSync } from "node:fs";
+import * as path from "node:path";
 import jju from "jju";
-// eslint-disable-next-line unicorn/import-style
-import * as path from "path";
-import { hideBin } from "yargs/helpers";
 import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 import Allowlist, { type AllowlistRecord } from "./allowlist.js";
 import { mapVulnerabilityLevelInput, type VulnerabilityLevels } from "./map-vulnerability.js";
 

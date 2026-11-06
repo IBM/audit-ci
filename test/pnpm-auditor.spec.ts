@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { report } from "../lib/pnpm-auditor.js";
 import { config as baseConfig, summaryWithDefault, testDirectory } from "./common.js";
-
 import untypedReportPnpmAllowlistedPath from "./pnpm-allowlisted-path/pnpm-output.json" with { type: "json" };
 import untypedReportPnpmCritical from "./pnpm-critical/pnpm-output.json" with { type: "json" };
 import untypedReportPnpmHighSeverity from "./pnpm-high/pnpm-output.json" with { type: "json" };

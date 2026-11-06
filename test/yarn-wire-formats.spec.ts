@@ -1,5 +1,5 @@
-import type { YarnNpmAuditReport } from "audit-types";
 import { readFileSync } from "node:fs";
+import type { YarnNpmAuditReport } from "audit-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { auditWithFullConfig } from "../lib/yarn-auditor.js";

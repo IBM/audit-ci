@@ -1,5 +1,5 @@
+import { execSync } from "node:child_process";
 import type { PNPMAuditReport } from "audit-types";
-import { execSync } from "child_process";
 import * as semver from "semver";
 import { blue, yellow } from "./colors.js";
 import { ReportConfig, reportAudit, runProgram } from "./common.js";
