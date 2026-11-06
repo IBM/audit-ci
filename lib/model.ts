@@ -1,6 +1,11 @@
 import type { GitHubAdvisoryId, NPMAuditReportV2 } from "audit-types";
 import Allowlist from "./allowlist.js";
-import { gitHubAdvisoryUrlToAdvisoryId, matchString, partition } from "./common.js";
+import {
+  gitHubAdvisoryUrlToAdvisoryId,
+  isGitHubAdvisoryId,
+  matchString,
+  partition,
+} from "./common.js";
 import type { AuditCiFullConfig } from "./config.js";
 import type { VulnerabilityLevels } from "./map-vulnerability.js";
 import type { DeepReadonly, DeepWriteable } from "./types.js";
@@ -31,17 +36,22 @@ interface ProcessedAdvisory {
   github_advisory_id: GitHubAdvisoryId;
   severity: "critical" | "high" | "moderate" | "low" | "info";
   module_name: string;
-  url: `https://github.com/advisories/${GitHubAdvisoryId}`;
+  url: string;
   findings: { paths: string[] }[];
 }
 
-// These are hre to simplify testing by requiring only the relevant parts of the
+interface RawAdvisory extends Omit<ProcessedAdvisory, "github_advisory_id"> {
+  github_advisory_id?: string;
+  title?: string;
+}
+
+// These simplify testing by requiring only the relevant parts of the
 // audit report.
 interface PartialNPMAuditReportV1Audit {
-  advisories: Readonly<Record<GitHubAdvisoryId, ProcessedAdvisory>>;
+  advisories: Readonly<Record<string, RawAdvisory>>;
 }
 interface PartialPNPMAuditReportAudit {
-  advisories: Readonly<Record<GitHubAdvisoryId, ProcessedAdvisory>>;
+  advisories: Readonly<Record<string, RawAdvisory>>;
 }
 interface PartialNPMAuditReportV2Audit {
   vulnerabilities: Readonly<
@@ -82,13 +92,8 @@ class Model {
     this.advisoryPathsFound = [];
   }
 
-  process(advisory: ProcessedAdvisory) {
-    const {
-      severity,
-      module_name: moduleName,
-      github_advisory_id: githubAdvisoryId,
-      findings,
-    } = advisory;
+  process(advisory: RawAdvisory) {
+    const { severity, module_name: moduleName, findings } = advisory;
     if (severity !== "info" && !this.failingSeverities[severity]) {
       return;
     }
@@ -99,6 +104,10 @@ class Model {
       }
       return;
     }
+
+    const githubAdvisoryId = isGitHubAdvisoryId(advisory.github_advisory_id)
+      ? advisory.github_advisory_id
+      : gitHubAdvisoryUrlToAdvisoryId(advisory.url);
 
     if (this.allowlist.advisories.includes(githubAdvisoryId)) {
       if (!this.allowlistedAdvisoriesFound.includes(githubAdvisoryId)) {
@@ -125,7 +134,7 @@ class Model {
       return;
     }
 
-    this.advisoriesFound.push(advisory);
+    this.advisoriesFound.push({ ...advisory, github_advisory_id: githubAdvisoryId });
     this.advisoryPathsFound.push(...falsy);
   }
 
@@ -140,7 +149,6 @@ class Model {
       for (const advisory of Object.values<
         DeepWriteable<PartialNPMAuditReportV1Audit["advisories"][GitHubAdvisoryId]>
       >(parsedOutput.advisories)) {
-        advisory.github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(advisory.url);
         // PNPM paths have a leading `.>`
         // "paths": [
         //  ".>module-name"

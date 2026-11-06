@@ -1,15 +1,24 @@
+import type { PNPMAuditReport } from "audit-types";
 import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { report } from "../lib/pnpm-auditor.js";
 import { config as baseConfig, summaryWithDefault, testDirectory } from "./common.js";
 
-import reportPnpmAllowlistedPath from "./pnpm-allowlisted-path/pnpm-output.json" with { type: "json" };
-import reportPnpmCritical from "./pnpm-critical/pnpm-output.json" with { type: "json" };
-import reportPnpmHighSeverity from "./pnpm-high/pnpm-output.json" with { type: "json" };
-import reportPnpmLow from "./pnpm-low/pnpm-output.json" with { type: "json" };
-import reportPnpmModerateSeverity from "./pnpm-moderate/pnpm-output.json" with { type: "json" };
-import reportPnpmNone from "./pnpm-none/pnpm-output.json" with { type: "json" };
-import reportPnpmSkipDevelopment from "./pnpm-skip-dev/pnpm-output.json" with { type: "json" };
+import untypedReportPnpmAllowlistedPath from "./pnpm-allowlisted-path/pnpm-output.json" with { type: "json" };
+import untypedReportPnpmCritical from "./pnpm-critical/pnpm-output.json" with { type: "json" };
+import untypedReportPnpmHighSeverity from "./pnpm-high/pnpm-output.json" with { type: "json" };
+import untypedReportPnpmLow from "./pnpm-low/pnpm-output.json" with { type: "json" };
+import untypedReportPnpmModerateSeverity from "./pnpm-moderate/pnpm-output.json" with { type: "json" };
+import untypedReportPnpmNone from "./pnpm-none/pnpm-output.json" with { type: "json" };
+import untypedReportPnpmSkipDevelopment from "./pnpm-skip-dev/pnpm-output.json" with { type: "json" };
+
+const reportPnpmAllowlistedPath = untypedReportPnpmAllowlistedPath as PNPMAuditReport.Audit;
+const reportPnpmCritical = untypedReportPnpmCritical as PNPMAuditReport.Audit;
+const reportPnpmHighSeverity = untypedReportPnpmHighSeverity as PNPMAuditReport.Audit;
+const reportPnpmLow = untypedReportPnpmLow as PNPMAuditReport.Audit;
+const reportPnpmModerateSeverity = untypedReportPnpmModerateSeverity as PNPMAuditReport.Audit;
+const reportPnpmNone = untypedReportPnpmNone as PNPMAuditReport.Audit;
+const reportPnpmSkipDevelopment = untypedReportPnpmSkipDevelopment as PNPMAuditReport.Audit;
 
 function config(additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">) {
   return baseConfig({ ...additions, "package-manager": "pnpm" });

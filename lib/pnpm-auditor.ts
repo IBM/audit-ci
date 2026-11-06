@@ -129,8 +129,9 @@ export function report(
 export async function auditWithFullConfig(config: AuditCiFullConfig, reporter = reportAudit) {
   const parsedOutput = await runPnpmAudit(config);
   if ("error" in parsedOutput) {
-    const { code, summary } = parsedOutput.error;
-    throw new Error(`code ${code}: ${summary}`);
+    const { code, summary, message }: { code?: string; summary?: string; message?: string } =
+      parsedOutput.error;
+    throw new Error(`code ${code}: ${summary ?? message ?? "Unknown audit error"}`);
   }
   return report(parsedOutput, config, reporter);
 }

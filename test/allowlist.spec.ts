@@ -1,11 +1,60 @@
 import { describe, expect, it } from "vitest";
 import {
   default as Allowlist,
+  type AllowlistRecord,
   normalizeAllowlistRecord,
   dedupeAllowlistRecords,
 } from "../lib/allowlist.js";
 
 describe("Allowlist", () => {
+  const constructors = [
+    { name: "constructor", create: (allowlist: AllowlistRecord[]) => new Allowlist(allowlist) },
+    {
+      name: "config mapping",
+      create: (allowlist: AllowlistRecord[]) => Allowlist.mapConfigToAllowlist({ allowlist }),
+    },
+  ];
+
+  it.each(constructors)("processes every key in an object through $name", ({ create }) => {
+    const moduleContent = { active: true, notes: "Module exception" };
+    const advisoryContent = { active: true, notes: "Advisory exception" };
+    const pathContent = { active: true, expiry: "", notes: "Path exception" };
+    const allowlist = create([
+      {
+        axios: moduleContent,
+        "GHSA-42xw-2xvc-qx8m": advisoryContent,
+        "GHSA-74fj-2j2h-c42q|axios>follow-redirects": pathContent,
+      },
+    ]);
+
+    expect(allowlist.modules).to.eql(["axios"]);
+    expect(allowlist.advisories).to.eql(["GHSA-42xw-2xvc-qx8m"]);
+    expect(allowlist.paths).to.eql(["GHSA-74fj-2j2h-c42q|axios>follow-redirects"]);
+    expect(allowlist.moduleRecords).to.eql([{ axios: moduleContent }]);
+    expect(allowlist.advisoryRecords).to.eql([{ "GHSA-42xw-2xvc-qx8m": advisoryContent }]);
+    expect(allowlist.pathRecords).to.eql([
+      { "GHSA-74fj-2j2h-c42q|axios>follow-redirects": pathContent },
+    ]);
+  });
+
+  it.each(constructors)(
+    "checks each key's active and expiry settings through $name",
+    ({ create }) => {
+      const allowlist = create([
+        {
+          inactiveFirst: { active: false },
+          active: { active: true },
+          expired: { active: true, expiry: "2000-01-01" },
+          inactiveLast: { active: false },
+          invalidExpiry: { active: true, expiry: "INVALID" },
+          activeLast: { active: true, expiry: "" },
+        },
+      ]);
+
+      expect(allowlist.modules).to.eql(["active", "activeLast"]);
+    },
+  );
+
   it("can map config to empty Allowlist", () => {
     const { advisories, modules, paths } = Allowlist.mapConfigToAllowlist({
       allowlist: [],
@@ -108,6 +157,21 @@ describe("normalizeAllowlistRecord", () => {
 });
 
 describe("dedupeAllowlistRecords", () => {
+  it("dedupes every key in multi-key objects while keeping the first entry's content", () => {
+    const records = dedupeAllowlistRecords([
+      { abc: { active: true }, xyz: { active: false, notes: "First xyz" } },
+      "xyz",
+      { xyz: { active: true }, def: { active: true } },
+      "abc",
+    ]);
+
+    expect(records).to.eql([
+      { abc: { active: true } },
+      { xyz: { active: false, notes: "First xyz" } },
+      { def: { active: true } },
+    ]);
+  });
+
   it("should dedupe string allowlist ids", () => {
     const records = dedupeAllowlistRecords(["abc", "abc", "xyz"]);
     expect(records.length).to.eql(2);

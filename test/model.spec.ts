@@ -10,6 +10,29 @@ function config(additions: any) {
 }
 
 describe("Model", () => {
+  it.each([undefined, "", "GHSA-3g3m-2fjr-6pw4"])(
+    "normalizes an advisory before matching its allowlist (id: %s)",
+    (githubAdvisoryId) => {
+      const model = new Model({
+        levels: { critical: true, high: true, moderate: true, low: true },
+        allowlist: new Allowlist(["GHSA-3g3m-2fjr-6pw4"]),
+      });
+      model.process({
+        id: 1244013,
+        github_advisory_id: githubAdvisoryId,
+        module_name: "glob",
+        severity: "moderate",
+        url: "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+        findings: [{ paths: ["glob"] }],
+      });
+      expect(model.getSummary()).to.eql(
+        summaryWithDefault({
+          allowlistedAdvisoriesFound: ["GHSA-3g3m-2fjr-6pw4"],
+        }),
+      );
+    },
+  );
+
   it("does not support number parameters for Allowlist", () => {
     expect(
       () =>
@@ -59,6 +82,72 @@ describe("Model", () => {
     expect(summary).to.eql(summaryWithDefault());
   });
 
+  it("allowlists npm advisory paths grouped in one object", () => {
+    const globPath = "GHSA-3g3m-2fjr-6pw4|ts-json-schema-generator>glob";
+    const minimatchPath = "GHSA-g3hv-75wg-m249|ts-json-schema-generator>glob>minimatch";
+    const model = new Model({
+      levels: { critical: true, high: true, moderate: true, low: true },
+      allowlist: Allowlist.mapConfigToAllowlist({
+        allowlist: [
+          {
+            [globPath]: { active: true, expiry: "" },
+            [minimatchPath]: { active: true, expiry: "" },
+          },
+        ],
+      }),
+    });
+
+    const summary = model.load({
+      vulnerabilities: {
+        glob: {
+          name: "glob",
+          isDirect: false,
+          via: [
+            {
+              source: 1244013,
+              name: "glob",
+              dependency: "glob",
+              title: "AbortSignal cancellation bypass",
+              url: "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+              severity: "moderate",
+              range: ">=9.0.0 <=14.0.1",
+            },
+            "minimatch",
+          ],
+          effects: ["ts-json-schema-generator"],
+        },
+        minimatch: {
+          name: "minimatch",
+          isDirect: false,
+          via: [
+            {
+              source: 1244623,
+              name: "minimatch",
+              dependency: "minimatch",
+              title: "Denial of service via globparts amplification",
+              url: "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+              severity: "moderate",
+              range: ">=7.0.0 <11.0.1",
+            },
+          ],
+          effects: ["glob"],
+        },
+        "ts-json-schema-generator": {
+          name: "ts-json-schema-generator",
+          isDirect: true,
+          via: ["glob"],
+          effects: [],
+        },
+      },
+    });
+
+    expect(summary).to.eql(
+      summaryWithDefault({
+        allowlistedPathsFound: [globPath, minimatchPath],
+      }),
+    );
+  });
+
   it("compute a summary", () => {
     const model = new Model({
       levels: { low: true, high: true, moderate: true, critical: true },
@@ -76,7 +165,7 @@ describe("Model", () => {
           findings: [{ paths: ["open"] }],
         },
       },
-    };
+    } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
     expect(summary).to.eql(
@@ -328,7 +417,7 @@ describe("Model", () => {
           findings: [{ paths: ["M_G"] }],
         },
       },
-    };
+    } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
     expect(summary).to.eql(
@@ -379,7 +468,7 @@ describe("Model", () => {
           findings: [{ paths: ["M_B_2"] }],
         },
       },
-    };
+    } satisfies Parameters<typeof model.load>[0];
 
     const summary = model.load(parsedAuditOutput);
     expect(summary).to.eql(

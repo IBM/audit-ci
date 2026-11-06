@@ -31,6 +31,16 @@ export function normalizeAllowlistRecord(recordOrId: AllowlistRecord): NSPRecord
     : recordOrId;
 }
 
+/** Split multi-key objects so each exception keeps its own metadata. */
+function expandAllowlistRecords(recordsOrIds: AllowlistRecord[]): AllowlistRecord[] {
+  return recordsOrIds.flatMap((recordOrId) => {
+    if (typeof recordOrId !== "object" || Object.keys(recordOrId).length <= 1) {
+      return [recordOrId];
+    }
+    return Object.entries(recordOrId).map(([id, content]) => ({ [id]: content }));
+  });
+}
+
 /**
  * Removes duplicate allowlist items from an array based on the allowlist id.
  *
@@ -39,7 +49,7 @@ export function normalizeAllowlistRecord(recordOrId: AllowlistRecord): NSPRecord
  */
 export function dedupeAllowlistRecords(recordsOrIds: AllowlistRecord[]): NSPRecord[] {
   const map = new Map<string, NSPRecord>();
-  for (const recordOrId of recordsOrIds) {
+  for (const recordOrId of expandAllowlistRecords(recordsOrIds)) {
     const nspRecord = normalizeAllowlistRecord(recordOrId);
     const advisoryId = getAllowlistId(nspRecord);
 
@@ -71,7 +81,7 @@ class Allowlist {
     if (!input) {
       return;
     }
-    for (const allowlist of input) {
+    for (const allowlist of expandAllowlistRecords(input)) {
       if (typeof allowlist === "number") {
         throw new TypeError(
           "Unsupported number as allowlist. Perform codemod to update config to use GitHub advisory as identifiers: https://github.com/quinnturner/audit-ci-codemod with `npx @quinnturner/audit-ci-codemod`. See also: https://github.com/IBM/audit-ci/pull/217",
