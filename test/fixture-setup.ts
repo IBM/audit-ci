@@ -17,9 +17,7 @@ const TEMPLATE_SUFFIX = ".tmpl";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 
-async function* findTemplates(
-  directory: string
-): AsyncGenerator<string> {
+async function* findTemplates(directory: string): AsyncGenerator<string> {
   const entries = await fs.readdir(directory, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(directory, entry.name);
