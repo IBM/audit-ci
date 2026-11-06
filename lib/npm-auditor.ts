@@ -1,4 +1,4 @@
-import type { GitHubAdvisoryId, NPMAuditReportV1, NPMAuditReportV2 } from "audit-types";
+import type { NPMAuditReportV1, NPMAuditReportV2 } from "audit-types";
 import { blue } from "./colors.js";
 import { reportAudit, ReportConfig, runProgram } from "./common.js";
 import { AuditCiConfig, AuditCiFullConfig, mapAuditCiConfigToAuditCiFullConfig } from "./config.js";
@@ -86,13 +86,13 @@ function printReport(
           return relevantNpmV2Advisories;
         } else {
           const advisories = parsedOutput.advisories;
-          const advisoryKeys = Object.keys(advisories) as GitHubAdvisoryId[];
+          const advisoryKeys = Object.keys(advisories);
           const relevantAdvisoryLevels = advisoryKeys.filter((advisory) => {
             const severity = advisories[advisory].severity;
             return severity !== "info" && levels[severity];
           });
 
-          const relevantNpmV1Advisories: Record<GitHubAdvisoryId, NPMAuditReportV1.Advisory> = {};
+          const relevantNpmV1Advisories: Record<string, NPMAuditReportV1.Advisory> = {};
           for (const advisory of relevantAdvisoryLevels) {
             relevantNpmV1Advisories[advisory] = advisories[advisory];
           }

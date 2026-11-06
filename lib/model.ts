@@ -175,8 +175,7 @@ class Model {
         PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]
       >(parsedOutput.vulnerabilities)) {
         const { via: vias, isDirect } = vulnerability;
-        // https://github.com/microsoft/TypeScript/issues/33591
-        for (const via of vias as Array<string | NPMAuditReportV2.Via>) {
+        for (const via of vias) {
           if (!isVia(via)) {
             continue;
           }
@@ -211,7 +210,7 @@ class Model {
         const vulnerability = vuln[1];
         const { via: vias, isDirect } = vulnerability;
 
-        if (vias.length === 0 || typeof vias[0] === "string") {
+        if (!vias.some(isVia)) {
           continue;
         }
 
@@ -248,8 +247,8 @@ class Model {
         if (isDirect) {
           result.push(moduleName);
         }
-        const advisories = (vias as Array<string | NPMAuditReportV2.Via>)
-          .filter((via) => typeof via !== "string")
+        const advisories = vias
+          .filter(isVia)
           .map((via) => via.source)
           // Filter boolean makes the next line non-nullable.
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

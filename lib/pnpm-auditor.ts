@@ -1,4 +1,4 @@
-import type { GitHubAdvisoryId, PNPMAuditReport } from "audit-types";
+import type { PNPMAuditReport } from "audit-types";
 import { execSync } from "child_process";
 import * as semver from "semver";
 import { blue, yellow } from "./colors.js";
@@ -77,7 +77,7 @@ function printReport(
     case "important": {
       const { advisories, metadata } = parsedOutput;
 
-      const advisoryKeys = Object.keys(advisories) as GitHubAdvisoryId[];
+      const advisoryKeys = Object.keys(advisories);
 
       const relevantAdvisoryLevels = advisoryKeys.filter((advisory) => {
         const severity = advisories[advisory].severity;

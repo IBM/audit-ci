@@ -1,4 +1,5 @@
-import type { YarnAudit, Yarn2And3AuditReport } from "audit-types";
+import type { YarnAudit, Yarn2And3AuditReport, YarnNpmAuditReport } from "audit-types";
+import semver from "semver";
 import { blue, red, yellow } from "./colors.js";
 import { reportAudit, runProgram } from "./common.js";
 import {
@@ -27,7 +28,7 @@ const isClassicAuditAdvisory = (
   return type === "auditAdvisory";
 };
 
-const isClassicAuditSummary = (data: unknown, type: unknown): data is YarnAudit.AuditSummary => {
+const isClassicAuditSummary = (data: unknown, type: unknown): data is YarnAudit.AuditMetadata => {
   return type === "auditSummary";
 };
 
@@ -62,6 +63,7 @@ export async function auditWithFullConfig(
     );
   }
   const isYarnClassic = yarnSupportsClassicAudit(yarnVersion);
+  const isYarn4 = semver.gte(yarnVersion, "4.0.0");
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
 
   function isClassicGuard(
@@ -127,7 +129,7 @@ export async function auditWithFullConfig(
     case "summary": {
       printAuditData = isYarnClassic
         ? ({ type, data }: { type: unknown; data: unknown }) => {
-            if (isClassicAuditAdvisory(data, type)) {
+            if (isClassicAuditSummary(data, type)) {
               printJson(data);
             }
           }
@@ -144,8 +146,64 @@ export async function auditWithFullConfig(
     }
   }
 
-  function outListener(line: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse) {
+  const treeCounts = { info: 0, low: 0, moderate: 0, high: 0, critical: 0 };
+  function outListener(
+    line:
+      | YarnAudit.AuditResponse
+      | Yarn2And3AuditReport.AuditResponse
+      | YarnNpmAuditReport.AuditResponse,
+  ) {
     try {
+      if ("error" in line) {
+        throw new Error(line.error.summary);
+      }
+      if ("type" in line && line.type === "error") {
+        throw new Error(line.data);
+      }
+      if (isYarn4) {
+        if (!("children" in line)) {
+          if (reportType === "full") printJson(line);
+          return;
+        }
+        const { value: moduleName, children } = line;
+        treeCounts[children.Severity]++;
+        if (
+          reportType === "full" ||
+          (reportType === "important" && children.Severity !== "info" && levels[children.Severity])
+        ) {
+          printJson(line);
+        }
+        if (
+          !children.URL &&
+          (children.Severity === "info" || levels[children.Severity]) &&
+          !model.allowlist.modules.includes(moduleName)
+        ) {
+          throw new Error(
+            `Cannot identify Yarn advisory for ${moduleName}: ${children.Issue} (missing URL).`,
+          );
+        }
+        model.process({
+          id: typeof children.ID === "number" ? children.ID : 0,
+          module_name: moduleName,
+          title: children.Issue,
+          severity: children.Severity,
+          url: children.URL ?? "",
+          findings: [
+            {
+              paths: children.Dependents.length
+                ? children.Dependents.map((dependent) => {
+                    const separator = dependent.lastIndexOf("@");
+                    return dependent.slice(separator + 1).startsWith("workspace:")
+                      ? moduleName
+                      : `${dependent.slice(0, separator)}>${moduleName}`;
+                  })
+                : [moduleName],
+            },
+          ],
+        });
+        return;
+      }
+      if ("children" in line) throw new Error("Unexpected Yarn advisory tree response.");
       if (isClassicGuard(line)) {
         const { type, data } = line;
         printAuditData(line);
@@ -209,6 +267,7 @@ export async function auditWithFullConfig(
     cliArguments.push(...extraArguments);
   }
   await runProgram(yarnExec, cliArguments, options, outListener, errorListener);
+  if (isYarn4 && reportType === "summary") printJson({ vulnerabilities: treeCounts });
   if (missingLockFile) {
     console.warn(
       yellow,

@@ -1,4 +1,4 @@
-import { NPMAuditReportV2 } from "audit-types";
+import { NPMAuditReportV2, type PNPMAuditReport } from "audit-types";
 import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import Model from "../lib/model.js";
@@ -10,6 +10,37 @@ function config(additions: any) {
 }
 
 describe("Model", () => {
+  it.each([undefined, null])(
+    "processes modern pnpm advisories with patched_versions=%s",
+    (patchedVersions) => {
+      const advisory = {
+        id: 1244013,
+        title: "AbortSignal cancellation bypass",
+        module_name: "glob",
+        severity: "moderate",
+        vulnerable_versions: "<=14.0.1",
+        github_advisory_id: "GHSA-3g3m-2fjr-6pw4",
+        url: "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+        cwe: "CWE-400",
+        patched_versions: patchedVersions,
+        patched_versions_unpublished: true,
+        findings: [
+          { version: "14.0.1", paths: [".>tool>glob"], dev: true, optional: false, bundled: false },
+        ],
+      } satisfies PNPMAuditReport.CurrentAdvisory;
+      const model = new Model({
+        levels: { low: true, moderate: true, high: true, critical: true },
+        allowlist: new Allowlist(),
+      });
+      expect(model.load({ advisories: { "1244013": advisory } })).to.eql(
+        summaryWithDefault({
+          advisoriesFound: ["GHSA-3g3m-2fjr-6pw4"],
+          failedLevelsFound: ["moderate"],
+          advisoryPathsFound: ["GHSA-3g3m-2fjr-6pw4|tool>glob"],
+        }),
+      );
+    },
+  );
   it.each([undefined, "", "GHSA-3g3m-2fjr-6pw4"])(
     "normalizes an advisory before matching its allowlist (id: %s)",
     (githubAdvisoryId) => {
@@ -82,7 +113,7 @@ describe("Model", () => {
     expect(summary).to.eql(summaryWithDefault());
   });
 
-  it("allowlists npm advisory paths grouped in one object", () => {
+  it.each([false, true])("allowlists mixed npm via arrays (reversed: %s)", (reverseVia) => {
     const globPath = "GHSA-3g3m-2fjr-6pw4|ts-json-schema-generator>glob";
     const minimatchPath = "GHSA-g3hv-75wg-m249|ts-json-schema-generator>glob>minimatch";
     const model = new Model({
@@ -97,7 +128,7 @@ describe("Model", () => {
       }),
     });
 
-    const summary = model.load({
+    const report = {
       vulnerabilities: {
         glob: {
           name: "glob",
@@ -139,7 +170,9 @@ describe("Model", () => {
           effects: [],
         },
       },
-    });
+    } satisfies Parameters<Model["load"]>[0];
+    if (reverseVia) report.vulnerabilities.glob.via.reverse();
+    const summary = model.load(report);
 
     expect(summary).to.eql(
       summaryWithDefault({
@@ -526,7 +559,7 @@ describe("Model", () => {
               dependency: "GHSA-a-a-c",
               title: "title",
               url: "https://github.com/advisories/GHSA-a-a-c",
-              severity: "moderate",
+              severity: "moderate" as const,
               range: ">2.1.1 <5.0.1",
             },
           ],
@@ -592,10 +625,10 @@ describe("Model", () => {
               dependency: "GHSA-a-a-c",
               title: "title",
               url: "https://github.com/advisories/GHSA-a-a-c",
-              severity: "moderate",
+              severity: "moderate" as const,
               range: ">2.1.1 <5.0.1",
             },
-          ] as NPMAuditReportV2.Via[],
+          ],
           effects: ["GHSA-a-a-c"],
           range: ">2.1.1 <5.0.1",
           nodes: ["node_modules/GHSA-a-a-a/node_modules/GHSA-a-a-c"],
