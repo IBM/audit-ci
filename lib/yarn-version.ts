@@ -36,7 +36,9 @@ const versionMap = new Map<string, string>();
 export function getYarnVersion(yarnExec = "yarn", cwd?: string) {
   const key = `${yarnExec}:${cwd}`;
   let version = versionMap.get(key);
-  if (version) return version;
+  if (version) {
+    return version;
+  }
   version = execSync(`${yarnExec} -v`, { cwd }).toString().replace("\n", "");
   versionMap.set(key, version);
   return version;

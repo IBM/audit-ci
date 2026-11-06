@@ -159,14 +159,21 @@ function readPackageManagerFromManifest(directory: string): "npm" | "yarn" | "pn
     const manifest: unknown = JSON.parse(
       readFileSync(path.resolve(directory, "package.json"), "utf8"),
     );
-    if (!manifest || typeof manifest !== "object" || !("packageManager" in manifest)) return;
+    if (!manifest || typeof manifest !== "object" || !("packageManager" in manifest)) {
+      return undefined;
+    }
     const field = manifest.packageManager;
-    if (typeof field !== "string") return;
+    if (typeof field !== "string") {
+      return undefined;
+    }
     const name = /^(npm|yarn|pnpm)@.+$/.exec(field.trim())?.[1];
-    if (name === "npm" || name === "yarn" || name === "pnpm") return name;
+    if (name === "npm" || name === "yarn" || name === "pnpm") {
+      return name;
+    }
   } catch {
     // Missing or malformed manifests fall back to lockfile detection.
   }
+  return undefined;
 }
 
 /**
@@ -186,16 +193,26 @@ function resolvePackageManagerType(
     }
     case "auto": {
       const manifestPackageManager = readPackageManagerFromManifest(directory);
-      if (manifestPackageManager) return manifestPackageManager;
+      if (manifestPackageManager) {
+        return manifestPackageManager;
+      }
       const getPath = (file: string) => path.resolve(directory, file);
       const packageLockExists = existsSync(getPath("package-lock.json"));
-      if (packageLockExists) return "npm";
+      if (packageLockExists) {
+        return "npm";
+      }
       const shrinkwrapExists = existsSync(getPath("npm-shrinkwrap.json"));
-      if (shrinkwrapExists) return "npm";
+      if (shrinkwrapExists) {
+        return "npm";
+      }
       const yarnLockExists = existsSync(getPath("yarn.lock"));
-      if (yarnLockExists) return "yarn";
+      if (yarnLockExists) {
+        return "yarn";
+      }
       const pnpmLockExists = existsSync(getPath("pnpm-lock.yaml"));
-      if (pnpmLockExists) return "pnpm";
+      if (pnpmLockExists) {
+        return "pnpm";
+      }
       throw new Error(
         "Cannot establish package-manager type. Set package.json#packageManager or add package-lock.json, npm-shrinkwrap.json, yarn.lock, or pnpm-lock.yaml.",
       );

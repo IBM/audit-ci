@@ -18,13 +18,17 @@ import {
 } from "./yarn-version.js";
 
 function mapTreeDependentsToPaths(moduleName: string, dependents?: readonly string[]): string[] {
-  if (!dependents?.length) return [moduleName];
+  if (!dependents?.length) {
+    return [moduleName];
+  }
   return [
     ...new Set(
       dependents.map((dependent) => {
         // Split after the package name; references can themselves contain `@`.
         const locator = /^(?<name>(?:@[^/]+\/)?[^@]+)@(?<reference>.+)$/.exec(dependent)?.groups;
-        if (locator?.reference === "workspace:.") return moduleName;
+        if (locator?.reference === "workspace:.") {
+          return moduleName;
+        }
         return `${locator?.name ?? dependent}>${moduleName}`;
       }),
     ),
@@ -97,7 +101,6 @@ function createYarnAuditSession(config: AuditCiFullConfig, yarnVersion: string) 
   }
 
   // Define a function to print based on the report type.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let printAuditData: any;
   switch (reportType) {
     case "full": {
@@ -108,8 +111,7 @@ function createYarnAuditSession(config: AuditCiFullConfig, yarnVersion: string) 
     }
     case "important": {
       printAuditData = isYarnClassic
-        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ({ type, data }: any) => {
+        ? ({ type, data }: any) => {
             if (isClassicAuditAdvisory(data, type)) {
               const severity = data.advisory.severity;
               if (severity !== "info" && levels[severity]) {
@@ -160,7 +162,9 @@ function createYarnAuditSession(config: AuditCiFullConfig, yarnVersion: string) 
       }
       if (isYarn4) {
         if (!("children" in line)) {
-          if (reportType === "full") printJson(line);
+          if (reportType === "full") {
+            printJson(line);
+          }
           return;
         }
         const { value: moduleName, children } = line;
@@ -168,7 +172,9 @@ function createYarnAuditSession(config: AuditCiFullConfig, yarnVersion: string) 
         // Only skip explicitly identified deprecations; missing vulnerability URLs
         // must still produce an error instead of silently passing the audit.
         if (!children.URL && children.ID === `${moduleName} (deprecation)`) {
-          if (reportType === "full") printJson(line);
+          if (reportType === "full") {
+            printJson(line);
+          }
           return;
         }
         treeCounts[children.Severity]++;
@@ -201,7 +207,9 @@ function createYarnAuditSession(config: AuditCiFullConfig, yarnVersion: string) 
         });
         return;
       }
-      if ("children" in line) throw new Error("Unexpected Yarn advisory tree response.");
+      if ("children" in line) {
+        throw new Error("Unexpected Yarn advisory tree response.");
+      }
       if (isClassicGuard(line)) {
         const { type, data } = line;
         printAuditData(line);
@@ -232,9 +240,7 @@ function createYarnAuditSession(config: AuditCiFullConfig, yarnVersion: string) 
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stderrBuffer: any[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function errorListener(line: any) {
     stderrBuffer.push(line);
 
@@ -265,7 +271,9 @@ export function reportClassic(
   reporter: YarnReporter = reportAudit,
 ): Summary {
   const session = createYarnAuditSession(config, "1.22.22");
-  for (const line of lines) session.outListener(line);
+  for (const line of lines) {
+    session.outListener(line);
+  }
   return session.finish(reporter);
 }
 

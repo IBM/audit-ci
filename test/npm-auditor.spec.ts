@@ -1,4 +1,4 @@
-import { NPMAuditReportV1 } from "audit-types";
+import { type NPMAuditReportV1 } from "audit-types";
 import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { auditWithFullConfig, report } from "../lib/npm-auditor.js";
@@ -382,19 +382,15 @@ describe("npm-auditor", () => {
     expect(summary).to.eql(summaryWithDefault());
   });
   it("fails with error code ENOTFOUND on a non-existent site", async () => {
-    try {
-      await auditWithFullConfig(
+    await expect(
+      auditWithFullConfig(
         config({
           directory: testDirectory("npm-low"),
           levels: { low: true },
           registry: "https://registry.nonexistentdomain0000000000.com",
         }),
-      );
-    } catch (error) {
-      expect((error as Error).message).to.include("ENOTFOUND");
-      return;
-    }
-    throw new Error("Expected an error to be thrown");
+      ),
+    ).rejects.toThrow("ENOTFOUND");
   });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(

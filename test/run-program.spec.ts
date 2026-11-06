@@ -2,6 +2,20 @@ import { describe, expect, it } from "vitest";
 import { runProgram } from "../lib/common.js";
 
 describe("runProgram", () => {
+  it("normalizes non-Error failures from third-party listeners", async () => {
+    await expect(
+      runProgram(
+        process.execPath,
+        ["-e", "console.log('{}')"],
+        {},
+        () => {
+          // oxlint-disable-next-line typescript/only-throw-error -- Exercise malformed third-party callback failures.
+          throw "listener failure";
+        },
+        () => {},
+      ),
+    ).rejects.toThrow("listener failure");
+  });
   it("streams parsed JSON objects to the stdout listener", async () => {
     const received: unknown[] = [];
     await runProgram(

@@ -9,13 +9,15 @@ const directories: string[] = [];
 function project(files: Record<string, string> = {}) {
   const directory = mkdtempSync(path.join(tmpdir(), "audit-ci-config-"));
   directories.push(directory);
-  for (const [name, content] of Object.entries(files))
+  for (const [name, content] of Object.entries(files)) {
     writeFileSync(path.join(directory, name), content);
+  }
   return directory;
 }
 afterEach(() => {
-  for (const directory of directories.splice(0))
+  for (const directory of directories.splice(0)) {
     rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 describe("programmatic configuration", () => {

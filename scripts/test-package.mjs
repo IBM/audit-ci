@@ -13,7 +13,9 @@ assert.ok(npmCli, "Run this check with npm run test:package");
 
 function run(command, args, cwd, expectedStatus = 0, env = process.env) {
   const result = spawnSync(command, args, { cwd, encoding: "utf8", env });
-  if (result.error) throw result.error;
+  if (result.error) {
+    throw result.error;
+  }
   assert.equal(
     result.status,
     expectedStatus,

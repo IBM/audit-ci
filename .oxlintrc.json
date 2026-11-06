@@ -1,15 +1,50 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "oxc"],
+  "plugins": ["typescript", "unicorn", "oxc", "import", "promise"],
   "options": {
+    "reportUnusedDisableDirectives": "error",
     "typeAware": true
   },
   "categories": {
-    "correctness": "error"
+    "correctness": "error",
+    "suspicious": "error"
   },
-  "rules": {},
+  "rules": {
+    "no-underscore-dangle": "off",
+    "unicorn/no-array-sort": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "eqeqeq": "error",
+    "curly": "error",
+    "array-callback-return": "error",
+    "import/no-cycle": "error",
+    "import/no-duplicates": "error",
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "typescript/consistent-type-exports": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/switch-exhaustiveness-check": "error",
+    "typescript/only-throw-error": "error",
+    "typescript/prefer-promise-reject-errors": "error"
+  },
   "env": {
     "builtin": true
   },
-  "ignorePatterns": ["**/*output.json", "test/yarn-*.cjs", "dist", "coverage"]
+  "ignorePatterns": ["**/*output.json", "test/yarn-*.cjs", "dist", "coverage"],
+  "overrides": [
+    {
+      "files": ["test/**/*.ts"],
+      "plugins": ["typescript", "unicorn", "oxc", "import", "promise", "vitest"],
+      "rules": {
+        "vitest/valid-expect": "off",
+        "vitest/require-mock-type-parameters": "off",
+        "vitest/no-focused-tests": "error",
+        "vitest/no-conditional-expect": "error"
+      }
+    }
+  ]
 }

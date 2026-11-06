@@ -1,4 +1,4 @@
-import semver, { SemVer } from "semver";
+import semver, { type SemVer } from "semver";
 import { describe, expect, it as unskippableIt, vi } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { yellow } from "../lib/colors.js";

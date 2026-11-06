@@ -32,10 +32,8 @@ describe("gitHubAdvisoryIdToUrl", () => {
   });
   it("does not handle null or undefined in a special way", () => {
     // @ts-expect-error testing null
-    // eslint-disable-next-line unicorn/no-null
     expect(gitHubAdvisoryIdToUrl(null)).toBe(`https://github.com/advisories/null`);
     // @ts-expect-error testing undefined
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(gitHubAdvisoryIdToUrl(undefined)).toBe(`https://github.com/advisories/undefined`);
   });
 });
@@ -54,9 +52,7 @@ describe("isGitHubAdvisoryId", () => {
   });
   it("returns false for invalid GitHub advisory IDs", () => {
     expect(isGitHubAdvisoryId("qrpm-p2h7-hrv2")).toBe(false);
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(isGitHubAdvisoryId(undefined)).toBe(false);
-    // eslint-disable-next-line unicorn/no-null
     expect(isGitHubAdvisoryId(null)).toBe(false);
   });
 });

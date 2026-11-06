@@ -1,5 +1,5 @@
 import { yellow } from "./colors.js";
-import { ReportConfig } from "./common.js";
+import { type ReportConfig } from "./common.js";
 import type { AuditCiFullConfig } from "./config.js";
 import type { Summary } from "./model.js";
 import * as npmAuditor from "./npm-auditor.js";

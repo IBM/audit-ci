@@ -1,5 +1,5 @@
 import type { GitHubAdvisoryId, NPMAuditReportV2 } from "audit-types";
-import Allowlist from "./allowlist.js";
+import type Allowlist from "./allowlist.js";
 import {
   gitHubAdvisoryUrlToAdvisoryId,
   isGitHubAdvisoryId,
@@ -251,7 +251,6 @@ class Model {
           .filter(isVia)
           .map((via) => via.source)
           // Filter boolean makes the next line non-nullable.
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           .map((id) => advisoryMap.get(id)!)
           .filter(Boolean);
         for (const advisory of advisories) {
@@ -272,10 +271,7 @@ class Model {
     return this.getSummary();
   }
 
-  getSummary(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    advisoryMapper: (advisory: any) => GitHubAdvisoryId = (a) => a.github_advisory_id,
-  ) {
+  getSummary(advisoryMapper: (advisory: any) => GitHubAdvisoryId = (a) => a.github_advisory_id) {
     // Clean up the data structures for more consistent output.
     this.advisoriesFound.sort((a, b) => a.github_advisory_id.localeCompare(b.github_advisory_id));
     this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)].sort((a, b) =>

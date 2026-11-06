@@ -2,23 +2,27 @@ import { readFileSync } from "node:fs";
 import type { YarnNpmAuditReport } from "audit-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Allowlist from "../lib/allowlist.js";
+import type * as Common from "../lib/common.js";
 import { auditWithFullConfig } from "../lib/yarn-auditor.js";
+import type * as YarnVersion from "../lib/yarn-version.js";
 import { config, summaryWithDefault } from "./common.js";
 
 const wire = vi.hoisted(() => ({ version: "4.18.1", lines: [] as unknown[] }));
 vi.mock("../lib/yarn-version.js", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../lib/yarn-version.js")>()),
+  ...(await importOriginal<typeof YarnVersion>()),
   getYarnVersion: () => wire.version,
 }));
 vi.mock("../lib/common.js", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../lib/common.js")>()),
+  ...(await importOriginal<typeof Common>()),
   runProgram: async (
     _exe: string,
     _args: string[],
     _options: unknown,
     out: (line: unknown) => void,
   ) => {
-    for (const line of wire.lines) out(line);
+    for (const line of wire.lines) {
+      out(line);
+    }
   },
 }));
 
@@ -107,13 +111,15 @@ describe("Yarn wire formats", () => {
         .filter((line): line is string => typeof line === "string" && line.startsWith("{"));
       const deprecations = jsonLogs.filter((line) => line.includes("(deprecation)"));
       expect(deprecations).toHaveLength(reportType === "full" ? 1 : 0);
-      if (reportType !== "full") {
-        expect(
-          jsonLogs
-            .filter((line) => line.includes('"vulnerabilities"'))
-            .map((line) => JSON.parse(line)),
-        ).to.eql([{ vulnerabilities: { info: 0, low: 0, moderate: 1, high: 0, critical: 0 } }]);
-      }
+      expect(
+        jsonLogs
+          .filter((line) => line.includes('"vulnerabilities"'))
+          .map((line) => JSON.parse(line)),
+      ).to.eql(
+        reportType === "full"
+          ? []
+          : [{ vulnerabilities: { info: 0, low: 0, moderate: 1, high: 0, critical: 0 } }],
+      );
     },
   );
 

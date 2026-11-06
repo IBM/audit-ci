@@ -1,10 +1,9 @@
-import { NPMAuditReportV2, type PNPMAuditReport } from "audit-types";
+import { type NPMAuditReportV2, type PNPMAuditReport } from "audit-types";
 import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import Model from "../lib/model.js";
 import { summaryWithDefault } from "./common.js";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Intentionally any to pass bad values
 function config(additions: any) {
   return { ...additions };
 }
@@ -171,7 +170,9 @@ describe("Model", () => {
         },
       },
     } satisfies Parameters<Model["load"]>[0];
-    if (reverseVia) report.vulnerabilities.glob.via.reverse();
+    if (reverseVia) {
+      report.vulnerabilities.glob.via.reverse();
+    }
     const summary = model.load(report);
 
     expect(summary).to.eql(

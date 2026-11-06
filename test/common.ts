@@ -2,9 +2,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { YarnAudit, Yarn2And3AuditReport } from "audit-types";
 import Allowlist from "../lib/allowlist.js";
-import { AuditCiFullConfig } from "../lib/config.js";
+import { type AuditCiFullConfig } from "../lib/config.js";
 import { mapVulnerabilityLevelInput } from "../lib/map-vulnerability.js";
-import { Summary } from "../lib/model.js";
+import { type Summary } from "../lib/model.js";
 
 export function summaryWithDefault(additions: Partial<Summary> = {}) {
   const summary = {

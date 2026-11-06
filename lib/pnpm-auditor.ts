@@ -2,8 +2,12 @@ import { execSync } from "node:child_process";
 import type { PNPMAuditReport } from "audit-types";
 import * as semver from "semver";
 import { blue, yellow } from "./colors.js";
-import { ReportConfig, reportAudit, runProgram } from "./common.js";
-import { AuditCiConfig, AuditCiFullConfig, mapAuditCiConfigToAuditCiFullConfig } from "./config.js";
+import { type ReportConfig, reportAudit, runProgram } from "./common.js";
+import {
+  type AuditCiConfig,
+  type AuditCiFullConfig,
+  mapAuditCiConfigToAuditCiFullConfig,
+} from "./config.js";
 import Model, { type Summary } from "./model.js";
 
 const MINIMUM_PNPM_AUDIT_REGISTRY_VERSION = "5.4.0";
@@ -18,7 +22,6 @@ async function runPnpmAudit(config: AuditCiFullConfig): Promise<PNPMAuditReport.
   } = config;
   const pnpmExec = _pnpm || "pnpm";
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stdoutBuffer: any = {};
   function outListener(data: unknown) {
     // Object.assign is used here instead of the spread operator for minor performance gains.

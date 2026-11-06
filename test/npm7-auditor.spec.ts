@@ -1,4 +1,4 @@
-import { NPMAuditReportV2 } from "audit-types";
+import { type NPMAuditReportV2 } from "audit-types";
 import semver from "semver";
 import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
@@ -370,36 +370,28 @@ describe("npm7-auditor", () => {
     expect(summary).to.eql(summaryWithDefault());
   });
   it("fails with error code ENOTFOUND on a non-existent site", async () => {
-    try {
-      await auditWithFullConfig(
+    await expect(
+      auditWithFullConfig(
         config({
           directory: testDirectory("npm-low"),
           levels: { low: true },
           registry: "https://registry.nonexistentdomain0000000000.com",
         }),
-      );
-    } catch (error) {
-      expect((error as Error).message).to.include("ENOTFOUND");
-      return;
-    }
-    throw new Error("Expected audit to fail");
+      ),
+    ).rejects.toThrow("ENOTFOUND");
   });
   // oxlint-disable-next-line eslint/no-unused-expressions
   semver.lt(nodeVersion, "20.0.0") &&
     it("fails with error code ECONNREFUSED on a live site with no registry", async () => {
-      try {
-        await auditWithFullConfig(
+      await expect(
+        auditWithFullConfig(
           config({
             directory: testDirectory("npm-low"),
             levels: { low: true },
             registry: "http://localhost",
           }),
-        );
-      } catch (error) {
-        expect((error as Error).message).to.include("ECONNREFUSED");
-        return;
-      }
-      throw new Error("Expected audit to fail");
+        ),
+      ).rejects.toThrow("ECONNREFUSED");
     });
   it("reports summary with no vulnerabilities when critical devDependency and skip-dev is true", () => {
     const summary = report(

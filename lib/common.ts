@@ -1,14 +1,14 @@
-import { SpawnOptionsWithoutStdio } from "node:child_process";
-import { GitHubAdvisoryId } from "audit-types";
+import { type SpawnOptionsWithoutStdio } from "node:child_process";
+import { type GitHubAdvisoryId } from "audit-types";
 import { spawn } from "cross-spawn";
 import escapeStringRegexp from "escape-string-regexp";
 import eventStream from "event-stream";
 import * as JSONStream from "jsonstream-next";
 import ReadlineTransform from "readline-transform";
-import Allowlist from "./allowlist.js";
+import type Allowlist from "./allowlist.js";
 import { blue, yellow } from "./colors.js";
-import { AuditCiConfig } from "./config.js";
-import { Summary } from "./model.js";
+import { type AuditCiConfig } from "./config.js";
+import { type Summary } from "./model.js";
 
 export function partition<T>(a: T[], fun: (parameter: T) => boolean) {
   const returnValue: { truthy: T[]; falsy: T[] } = { truthy: [], falsy: [] };
@@ -110,11 +110,11 @@ export function reportAudit(summary: Summary, config: ReportConfig) {
 }
 
 function hasMessage(value: unknown): value is { message: unknown } {
-  return typeof value === "object" && value != undefined && "message" in value;
+  return typeof value === "object" && value !== null && "message" in value;
 }
 
 function hasStatusCode(value: unknown): value is { statusCode: unknown; message: unknown } {
-  return typeof value === "object" && value != undefined && "statusCode" in value;
+  return typeof value === "object" && value !== null && "statusCode" in value;
 }
 
 export function runProgram(
@@ -128,11 +128,9 @@ export function runProgram(
   const proc = spawn(command, cliArguments, options);
   let recentMessage: string;
   let errorMessage: string;
-  let listenerError: unknown;
-  let listenerFailed = false;
+  let listenerError: Error | undefined;
   const recordListenerError = (error: unknown) => {
-    if (!listenerFailed) listenerError = error;
-    listenerFailed = true;
+    listenerError ??= error instanceof Error ? error : new Error(String(error));
   };
   proc.stdout.setEncoding("utf8");
   proc.stdout
@@ -148,7 +146,6 @@ export function runProgram(
       }),
     )
     .pipe(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error -- JSONStream.parse() accepts (pattern: any) when it should accept (pattern?: any)
       JSONStream.parse().on("error", () => {
         errorMessage = recentMessage;
@@ -156,7 +153,9 @@ export function runProgram(
     )
     .pipe(
       eventStream.mapSync((data: unknown) => {
-        if (!data) return;
+        if (!data) {
+          return;
+        }
         try {
           // due to response without error
           if (
@@ -186,7 +185,9 @@ export function runProgram(
     );
   return new Promise<void>((resolve, reject) => {
     proc.on("close", () => {
-      if (listenerFailed) return reject(listenerError);
+      if (listenerError) {
+        return reject(listenerError);
+      }
       if (errorMessage) {
         return reject(new Error(errorMessage));
       }
