@@ -4,11 +4,12 @@ export default defineConfig({
   test: {
     coverage: {
       provider: "v8",
+      exclude: ["test/**"],
       thresholds: {
-        branches: 84,
-        functions: 76,
-        lines: 71,
-        statements: 72,
+        branches: 90,
+        functions: 90,
+        lines: 90,
+        statements: 90,
       },
     },
     globalSetup: "./test/fixture-setup.ts",

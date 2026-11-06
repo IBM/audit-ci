@@ -1,4 +1,6 @@
-import path from "path";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import type { YarnAudit, Yarn2And3AuditReport } from "audit-types";
 import Allowlist from "../lib/allowlist.js";
 import { AuditCiFullConfig } from "../lib/config.js";
 import { mapVulnerabilityLevelInput } from "../lib/map-vulnerability.js";
@@ -57,4 +59,19 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 export function testDirectory(s: string) {
   return path.resolve(__dirname, s);
+}
+
+export function readYarnClassicAuditOutput(directoryName: string): YarnAudit.AuditResponse[] {
+  return readFileSync(path.join(testDirectory(directoryName), "output.jsonl"), "utf8")
+    .split(/\r?\n/)
+    .filter((line) => line.trim().length > 0)
+    .map((line) => JSON.parse(line) as YarnAudit.AuditResponse);
+}
+
+export function readYarnBerryAuditOutput(
+  directoryName: string,
+): Yarn2And3AuditReport.AuditResponse {
+  return JSON.parse(
+    readFileSync(path.join(testDirectory(directoryName), "output.json"), "utf8"),
+  ) as Yarn2And3AuditReport.AuditResponse;
 }

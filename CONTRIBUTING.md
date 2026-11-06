@@ -31,4 +31,4 @@ For a list of the maintainers, see the [MAINTAINERS.md](MAINTAINERS.md) page.
 
 ## Testing
 
-Mocha + Chai testing is performed in the `test` directory. Most tests are end-to-end tests. In the case for `audit-ci`, when calling `audit-ci`, compare the expected output with the actual output.
+Tests use Vitest in the `test` directory. Run `npm test -- --run` for the full suite, `npm run coverage` to check the 90% coverage thresholds, and `npm run check:ci` for lint and formatting checks. Yarn reporting tests use recorded audit output so registry changes do not affect their results; subprocess tests cover command arguments and error handling separately.

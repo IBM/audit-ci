@@ -268,6 +268,8 @@ scripts:
 > Using a config file supports workflows such as documenting your allowlist, centralized and easier config management,
 > and code completion when using the `$schema` field.
 
+Automatic package-manager selection first checks `package.json#packageManager` in the audit directory. If that field is missing or unsupported, it checks `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock`, and `pnpm-lock.yaml`, in that order. An explicit `--package-manager` takes precedence.
+
 | Args | Alias             | Description                                                                                           |
 | ---- | ----------------- | ----------------------------------------------------------------------------------------------------- |
 | -l   | --low             | Prevents integration with low or higher vulnerabilities (default `false`)                             |

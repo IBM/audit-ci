@@ -132,11 +132,17 @@ export function runProgram(
   const proc = spawn(command, cliArguments, options);
   let recentMessage: string;
   let errorMessage: string;
+  let listenerError: unknown;
+  let listenerFailed = false;
+  const recordListenerError = (error: unknown) => {
+    if (!listenerFailed) listenerError = error;
+    listenerFailed = true;
+  };
   proc.stdout.setEncoding("utf8");
   proc.stdout
     .pipe(
       transform.on("error", (error: unknown) => {
-        throw error;
+        recordListenerError(error);
       }),
     )
     .pipe(
@@ -150,7 +156,6 @@ export function runProgram(
       // @ts-expect-error -- JSONStream.parse() accepts (pattern: any) when it should accept (pattern?: any)
       JSONStream.parse().on("error", () => {
         errorMessage = recentMessage;
-        throw new Error(errorMessage);
       }),
     )
     .pipe(
@@ -174,12 +179,18 @@ export function runProgram(
 
           stdoutListener(data);
         } catch (error) {
-          stderrListener(error);
+          recordListenerError(error);
+          try {
+            stderrListener(error);
+          } catch (listenerFailure) {
+            recordListenerError(listenerFailure);
+          }
         }
       }),
     );
   return new Promise<void>((resolve, reject) => {
     proc.on("close", () => {
+      if (listenerFailed) return reject(listenerError);
       if (errorMessage) {
         return reject(new Error(errorMessage));
       }

@@ -1,6 +1,6 @@
 import type { YarnAudit, Yarn2And3AuditReport, YarnNpmAuditReport } from "audit-types";
 import { blue, red, yellow } from "./colors.js";
-import { reportAudit, runProgram } from "./common.js";
+import { type ReportConfig, reportAudit, runProgram } from "./common.js";
 import {
   mapAuditCiConfigToAuditCiFullConfig,
   type AuditCiConfig,
@@ -46,30 +46,14 @@ const isClassicAuditSummary = (data: unknown, type: unknown): data is YarnAudit.
   return type === "auditSummary";
 };
 
-/**
- * Audit your Yarn project!
- *
- * @returns Returns the audit report summary on resolve, `Error` on rejection.
- */
-export async function auditWithFullConfig(
-  config: AuditCiFullConfig,
-  reporter = reportAudit,
-): Promise<Summary> {
-  const {
-    levels,
-    registry,
-    "report-type": reportType,
-    "skip-dev": skipDevelopmentDependencies,
-    "output-format": outputFormat,
-    _yarn,
-    directory,
-    "extra-args": extraArguments,
-  } = config;
-  const yarnExec = _yarn || "yarn";
+type YarnReporter = (summary: Summary, config: ReportConfig) => Summary;
+
+/** Share parsing and reporting between subprocess audits and recorded fixtures. */
+function createYarnAuditSession(config: AuditCiFullConfig, yarnVersion: string) {
+  const { levels, "report-type": reportType, "output-format": outputFormat } = config;
   let missingLockFile = false;
   const model = new Model(config);
 
-  const yarnVersion = getYarnVersion(yarnExec, directory);
   const isYarnVersionSupported = yarnSupportsAudit(yarnVersion);
   if (!isYarnVersionSupported) {
     throw new Error(
@@ -258,6 +242,59 @@ export async function auditWithFullConfig(
       throw new Error(line.data);
     }
   }
+  function finish(reporter: YarnReporter = reportAudit): Summary {
+    if (isYarn4 && (reportType === "summary" || reportType === "important")) {
+      printJson({ vulnerabilities: treeCounts });
+    }
+    if (missingLockFile) {
+      console.warn(
+        yellow,
+        "No yarn.lock file. This does not affect auditing, but it may be a mistake.",
+      );
+    }
+
+    const summary = model.getSummary((a) => a.github_advisory_id);
+    return reporter(summary, config);
+  }
+  return { outListener, errorListener, finish };
+}
+
+export function reportClassic(
+  lines: readonly YarnAudit.AuditResponse[],
+  config: AuditCiFullConfig,
+  reporter: YarnReporter = reportAudit,
+): Summary {
+  const session = createYarnAuditSession(config, "1.22.22");
+  for (const line of lines) session.outListener(line);
+  return session.finish(reporter);
+}
+
+export function reportBerry(
+  output: Yarn2And3AuditReport.AuditResponse,
+  config: AuditCiFullConfig,
+  reporter: YarnReporter = reportAudit,
+): Summary {
+  const session = createYarnAuditSession(config, "2.4.0");
+  session.outListener(output);
+  return session.finish(reporter);
+}
+
+/** Run a Yarn audit and report its streamed response. */
+export async function auditWithFullConfig(
+  config: AuditCiFullConfig,
+  reporter: YarnReporter = reportAudit,
+): Promise<Summary> {
+  const {
+    registry,
+    "skip-dev": skipDevelopmentDependencies,
+    _yarn,
+    directory,
+    "extra-args": extraArguments,
+  } = config;
+  const yarnExec = _yarn || "yarn";
+  const yarnVersion = getYarnVersion(yarnExec, directory);
+  const session = createYarnAuditSession(config, yarnVersion);
+  const isYarnClassic = yarnSupportsClassicAudit(yarnVersion);
   const options = { cwd: directory };
   const cliArguments = isYarnClassic
     ? ["audit", "--json", ...(skipDevelopmentDependencies ? ["--groups", "dependencies"] : [])]
@@ -280,19 +317,8 @@ export async function auditWithFullConfig(
   if (extraArguments) {
     cliArguments.push(...extraArguments);
   }
-  await runProgram(yarnExec, cliArguments, options, outListener, errorListener);
-  if (isYarn4 && (reportType === "summary" || reportType === "important")) {
-    printJson({ vulnerabilities: treeCounts });
-  }
-  if (missingLockFile) {
-    console.warn(
-      yellow,
-      "No yarn.lock file. This does not affect auditing, but it may be a mistake.",
-    );
-  }
-
-  const summary = model.getSummary((a) => a.github_advisory_id);
-  return reporter(summary, config);
+  await runProgram(yarnExec, cliArguments, options, session.outListener, session.errorListener);
+  return session.finish(reporter);
 }
 
 /**

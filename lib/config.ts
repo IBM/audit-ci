@@ -138,7 +138,11 @@ export type AuditCiFullConfig = {
   [K in keyof ComplexConfig]: ComplexConfig[K];
 };
 
-type AuditCiConfigComplex = Omit<Partial<AuditCiFullConfig>, "levels" | "allowlist"> & {
+type AuditCiConfigComplex = Omit<
+  Partial<AuditCiFullConfig>,
+  "levels" | "allowlist" | "package-manager"
+> & {
+  "package-manager"?: "auto" | "npm" | "yarn" | "pnpm";
   allowlist?: AllowlistRecord[];
   low?: boolean;
   moderate?: boolean;
@@ -149,6 +153,21 @@ type AuditCiConfigComplex = Omit<Partial<AuditCiFullConfig>, "levels" | "allowli
 export type AuditCiConfig = {
   [K in keyof AuditCiConfigComplex]: AuditCiConfigComplex[K];
 };
+
+function readPackageManagerFromManifest(directory: string): "npm" | "yarn" | "pnpm" | undefined {
+  try {
+    const manifest: unknown = JSON.parse(
+      readFileSync(path.resolve(directory, "package.json"), "utf8"),
+    );
+    if (!manifest || typeof manifest !== "object" || !("packageManager" in manifest)) return;
+    const field = manifest.packageManager;
+    if (typeof field !== "string") return;
+    const name = /^(npm|yarn|pnpm)@.+$/.exec(field.trim())?.[1];
+    if (name === "npm" || name === "yarn" || name === "pnpm") return name;
+  } catch {
+    // Missing or malformed manifests fall back to lockfile detection.
+  }
+}
 
 /**
  * @param pmArgument the package manager (including the `auto` option)
@@ -166,8 +185,9 @@ function resolvePackageManagerType(
       return pmArgument;
     }
     case "auto": {
+      const manifestPackageManager = readPackageManagerFromManifest(directory);
+      if (manifestPackageManager) return manifestPackageManager;
       const getPath = (file: string) => path.resolve(directory, file);
-      // TODO: Consider prioritizing `package.json#packageManager` for determining the package manager.
       const packageLockExists = existsSync(getPath("package-lock.json"));
       if (packageLockExists) return "npm";
       const shrinkwrapExists = existsSync(getPath("npm-shrinkwrap.json"));
@@ -177,7 +197,7 @@ function resolvePackageManagerType(
       const pnpmLockExists = existsSync(getPath("pnpm-lock.yaml"));
       if (pnpmLockExists) return "pnpm";
       throw new Error(
-        "Cannot establish package-manager type, missing package-lock.json, yarn.lock, and pnpm-lock.yaml.",
+        "Cannot establish package-manager type. Set package.json#packageManager or add package-lock.json, npm-shrinkwrap.json, yarn.lock, or pnpm-lock.yaml.",
       );
     }
     default: {
@@ -208,7 +228,7 @@ const defaults = {
   "extra-args": [] as string[],
 };
 
-function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
+export function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
   const allowlist = Allowlist.mapConfigToAllowlist(argv);
 
   const { low, moderate, high, critical, "package-manager": packageManager, directory } = argv;
@@ -264,6 +284,9 @@ export function mapAuditCiConfigToAuditCiFullConfig(config: AuditCiConfig): Audi
     allowlist,
     levels,
     "extra-args": config["extra-args"] ?? defaults["extra-args"],
+    _npm: config._npm,
+    _yarn: config._yarn,
+    _pnpm: config._pnpm,
   };
   return fullConfig;
 }
