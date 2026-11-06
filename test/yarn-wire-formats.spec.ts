@@ -1,4 +1,5 @@
 import type { YarnNpmAuditReport } from "audit-types";
+import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { auditWithFullConfig } from "../lib/yarn-auditor.js";
@@ -52,6 +53,70 @@ afterEach(() => {
 });
 
 describe("Yarn wire formats", () => {
+  it.each([
+    ["tool@workspace:packages/tool", "tool>glob"],
+    ["@scope/tool@workspace:packages/tool", "@scope/tool>glob"],
+    ["@scope/tool@virtual:abc#npm:1.0.0", "@scope/tool>glob"],
+    ["tool@patch:tool@npm:1.0.0#./patch", "tool>glob"],
+    ["tool", "tool>glob"],
+    ["project@workspace:.", "glob"],
+  ])("maps Yarn locator %s to %s", async (dependent, expectedPath) => {
+    wire.lines = [
+      { ...advisory, children: { ...advisory.children, Dependents: [dependent, dependent] } },
+    ];
+    expect((await audit()).advisoryPathsFound).to.eql([`GHSA-3g3m-2fjr-6pw4|${expectedPath}`]);
+  });
+
+  it("preserves workspace path allowlists in the captured Yarn 4 fixture", async () => {
+    wire.lines = readFileSync(new URL("./yarn-4-workspace/output.json", import.meta.url), "utf8")
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line));
+    const allowedPath = "GHSA-hrpp-h998-j3pp|audit-ci-yarn-4-workspace-high-vulnerability>qs";
+    expect(
+      await audit({
+        levels: { low: false, moderate: false, high: true, critical: true },
+        allowlist: new Allowlist([allowedPath]),
+      }),
+    ).to.eql(
+      summaryWithDefault({
+        advisoriesFound: ["GHSA-28xh-wpgr-7fm8"],
+        failedLevelsFound: ["critical"],
+        allowlistedPathsFound: [allowedPath],
+        advisoryPathsFound: [
+          "GHSA-28xh-wpgr-7fm8|audit-ci-yarn-4-workspace-critical-vulnerability-dev>open",
+        ],
+      }),
+    );
+  });
+
+  it.each(["summary", "important", "full"] as const)(
+    "excludes deprecations from %s vulnerability counts",
+    async (reportType) => {
+      const deprecation = {
+        ...advisory,
+        children: { ...advisory.children, ID: "glob (deprecation)", URL: undefined },
+      };
+      wire.lines = [deprecation, advisory];
+      const log = vi.spyOn(console, "log").mockImplementation(() => {});
+      expect((await audit({ "report-type": reportType })).advisoriesFound).to.eql([
+        "GHSA-3g3m-2fjr-6pw4",
+      ]);
+      const jsonLogs = log.mock.calls
+        .map(([line]) => line)
+        .filter((line): line is string => typeof line === "string" && line.startsWith("{"));
+      const deprecations = jsonLogs.filter((line) => line.includes("(deprecation)"));
+      expect(deprecations).toHaveLength(reportType === "full" ? 1 : 0);
+      if (reportType !== "full") {
+        expect(
+          jsonLogs
+            .filter((line) => line.includes('"vulnerabilities"'))
+            .map((line) => JSON.parse(line)),
+        ).to.eql([{ vulnerabilities: { info: 0, low: 0, moderate: 1, high: 0, critical: 0 } }]);
+      }
+    },
+  );
+
   it("processes Yarn 4 advisory trees and string IDs", async () => {
     wire.lines = [advisory];
     expect(await audit()).to.eql(
@@ -61,6 +126,21 @@ describe("Yarn wire formats", () => {
         advisoryPathsFound: ["GHSA-3g3m-2fjr-6pw4|glob"],
       }),
     );
+  });
+  it("keeps distinct advisories with string IDs", async () => {
+    wire.lines = [
+      advisory,
+      {
+        ...advisory,
+        value: "other",
+        children: {
+          ...advisory.children,
+          ID: "another-id",
+          URL: "https://github.com/advisories/GHSA-rvg8-pwq2-xj7q",
+        },
+      },
+    ];
+    expect((await audit()).advisoriesFound).to.eql(["GHSA-3g3m-2fjr-6pw4", "GHSA-rvg8-pwq2-xj7q"]);
   });
   it("preserves scoped dependent names and supports path allowlisting", async () => {
     wire.lines = [
@@ -84,10 +164,10 @@ describe("Yarn wire formats", () => {
     ];
     expect(await audit()).to.eql(summaryWithDefault());
   });
-  it("prints Yarn 4 summary counts", async () => {
+  it.each(["summary", "important"] as const)("prints Yarn 4 %s counts", async (reportType) => {
     wire.lines = [advisory];
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
-    await audit({ "report-type": "summary" });
+    await audit({ "report-type": reportType });
     expect(log).toHaveBeenCalledWith(
       JSON.stringify(
         { vulnerabilities: { info: 0, low: 0, moderate: 1, high: 0, critical: 0 } },
@@ -98,7 +178,7 @@ describe("Yarn wire formats", () => {
   });
   it("rejects unidentified Yarn 4 advisories unless their module is allowlisted", async () => {
     wire.lines = [
-      { ...advisory, children: { ...advisory.children, ID: "glob (deprecation)", URL: undefined } },
+      { ...advisory, children: { ...advisory.children, ID: "unknown", URL: undefined } },
     ];
     await expect(audit()).rejects.toThrow("missing URL");
     expect(await audit({ allowlist: new Allowlist(["glob"]) })).to.eql(

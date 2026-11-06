@@ -3,6 +3,12 @@ import semver from "semver";
 
 export const MINIMUM_YARN_CLASSIC_VERSION = "1.12.3";
 export const MINIMUM_YARN_BERRY_VERSION = "2.4.0";
+export const MINIMUM_YARN_BERRY_TREE_REPORT_VERSION = "4.0.0";
+
+/** Yarn 4+ emits advisory trees instead of the Yarn 2/3 aggregated report. */
+export function yarnUsesBerryTreeReport(yarnVersion: string | semver.SemVer) {
+  return semver.gte(yarnVersion, MINIMUM_YARN_BERRY_TREE_REPORT_VERSION);
+}
 /**
  * Change this to the appropriate version when
  * yarn audit --registry is supported:

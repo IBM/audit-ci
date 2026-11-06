@@ -1,5 +1,4 @@
 import type { YarnAudit, Yarn2And3AuditReport, YarnNpmAuditReport } from "audit-types";
-import semver from "semver";
 import { blue, red, yellow } from "./colors.js";
 import { reportAudit, runProgram } from "./common.js";
 import {
@@ -15,7 +14,22 @@ import {
   yarnAuditSupportsRegistry,
   yarnSupportsAudit,
   yarnSupportsClassicAudit,
+  yarnUsesBerryTreeReport,
 } from "./yarn-version.js";
+
+function mapTreeDependentsToPaths(moduleName: string, dependents?: readonly string[]): string[] {
+  if (!dependents?.length) return [moduleName];
+  return [
+    ...new Set(
+      dependents.map((dependent) => {
+        // Split after the package name; references can themselves contain `@`.
+        const locator = /^(?<name>(?:@[^/]+\/)?[^@]+)@(?<reference>.+)$/.exec(dependent)?.groups;
+        if (locator?.reference === "workspace:.") return moduleName;
+        return `${locator?.name ?? dependent}>${moduleName}`;
+      }),
+    ),
+  ];
+}
 
 const printJson = (data: unknown) => {
   console.log(JSON.stringify(data, undefined, 2));
@@ -63,7 +77,7 @@ export async function auditWithFullConfig(
     );
   }
   const isYarnClassic = yarnSupportsClassicAudit(yarnVersion);
-  const isYarn4 = semver.gte(yarnVersion, "4.0.0");
+  const isYarn4 = yarnUsesBerryTreeReport(yarnVersion);
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
 
   function isClassicGuard(
@@ -166,6 +180,13 @@ export async function auditWithFullConfig(
           return;
         }
         const { value: moduleName, children } = line;
+        // Yarn includes deprecation notices in the same stream as vulnerabilities.
+        // Only skip explicitly identified deprecations; missing vulnerability URLs
+        // must still produce an error instead of silently passing the audit.
+        if (!children.URL && children.ID === `${moduleName} (deprecation)`) {
+          if (reportType === "full") printJson(line);
+          return;
+        }
         treeCounts[children.Severity]++;
         if (
           reportType === "full" ||
@@ -190,14 +211,7 @@ export async function auditWithFullConfig(
           url: children.URL ?? "",
           findings: [
             {
-              paths: children.Dependents.length
-                ? children.Dependents.map((dependent) => {
-                    const separator = dependent.lastIndexOf("@");
-                    return dependent.slice(separator + 1).startsWith("workspace:")
-                      ? moduleName
-                      : `${dependent.slice(0, separator)}>${moduleName}`;
-                  })
-                : [moduleName],
+              paths: mapTreeDependentsToPaths(moduleName, children.Dependents),
             },
           ],
         });
@@ -267,7 +281,9 @@ export async function auditWithFullConfig(
     cliArguments.push(...extraArguments);
   }
   await runProgram(yarnExec, cliArguments, options, outListener, errorListener);
-  if (isYarn4 && reportType === "summary") printJson({ vulnerabilities: treeCounts });
+  if (isYarn4 && (reportType === "summary" || reportType === "important")) {
+    printJson({ vulnerabilities: treeCounts });
+  }
   if (missingLockFile) {
     console.warn(
       yellow,

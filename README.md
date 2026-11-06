@@ -13,16 +13,14 @@ threshold while ignoring allowlisted advisories.
 ## Requirements
 
 - Node >=16
-- _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0 && <4.0.0
+- _(Optional)_ Yarn ^1.12.3 || Yarn >=2.4.0
 - _(Optional)_ PNPM >=4.3.0
 - _(Optional)_ Bun
 
 ## Limitations
 
 - Yarn Classic workspaces does not audit `devDependencies`. See [this issue](https://github.com/yarnpkg/yarn/issues/7047) for more information.
-- Yarn v4 is not supported because it provides similar functionality to `audit-ci`.
-  For more information, see the [documentation on `yarn npm audit`](https://yarnpkg.com/cli/npm/audit#options).
-  If you'd like `audit-ci` to support Yarn v4, voice your opinion on [this issue](https://github.com/IBM/audit-ci/issues/332).
+- Yarn 4+ emits an NDJSON advisory stream. `audit-ci` synthesizes severity counts for `important` and `summary` output and ignores explicitly identified deprecation-only entries. Path allowlists use the immediate dependents reported by Yarn, rather than full dependency chains. The root workspace is omitted from paths; named workspaces retain their package names (for example, `GHSA-…|my-workspace>qs`).
 - Bun is supported by exporting the `bun.lockb` into a Yarn v1 `yarn.lock` file.
   Accordingly, auditing a `bun.lockb` file with `audit-ci` requires Yarn v1.
 
