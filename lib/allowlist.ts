@@ -23,9 +23,7 @@ const DEFAULT_NSP_CONTENT: Readonly<NSPContent> = {
  * @param recordOrId A string or NSPRecord object.
  * @returns Normalized NSPRecord object.
  */
-export function normalizeAllowlistRecord(
-  recordOrId: AllowlistRecord,
-): NSPRecord {
+export function normalizeAllowlistRecord(recordOrId: AllowlistRecord): NSPRecord {
   return typeof recordOrId === "string"
     ? {
         [recordOrId]: DEFAULT_NSP_CONTENT,
@@ -39,9 +37,7 @@ export function normalizeAllowlistRecord(
  * @param recordsOrIds An array containing allowlist string ids or NSPRecords.
  * @returns An array of NSPRecords with duplicates removed.
  */
-export function dedupeAllowlistRecords(
-  recordsOrIds: AllowlistRecord[],
-): NSPRecord[] {
+export function dedupeAllowlistRecords(recordsOrIds: AllowlistRecord[]): NSPRecord[] {
   const map = new Map<string, NSPRecord>();
   for (const recordOrId of recordsOrIds) {
     const nspRecord = normalizeAllowlistRecord(recordOrId);
@@ -88,9 +84,7 @@ class Allowlist {
       }
 
       const allowlistId =
-        typeof allowlist === "string"
-          ? allowlist
-          : getAllowlistId(allowlistNspRecord);
+        typeof allowlist === "string" ? allowlist : getAllowlistId(allowlistNspRecord);
 
       if (allowlistId.includes(">") || allowlistId.includes("|")) {
         this.paths.push(allowlistId);
@@ -105,9 +99,7 @@ class Allowlist {
     }
   }
 
-  static mapConfigToAllowlist(
-    config: Readonly<{ allowlist: AllowlistRecord[] }>,
-  ) {
+  static mapConfigToAllowlist(config: Readonly<{ allowlist: AllowlistRecord[] }>) {
     const { allowlist } = config;
     const deduplicatedAllowlist = dedupeAllowlistRecords(allowlist || []);
     const allowlistObject = new Allowlist(deduplicatedAllowlist);

@@ -19,9 +19,7 @@ export function yarnSupportsBerryAudit(yarnVersion: string | semver.SemVer) {
 }
 
 export function yarnSupportsAudit(yarnVersion: string | semver.SemVer) {
-  return (
-    yarnSupportsClassicAudit(yarnVersion) || yarnSupportsBerryAudit(yarnVersion)
-  );
+  return yarnSupportsClassicAudit(yarnVersion) || yarnSupportsBerryAudit(yarnVersion);
 }
 
 export function yarnAuditSupportsRegistry(yarnVersion: string | semver.SemVer) {

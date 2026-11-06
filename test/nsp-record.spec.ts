@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  getAllowlistId,
-  getNSPContent,
-  isNSPRecordActive,
-} from "../lib/nsp-record.js";
+import { getAllowlistId, getNSPContent, isNSPRecordActive } from "../lib/nsp-record.js";
 
 describe("getAllowlistId", () => {
   it("should get the allowlist id", () => {

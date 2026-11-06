@@ -1,25 +1,14 @@
 import type { GitHubAdvisoryId, NPMAuditReportV2 } from "audit-types";
 import Allowlist from "./allowlist.js";
-import {
-  gitHubAdvisoryUrlToAdvisoryId,
-  matchString,
-  partition,
-} from "./common.js";
+import { gitHubAdvisoryUrlToAdvisoryId, matchString, partition } from "./common.js";
 import type { AuditCiFullConfig } from "./config.js";
 import type { VulnerabilityLevels } from "./map-vulnerability.js";
 import type { DeepReadonly, DeepWriteable } from "./types.js";
 
-const SUPPORTED_SEVERITY_LEVELS = new Set([
-  "critical",
-  "high",
-  "moderate",
-  "low",
-]);
+const SUPPORTED_SEVERITY_LEVELS = new Set(["critical", "high", "moderate", "low"]);
 
-const prependPath = <N extends string, C extends string>(
-  newItem: N,
-  currentPath: C,
-): `${N}>${C}` => `${newItem}>${currentPath}`;
+const prependPath = <N extends string, C extends string>(newItem: N, currentPath: C): `${N}>${C}` =>
+  `${newItem}>${currentPath}`;
 
 const isVia = <T>(via: T | string): via is T => {
   return typeof via !== "string";
@@ -80,9 +69,7 @@ class Model {
       (level) => !SUPPORTED_SEVERITY_LEVELS.has(level),
     );
     if (unsupported.length > 0) {
-      throw new Error(
-        `Unsupported severity levels found: ${unsupported.sort().join(", ")}`,
-      );
+      throw new Error(`Unsupported severity levels found: ${unsupported.toSorted().join(", ")}`);
     }
     this.failingSeverities = config.levels;
 
@@ -123,13 +110,9 @@ class Model {
     const allowlistedPathsFoundSet = new Set<`${GitHubAdvisoryId}|${string}`>();
 
     const flattenedPaths = findings.flatMap((finding) => finding.paths);
-    const flattenedAllowlist = flattenedPaths.map(
-      (path) => `${githubAdvisoryId}|${path}` as const,
-    );
+    const flattenedAllowlist = flattenedPaths.map((path) => `${githubAdvisoryId}|${path}` as const);
     const { truthy, falsy } = partition(flattenedAllowlist, (path) =>
-      this.allowlist.paths.some((allowedPath) =>
-        matchString(allowedPath, path),
-      ),
+      this.allowlist.paths.some((allowedPath) => matchString(allowedPath, path)),
     );
     for (const path of truthy) {
       allowlistedPathsFoundSet.add(path);
@@ -155,14 +138,9 @@ class Model {
     /** NPM 6 & PNPM */
     if ("advisories" in parsedOutput && parsedOutput.advisories) {
       for (const advisory of Object.values<
-        DeepWriteable<
-          | PartialNPMAuditReportV1Audit["advisories"][GitHubAdvisoryId]
-          | PartialPNPMAuditReportAudit["advisories"][GitHubAdvisoryId]
-        >
+        DeepWriteable<PartialNPMAuditReportV1Audit["advisories"][GitHubAdvisoryId]>
       >(parsedOutput.advisories)) {
-        advisory.github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(
-          advisory.url,
-        );
+        advisory.github_advisory_id = gitHubAdvisoryUrlToAdvisoryId(advisory.url);
         // PNPM paths have a leading `.>`
         // "paths": [
         //  ".>module-name"
@@ -218,9 +196,7 @@ class Model {
       const visitedModules = new Map<string, string[]>();
 
       for (const vuln of Object.entries<
-        DeepReadonly<
-          PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]
-        >
+        DeepReadonly<PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]>
       >(parsedOutput.vulnerabilities)) {
         // Did this approach rather than destructuring within the forEach to type vulnerability
         const moduleName = vuln[0];
@@ -234,19 +210,14 @@ class Model {
         const visited = new Set<string>();
 
         const recursiveMagic = (
-          cVuln: DeepReadonly<
-            PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]
-          >,
+          cVuln: DeepReadonly<PartialNPMAuditReportV2Audit["vulnerabilities"][GitHubAdvisoryId]>,
           dependencyPath: string,
         ): string[] => {
           const visitedModule = visitedModules.get(cVuln.name);
           if (visitedModule) {
             return visitedModule.map((name) => {
               const resultWithExtraCarat = prependPath(name, dependencyPath);
-              return resultWithExtraCarat.slice(
-                0,
-                Math.max(0, resultWithExtraCarat.length - 1),
-              );
+              return resultWithExtraCarat.slice(0, Math.max(0, resultWithExtraCarat.length - 1));
             });
           }
 
@@ -269,11 +240,8 @@ class Model {
         if (isDirect) {
           result.push(moduleName);
         }
-        const advisories = (
-          (vias as Array<string | NPMAuditReportV2.Via>).filter(
-            (via) => typeof via !== "string",
-          ) as NPMAuditReportV2.Via[]
-        )
+        const advisories = (vias as Array<string | NPMAuditReportV2.Via>)
+          .filter((via) => typeof via !== "string")
           .map((via) => via.source)
           // Filter boolean makes the next line non-nullable.
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -299,12 +267,13 @@ class Model {
 
   getSummary(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    advisoryMapper: (advisory: any) => GitHubAdvisoryId = (a) =>
-      a.github_advisory_id,
+    advisoryMapper: (advisory: any) => GitHubAdvisoryId = (a) => a.github_advisory_id,
   ) {
     // Clean up the data structures for more consistent output.
-    this.advisoriesFound.sort();
-    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)].sort();
+    this.advisoriesFound.sort((a, b) => a.github_advisory_id.localeCompare(b.github_advisory_id));
+    this.advisoryPathsFound = [...new Set(this.advisoryPathsFound)].sort((a, b) =>
+      a.localeCompare(b),
+    );
     this.allowlistedAdvisoriesFound.sort();
     this.allowlistedModulesFound.sort();
     this.allowlistedPathsFound.sort();
@@ -317,9 +286,7 @@ class Model {
     }
     const failedLevelsFound = [...foundSeverities].sort();
 
-    const advisoriesFound = [
-      ...new Set(this.advisoriesFound.map((a) => advisoryMapper(a))),
-    ].sort();
+    const advisoriesFound = [...new Set(this.advisoriesFound.map((a) => advisoryMapper(a)))].sort();
 
     const allowlistedAdvisoriesNotFound = this.allowlist.advisories
       .filter((id) => !this.allowlistedAdvisoriesFound.includes(id))
@@ -328,12 +295,7 @@ class Model {
       .filter((id) => !this.allowlistedModulesFound.includes(id))
       .sort();
     const allowlistedPathsNotFound = this.allowlist.paths
-      .filter(
-        (id) =>
-          !this.allowlistedPathsFound.some((foundPath) =>
-            matchString(id, foundPath),
-          ),
-      )
+      .filter((id) => !this.allowlistedPathsFound.some((foundPath) => matchString(id, foundPath)))
       .sort();
 
     const summary: Summary = {

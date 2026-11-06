@@ -47,10 +47,7 @@ export function reportAudit(summary: Summary, config: ReportConfig) {
 
   if (outputFormat === "text") {
     if (allowlist.modules.length > 0) {
-      console.log(
-        blue,
-        `Modules to allowlist: ${allowlist.modules.join(", ")}.`,
-      );
+      console.log(blue, `Modules to allowlist: ${allowlist.modules.join(", ")}.`);
     }
 
     if (showFound) {
@@ -60,17 +57,12 @@ export function reportAudit(summary: Summary, config: ReportConfig) {
       }
       if (allowlistedAdvisoriesFound.length > 0) {
         const found = allowlistedAdvisoriesFound.join(", ");
-        console.warn(
-          yellow,
-          `Found vulnerable allowlisted advisories: ${found}.`,
-        );
+        console.warn(yellow, `Found vulnerable allowlisted advisories: ${found}.`);
       }
     }
     if (showNotFound) {
       if (allowlistedModulesNotFound.length > 0) {
-        const found = allowlistedModulesNotFound
-          .sort((a, b) => a.localeCompare(b))
-          .join(", ");
+        const found = allowlistedModulesNotFound.toSorted((a, b) => a.localeCompare(b)).join(", ");
         const allowlistMessage =
           allowlistedModulesNotFound.length === 1
             ? `Consider not allowlisting module: ${found}.`
@@ -79,7 +71,7 @@ export function reportAudit(summary: Summary, config: ReportConfig) {
       }
       if (allowlistedAdvisoriesNotFound.length > 0) {
         const found = allowlistedAdvisoriesNotFound
-          .sort((a, b) => a.localeCompare(b))
+          .toSorted((a, b) => a.localeCompare(b))
           .join(", ");
         const allowlistMessage =
           allowlistedAdvisoriesNotFound.length === 1
@@ -88,9 +80,7 @@ export function reportAudit(summary: Summary, config: ReportConfig) {
         console.warn(yellow, allowlistMessage);
       }
       if (allowlistedPathsNotFound.length > 0) {
-        const found = allowlistedPathsNotFound
-          .sort((a, b) => a.localeCompare(b))
-          .join(", ");
+        const found = allowlistedPathsNotFound.toSorted((a, b) => a.localeCompare(b)).join(", ");
         const allowlistMessage =
           allowlistedPathsNotFound.length === 1
             ? `Consider not allowlisting path: ${found}.`
@@ -123,17 +113,13 @@ function hasMessage(value: unknown): value is { message: unknown } {
   return typeof value === "object" && value != undefined && "message" in value;
 }
 
-function hasStatusCode(
-  value: unknown,
-): value is { statusCode: unknown; message: unknown } {
-  return (
-    typeof value === "object" && value != undefined && "statusCode" in value
-  );
+function hasStatusCode(value: unknown): value is { statusCode: unknown; message: unknown } {
+  return typeof value === "object" && value != undefined && "statusCode" in value;
 }
 
 export function runProgram(
   command: string,
-  arguments_: readonly string[],
+  cliArguments: readonly string[],
   options: SpawnOptionsWithoutStdio,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stdoutListener: (data: any) => void,
@@ -143,7 +129,7 @@ export function runProgram(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const transform = new ReadlineTransform({ skipEmpty: true });
-  const proc = spawn(command, arguments_, options);
+  const proc = spawn(command, cliArguments, options);
   let recentMessage: string;
   let errorMessage: string;
   proc.stdout.setEncoding("utf8");
@@ -199,9 +185,7 @@ export function runProgram(
       }
       return resolve();
     });
-    proc.on("error", (error) =>
-      reject(errorMessage ? new Error(errorMessage) : error),
-    );
+    proc.on("error", (error) => reject(errorMessage ? new Error(errorMessage) : error));
   });
 }
 
@@ -214,9 +198,7 @@ function wildcardToRegex(stringWithWildcard: string) {
 }
 
 export function matchString(template: string, string_: string) {
-  return template.includes("*")
-    ? wildcardToRegex(template).test(string_)
-    : template === string_;
+  return template.includes("*") ? wildcardToRegex(template).test(string_) : template === string_;
 }
 
 export function isGitHubAdvisoryId(id: unknown): id is GitHubAdvisoryId {

@@ -8,8 +8,7 @@ import { runYargs } from "./config.js";
 export async function runAuditCi() {
   const auditCiConfig = await runYargs();
 
-  const { "package-manager": packageManager, "output-format": outputFormat } =
-    auditCiConfig;
+  const { "package-manager": packageManager, "output-format": outputFormat } = auditCiConfig;
 
   try {
     await audit(auditCiConfig);

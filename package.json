@@ -2,8 +2,33 @@
   "name": "audit-ci",
   "version": "7.1.0",
   "description": "Audits NPM, Yarn, and PNPM projects in CI environments",
+  "keywords": [
+    "actions",
+    "advisory",
+    "audit",
+    "ci",
+    "github",
+    "github-actions",
+    "npm",
+    "pnpm",
+    "security",
+    "yarn"
+  ],
+  "homepage": "https://github.com/IBM/audit-ci",
+  "bugs": "https://github.com/IBM/audit-ci/issues",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:IBM/audit-ci.git"
+  },
+  "bin": "./dist/bin.js",
+  "files": [
+    "dist/*",
+    "README.md"
+  ],
   "type": "module",
+  "main": "./dist/index.cjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -17,44 +42,15 @@
     },
     "./package.json": "./package.json"
   },
-  "types": "dist/index.d.ts",
-  "main": "./dist/index.cjs",
-  "homepage": "https://github.com/IBM/audit-ci",
-  "bugs": "https://github.com/IBM/audit-ci/issues",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:IBM/audit-ci.git"
-  },
-  "keywords": [
-    "audit",
-    "ci",
-    "npm",
-    "yarn",
-    "pnpm",
-    "security",
-    "github",
-    "actions",
-    "github-actions",
-    "circleci"
-  ],
-  "bin": "./dist/bin.js",
-  "files": [
-    "dist/*",
-    "README.md"
-  ],
   "scripts": {
+    "check": "oxlint . && oxfmt .",
+    "check:ci": "oxlint . --deny-warnings && oxfmt . --check",
     "tsc": "tsc -p tsconfig.build.json",
     "build": "concurrently \"tsc -p tsconfig.build.json --noEmit\" \"tsup lib/index.ts lib/bin.ts\"",
-    "lint": "eslint . --ext .ts,.js,.cjs",
-    "lint:fix": "eslint . --ext .ts,.js,.cjs --fix",
-    "format": "prettier --write lib test",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "check-types": "tsc -p tsconfig.json",
     "schema": "ts-json-schema-generator -p ./docs/schema.d.ts -o ./docs/schema.json -t Schema"
-  },
-  "engines": {
-    "node": ">=20"
   },
   "dependencies": {
     "cross-spawn": "^7.0.6",
@@ -74,22 +70,25 @@
     "@types/jju": "^1.4.5",
     "@types/jsonstream-next": "^3.0.3",
     "@types/node": "^26.6.6",
-    "@types/readline-transform": "^1.0.4",
+    "@types/readline-transform": "^1.0.5",
     "@types/semver": "^7.8.0",
     "@types/yargs": "^17.0.35",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
     "@vitest/coverage-v8": "^5.1.0",
-    "audit-types": "^0.6.1",
+    "audit-types": "^0.6.2",
     "concurrently": "^10.0.6",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-unicorn": "^55.0.0",
-    "prettier": "^3.9.10",
+    "oxfmt": "^0.76.0",
+    "oxlint": "^1.91.0",
+    "oxlint-tsgolint": "^7.0.2006",
     "ts-json-schema-generator": "^2.9.0",
     "tsup": "^9.0.0",
-    "typescript": "^7.0.2",
+    "typescript": "6.0.3",
     "vitest": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=21"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true
   }
 }

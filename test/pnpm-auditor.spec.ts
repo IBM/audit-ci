@@ -1,23 +1,17 @@
 import { describe, expect, it } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import { report } from "../lib/pnpm-auditor.js";
-import {
-  config as baseConfig,
-  summaryWithDefault,
-  testDirectory,
-} from "./common.js";
+import { config as baseConfig, summaryWithDefault, testDirectory } from "./common.js";
 
-import reportPnpmAllowlistedPath from "./pnpm-allowlisted-path/pnpm-output.json";
-import reportPnpmCritical from "./pnpm-critical/pnpm-output.json";
-import reportPnpmHighSeverity from "./pnpm-high/pnpm-output.json";
-import reportPnpmLow from "./pnpm-low/pnpm-output.json";
-import reportPnpmModerateSeverity from "./pnpm-moderate/pnpm-output.json";
-import reportPnpmNone from "./pnpm-none/pnpm-output.json";
-import reportPnpmSkipDevelopment from "./pnpm-skip-dev/pnpm-output.json";
+import reportPnpmAllowlistedPath from "./pnpm-allowlisted-path/pnpm-output.json" with { type: "json" };
+import reportPnpmCritical from "./pnpm-critical/pnpm-output.json" with { type: "json" };
+import reportPnpmHighSeverity from "./pnpm-high/pnpm-output.json" with { type: "json" };
+import reportPnpmLow from "./pnpm-low/pnpm-output.json" with { type: "json" };
+import reportPnpmModerateSeverity from "./pnpm-moderate/pnpm-output.json" with { type: "json" };
+import reportPnpmNone from "./pnpm-none/pnpm-output.json" with { type: "json" };
+import reportPnpmSkipDevelopment from "./pnpm-skip-dev/pnpm-output.json" with { type: "json" };
 
-function config(
-  additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">,
-) {
+function config(additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">) {
   return baseConfig({ ...additions, "package-manager": "pnpm" });
 }
 
@@ -248,11 +242,7 @@ describe("pnpm-auditor", () => {
     );
     expect(summary).to.eql(
       summaryWithDefault({
-        advisoriesFound: [
-          "GHSA-4w2v-q235-vp99",
-          "GHSA-74fj-2j2h-c42q",
-          "GHSA-cph5-m8f7-6c5x",
-        ],
+        advisoriesFound: ["GHSA-4w2v-q235-vp99", "GHSA-74fj-2j2h-c42q", "GHSA-cph5-m8f7-6c5x"],
         failedLevelsFound: ["high"],
         allowlistedPathsFound: [
           "GHSA-42xw-2xvc-qx8m|axios",

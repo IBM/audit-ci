@@ -27,10 +27,7 @@ const isClassicAuditAdvisory = (
   return type === "auditAdvisory";
 };
 
-const isClassicAuditSummary = (
-  data: unknown,
-  type: unknown,
-): data is YarnAudit.AuditSummary => {
+const isClassicAuditSummary = (data: unknown, type: unknown): data is YarnAudit.AuditSummary => {
   return type === "auditSummary";
 };
 
@@ -68,8 +65,8 @@ export async function auditWithFullConfig(
   const yarnName = isYarnClassic ? `Yarn` : `Yarn Berry`;
 
   function isClassicGuard(
-    response: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse,
-  ): response is YarnAudit.AuditResponse {
+    _response: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse,
+  ): _response is YarnAudit.AuditResponse {
     return isYarnClassic;
   }
 
@@ -92,8 +89,9 @@ export async function auditWithFullConfig(
       break;
     }
     default: {
+      reportType satisfies never;
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
+        `Invalid report type: ${reportType as string}. Should be \`['important', 'full', 'summary']\`.`,
       );
     }
   }
@@ -139,15 +137,14 @@ export async function auditWithFullConfig(
       break;
     }
     default: {
+      reportType satisfies never;
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
+        `Invalid report type: ${reportType as string}. Should be \`['important', 'full', 'summary']\`.`,
       );
     }
   }
 
-  function outListener(
-    line: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse,
-  ) {
+  function outListener(line: YarnAudit.AuditResponse | Yarn2And3AuditReport.AuditResponse) {
     try {
       if (isClassicGuard(line)) {
         const { type, data } = line;
@@ -167,9 +164,7 @@ export async function auditWithFullConfig(
         printAuditData(line);
 
         if ("advisories" in line) {
-          for (const advisory of Object.values<Yarn2And3AuditReport.Advisory>(
-            line.advisories,
-          )) {
+          for (const advisory of Object.values<Yarn2And3AuditReport.Advisory>(line.advisories)) {
             model.process(advisory);
           }
         }
@@ -192,12 +187,8 @@ export async function auditWithFullConfig(
     }
   }
   const options = { cwd: directory };
-  const arguments_ = isYarnClassic
-    ? [
-        "audit",
-        "--json",
-        ...(skipDevelopmentDependencies ? ["--groups", "dependencies"] : []),
-      ]
+  const cliArguments = isYarnClassic
+    ? ["audit", "--json", ...(skipDevelopmentDependencies ? ["--groups", "dependencies"] : [])]
     : [
         "npm",
         "audit",
@@ -209,18 +200,15 @@ export async function auditWithFullConfig(
   if (registry) {
     const auditRegistrySupported = yarnAuditSupportsRegistry(yarnVersion);
     if (auditRegistrySupported) {
-      arguments_.push("--registry", registry);
+      cliArguments.push("--registry", registry);
     } else {
-      console.warn(
-        yellow,
-        "Yarn audit does not support the registry flag yet.",
-      );
+      console.warn(yellow, "Yarn audit does not support the registry flag yet.");
     }
   }
   if (extraArguments) {
-    arguments_.push(...extraArguments);
+    cliArguments.push(...extraArguments);
   }
-  await runProgram(yarnExec, arguments_, options, outListener, errorListener);
+  await runProgram(yarnExec, cliArguments, options, outListener, errorListener);
   if (missingLockFile) {
     console.warn(
       yellow,

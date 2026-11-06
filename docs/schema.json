@@ -9,10 +9,7 @@
           "type": "boolean"
         },
         "expiry": {
-          "type": [
-            "string",
-            "number"
-          ]
+          "type": ["string", "number"]
         },
         "notes": {
           "type": "string"
@@ -84,21 +81,13 @@
         "output-format": {
           "default": "text",
           "description": "Output format for audit-ci.",
-          "enum": [
-            "json",
-            "text"
-          ],
+          "enum": ["json", "text"],
           "type": "string"
         },
         "package-manager": {
           "default": "auto",
           "description": "Package manager to use for auditing.",
-          "enum": [
-            "npm",
-            "yarn",
-            "pnpm",
-            "auto"
-          ],
+          "enum": ["npm", "yarn", "pnpm", "auto"],
           "type": "string"
         },
         "pass-enoaudit": {
@@ -114,11 +103,7 @@
         "report-type": {
           "default": "important",
           "description": "Format for the audit report results.",
-          "enum": [
-            "full",
-            "important",
-            "summary"
-          ],
+          "enum": ["full", "important", "summary"],
           "type": "string"
         },
         "retry-count": {

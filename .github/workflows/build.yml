@@ -21,5 +21,4 @@ jobs:
       # Have audit-ci run audit-ci to audit itself :)
       - run: node ./dist/bin.js --config ./audit-ci.jsonc
       - run: npm run coverage
-      - run: npm run lint
-      - run: npm run format -- --check
+      - run: npm run check:ci

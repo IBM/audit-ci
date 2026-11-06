@@ -5,14 +5,9 @@ import * as path from "path";
 import { hideBin } from "yargs/helpers";
 import yargs from "yargs";
 import Allowlist, { type AllowlistRecord } from "./allowlist.js";
-import {
-  mapVulnerabilityLevelInput,
-  type VulnerabilityLevels,
-} from "./map-vulnerability.js";
+import { mapVulnerabilityLevelInput, type VulnerabilityLevels } from "./map-vulnerability.js";
 
-function mapReportTypeInput(
-  config: Pick<AuditCiPreprocessedConfig, "report-type">,
-) {
+function mapReportTypeInput(config: Pick<AuditCiPreprocessedConfig, "report-type">) {
   const { "report-type": reportType } = config;
   switch (reportType) {
     case "full":
@@ -21,16 +16,15 @@ function mapReportTypeInput(
       return reportType;
     }
     default: {
+      reportType satisfies never;
       throw new Error(
-        `Invalid report type: ${reportType}. Should be \`['important', 'full', 'summary']\`.`,
+        `Invalid report type: ${reportType as string}. Should be \`['important', 'full', 'summary']\`.`,
       );
     }
   }
 }
 
-function mapExtraArgumentsInput(
-  config: Pick<AuditCiPreprocessedConfig, "extra-args">,
-) {
+function mapExtraArgumentsInput(config: Pick<AuditCiPreprocessedConfig, "extra-args">) {
   // These args will often be flags for another command, so we
   // want to have some way of escaping args that start with a -.
   // We'll look for and remove a single backslash at the start, if present.
@@ -145,10 +139,7 @@ export type AuditCiFullConfig = {
   [K in keyof ComplexConfig]: ComplexConfig[K];
 };
 
-type AuditCiConfigComplex = Omit<
-  Partial<AuditCiFullConfig>,
-  "levels" | "allowlist"
-> & {
+type AuditCiConfigComplex = Omit<Partial<AuditCiFullConfig>, "levels" | "allowlist"> & {
   allowlist?: AllowlistRecord[];
   low?: boolean;
   moderate?: boolean;
@@ -191,7 +182,8 @@ function resolvePackageManagerType(
       );
     }
     default: {
-      throw new Error(`Unexpected package manager argument: ${pmArgument}`);
+      pmArgument satisfies never;
+      throw new Error(`Unexpected package manager argument: ${pmArgument as string}`);
     }
   }
 }
@@ -220,19 +212,9 @@ const defaults = {
 function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
   const allowlist = Allowlist.mapConfigToAllowlist(argv);
 
-  const {
-    low,
-    moderate,
-    high,
-    critical,
-    "package-manager": packageManager,
-    directory,
-  } = argv;
+  const { low, moderate, high, critical, "package-manager": packageManager, directory } = argv;
 
-  const resolvedPackageManager = resolvePackageManagerType(
-    packageManager,
-    directory,
-  );
+  const resolvedPackageManager = resolvePackageManagerType(packageManager, directory);
 
   const result: AuditCiFullConfig = {
     ...argv,
@@ -250,17 +232,11 @@ function mapArgvToAuditCiConfig(argv: AuditCiPreprocessedConfig) {
   return result;
 }
 
-export function mapAuditCiConfigToAuditCiFullConfig(
-  config: AuditCiConfig,
-): AuditCiFullConfig {
-  const packageManager =
-    config["package-manager"] ?? defaults["package-manager"];
+export function mapAuditCiConfigToAuditCiFullConfig(config: AuditCiConfig): AuditCiFullConfig {
+  const packageManager = config["package-manager"] ?? defaults["package-manager"];
   const directory = config.directory ?? defaults.directory;
 
-  const resolvedPackageManager = resolvePackageManagerType(
-    packageManager,
-    directory,
-  );
+  const resolvedPackageManager = resolvePackageManagerType(packageManager, directory);
 
   const allowlist = Allowlist.mapConfigToAllowlist({
     allowlist: config.allowlist ?? defaults.allowlist,
@@ -388,14 +364,12 @@ export async function runYargs(): Promise<AuditCiFullConfig> {
       },
       "retry-count": {
         default: defaults["retry-count"],
-        describe:
-          "The number of attempts audit-ci calls an unavailable registry before failing",
+        describe: "The number of attempts audit-ci calls an unavailable registry before failing",
         type: "number",
       },
       "pass-enoaudit": {
         default: defaults["pass-enoaudit"],
-        describe:
-          "Pass if no audit is performed due to the registry returning ENOAUDIT",
+        describe: "Pass if no audit is performed due to the registry returning ENOAUDIT",
         type: "boolean",
       },
       "skip-dev": {

@@ -32,7 +32,8 @@ function getAuditor(
       return pnpmAuditor;
     }
     default: {
-      throw new Error(`Invalid package manager: ${packageManager}`);
+      packageManager satisfies never;
+      throw new Error(`Invalid package manager: ${packageManager as string}`);
     }
   }
 }
@@ -55,9 +56,7 @@ async function audit(
       return result;
     } catch (error: unknown) {
       const message =
-        error && typeof error === "object" && "message" in error
-          ? error.message
-          : error;
+        error && typeof error === "object" && "message" in error ? error.message : error;
       const isRetryableMessage =
         typeof message === "string" &&
         PARTIAL_RETRY_ERROR_MSG[packageManager].some((retryErrorMessage) =>
@@ -76,7 +75,7 @@ async function audit(
           yellow,
           `ACTION RECOMMENDED: An audit could not performed due to ${maxRetryCount} audits that resulted in ENOAUDIT. Perform an audit manually and verify that no significant vulnerabilities exist before merging.`,
         );
-        return;
+        return undefined;
       }
       throw error;
     }

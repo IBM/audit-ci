@@ -25,9 +25,7 @@ export function getAllowlistId(nspRecord: NSPRecord | GitHubNSPRecord): string {
  * @param nspRecord NSPRecord object.
  * @returns The NSPContent object.
  */
-export function getNSPContent(
-  nspRecord: NSPRecord | GitHubNSPRecord,
-): NSPContent {
+export function getNSPContent(nspRecord: NSPRecord | GitHubNSPRecord): NSPContent {
   const values = Object.values(nspRecord);
   if (values.length > 0) {
     return values[0];
@@ -56,10 +54,7 @@ export function getNSPContent(
  * @param now The current date. The default is initialized to the current date.
  * @returns True if the record is active, false otherwise.
  */
-export function isNSPRecordActive(
-  nspRecord: NSPRecord,
-  now = new Date(),
-): boolean {
+export function isNSPRecordActive(nspRecord: NSPRecord, now = new Date()): boolean {
   const content = getNSPContent(nspRecord);
   if (!content.active) {
     return false;

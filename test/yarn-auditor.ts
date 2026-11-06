@@ -2,25 +2,21 @@ import semver, { SemVer } from "semver";
 import { describe, expect, it as unskippableIt } from "vitest";
 import Allowlist from "../lib/allowlist.js";
 import audit from "../lib/audit.js";
-import {
-  config as baseConfig,
-  summaryWithDefault,
-  testDirectory,
-} from "./common.js";
-// import untypedReportYarn2Critical from "./yarn-2-critical/output.json";
-// import untypedReportYarn2High from "./yarn-2-high/output.json";
-// import untypedReportYarn2Low from "./yarn-2-low/output.json";
-// import untypedReportYarn2Moderate from "./yarn-2-moderate/output.json";
-// import untypedReportYarn2SkipDevelopment from "./yarn-2-skip-dev/output.json";
-// import untypedReportYarn2Workspace from "./yarn-2-workspace/output.json";
-// import untypedReportYarn2WorkspaceEmpty from "./yarn-2-workspace-empty/output.json";
-// import untypedReportYarn3Critical from "./yarn-3-critical/output.json";
-// import untypedReportYarn3High from "./yarn-3-high/output.json";
-// import untypedReportYarn3Low from "./yarn-3-low/output.json";
-// import untypedReportYarn3Moderate from "./yarn-3-moderate/output.json";
-// import untypedReportYarn3SkipDevelopment from "./yarn-3-skip-dev/output.json";
-// import untypedReportYarn3Workspace from "./yarn-3-workspace/output.json";
-// import untypedReportYarn3WorkspaceEmpty from "./yarn-3-workspace-empty/output.json";
+import { config as baseConfig, summaryWithDefault, testDirectory } from "./common.js";
+// import untypedReportYarn2Critical from "./yarn-2-critical/output.json" with { type: "json" };
+// import untypedReportYarn2High from "./yarn-2-high/output.json" with { type: "json" };
+// import untypedReportYarn2Low from "./yarn-2-low/output.json" with { type: "json" };
+// import untypedReportYarn2Moderate from "./yarn-2-moderate/output.json" with { type: "json" };
+// import untypedReportYarn2SkipDevelopment from "./yarn-2-skip-dev/output.json" with { type: "json" };
+// import untypedReportYarn2Workspace from "./yarn-2-workspace/output.json" with { type: "json" };
+// import untypedReportYarn2WorkspaceEmpty from "./yarn-2-workspace-empty/output.json" with { type: "json" };
+// import untypedReportYarn3Critical from "./yarn-3-critical/output.json" with { type: "json" };
+// import untypedReportYarn3High from "./yarn-3-high/output.json" with { type: "json" };
+// import untypedReportYarn3Low from "./yarn-3-low/output.json" with { type: "json" };
+// import untypedReportYarn3Moderate from "./yarn-3-moderate/output.json" with { type: "json" };
+// import untypedReportYarn3SkipDevelopment from "./yarn-3-skip-dev/output.json" with { type: "json" };
+// import untypedReportYarn3Workspace from "./yarn-3-workspace/output.json" with { type: "json" };
+// import untypedReportYarn3WorkspaceEmpty from "./yarn-3-workspace-empty/output.json" with { type: "json" };
 
 // const reportYarn2Critical =
 //   untypedReportYarn2Critical as Yarn2And3AuditReport.AuditResponse;
@@ -60,28 +56,25 @@ export interface PerformAuditTests {
   yarnVersion: SemVer;
 }
 
-export function performAuditTests({
-  yarnAbsolutePath,
-  yarnVersion,
-}: PerformAuditTests) {
+export function performAuditTests({ yarnAbsolutePath, yarnVersion }: PerformAuditTests) {
   const { major: majorVersion } = yarnVersion;
 
-  const config = (
-    additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">,
-  ) =>
+  const config = (additions: Omit<Parameters<typeof baseConfig>[0], "package-manager">) =>
     baseConfig({
       ...additions,
       "package-manager": "yarn",
       _yarn: yarnAbsolutePath,
     });
 
-  const it =
-    !canRunYarnBerry && majorVersion > 1 ? unskippableIt.skip : unskippableIt;
+  const it = !canRunYarnBerry && majorVersion > 1 ? unskippableIt.skip : unskippableIt;
 
   // To modify what slow times are, need to use
   // function() {} instead of () => {}
   describe(
     `yarn-${majorVersion}-auditor`,
+    {
+      timeout: 10_000,
+    },
     function testYarnAuditor() {
       it("prints full report with critical severity", async () => {
         const summary = await audit(
@@ -318,9 +311,6 @@ export function performAuditTests({
           }),
           (_summary) => _summary,
         ));
-    },
-    {
-      timeout: 10_000,
     },
   );
 }
