@@ -1,6 +1,6 @@
 {
   "name": "audit-ci",
-  "version": "7.1.0",
+  "version": "8.0.0-beta.1",
   "description": "Audits NPM, Yarn, and PNPM projects in CI environments",
   "keywords": [
     "actions",
@@ -27,32 +27,33 @@
     "README.md"
   ],
   "type": "module",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "tag": "next"
   },
   "scripts": {
     "check": "oxlint . && oxfmt .",
     "check:ci": "oxlint . --deny-warnings && oxfmt . --check",
     "tsc": "tsc -p tsconfig.build.json",
-    "build": "concurrently \"tsc -p tsconfig.build.json --noEmit\" \"tsup lib/index.ts lib/bin.ts\"",
+    "build": "node scripts/build.mjs",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "check-types": "tsc -p tsconfig.json",
-    "schema": "ts-json-schema-generator -p ./docs/schema.d.ts -o ./docs/schema.json -t Schema"
+    "schema": "ts-json-schema-generator -p ./docs/schema.d.ts -o ./docs/schema.json -t Schema",
+    "test:package": "node scripts/test-package.mjs",
+    "prepack": "npm run build"
   },
   "dependencies": {
+    "@types/node": "*",
+    "audit-types": "^0.7.0",
     "cross-spawn": "^7.0.6",
     "escape-string-regexp": "^4.0.0",
     "event-stream": "4.0.1",
@@ -64,31 +65,26 @@
     "yargs": "^17.0.0"
   },
   "devDependencies": {
-    "@tsconfig/node26": "^26.0.1",
+    "@tsconfig/node22": "^22.0.0",
     "@types/cross-spawn": "^6.0.6",
     "@types/event-stream": "^4.0.5",
     "@types/jju": "^1.4.5",
     "@types/jsonstream-next": "^3.0.3",
-    "@types/node": "^26.6.6",
     "@types/readline-transform": "^1.0.5",
     "@types/semver": "^7.8.0",
     "@types/yargs": "^17.0.35",
     "@vitest/coverage-v8": "^5.1.0",
-    "audit-types": "^0.7.0",
-    "concurrently": "^10.0.6",
     "oxfmt": "^0.76.0",
     "oxlint": "^1.91.0",
     "oxlint-tsgolint": "^7.0.2006",
     "ts-json-schema-generator": "^2.9.0",
-    "tsup": "^9.0.0",
     "typescript": "7.0.2",
     "vitest": "^5.1.0"
   },
   "engines": {
-    "node": ">=21"
+    "node": ">=22.12.0"
   },
   "allowScripts": {
-    "esbuild@0.28.2": true,
     "fsevents@2.3.3": true
   }
 }

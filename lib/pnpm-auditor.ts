@@ -30,12 +30,12 @@ async function runPnpmAudit(config: AuditCiFullConfig): Promise<PNPMAuditReport.
     stderrBuffer.push(line);
   }
 
-  const arguments_ = ["audit", "--json"];
+  const cliArguments = ["audit", "--json"];
   if (registry) {
     const pnpmVersion = getPnpmVersion(directory);
 
     if (pnpmAuditSupportsRegistry(pnpmVersion)) {
-      arguments_.push("--registry", registry);
+      cliArguments.push("--registry", registry);
     } else {
       console.warn(
         yellow,
@@ -44,13 +44,13 @@ async function runPnpmAudit(config: AuditCiFullConfig): Promise<PNPMAuditReport.
     }
   }
   if (skipDevelopmentDependencies) {
-    arguments_.push("--prod");
+    cliArguments.push("--prod");
   }
   if (extraArguments) {
-    arguments_.push(...extraArguments);
+    cliArguments.push(...extraArguments);
   }
   const options = { cwd: directory };
-  await runProgram(pnpmExec, arguments_, options, outListener, errorListener);
+  await runProgram(pnpmExec, cliArguments, options, outListener, errorListener);
   if (stderrBuffer.length > 0) {
     throw new Error(`Invocation of pnpm audit failed:\n${stderrBuffer.join("\n")}`);
   }

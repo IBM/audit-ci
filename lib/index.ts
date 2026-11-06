@@ -1,3 +1,4 @@
+/// <reference types="node" preserve="true" />
 export { default as Allowlist, AllowlistRecord } from "./allowlist.js";
 export { runAuditCi } from "./audit-ci.js";
 export {

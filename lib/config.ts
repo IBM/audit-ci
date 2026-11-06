@@ -292,7 +292,11 @@ export function mapAuditCiConfigToAuditCiFullConfig(config: AuditCiConfig): Audi
 }
 
 export async function runYargs(): Promise<AuditCiFullConfig> {
+  const { version } = JSON.parse(
+    readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+  ) as { version: string };
   const { argv } = yargs(hideBin(process.argv))
+    .version(version)
     .config("config", (configPath) =>
       // Supports JSON, JSONC, & JSON5
       jju.parse(readFileSync(configPath, "utf8"), {

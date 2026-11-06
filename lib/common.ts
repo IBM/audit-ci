@@ -121,13 +121,9 @@ export function runProgram(
   command: string,
   cliArguments: readonly string[],
   options: SpawnOptionsWithoutStdio,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stdoutListener: (data: any) => void,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stderrListener: (data: any) => void,
 ) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const transform = new ReadlineTransform({ skipEmpty: true });
   const proc = spawn(command, cliArguments, options);
   let recentMessage: string;

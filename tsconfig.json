@@ -1,10 +1,9 @@
 {
-  "extends": "@tsconfig/node26/tsconfig.json",
+  "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
     "noEmit": true,
     "importHelpers": true,
-    // Only needed for tests, disabled in build
     "resolveJsonModule": true
   },
   "include": ["lib", "test"]

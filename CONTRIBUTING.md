@@ -25,6 +25,8 @@ For a list of the maintainers, see the [MAINTAINERS.md](MAINTAINERS.md) page.
 
 ## Setup
 
+Use Node 22.12.0 or newer. CI tests that minimum version and the current Node 24 and 26 releases.
+
 1. `git clone git@github.com:IBM/audit-ci.git`
 1. `cd audit-ci`
 1. `npm install`
@@ -32,3 +34,7 @@ For a list of the maintainers, see the [MAINTAINERS.md](MAINTAINERS.md) page.
 ## Testing
 
 Tests use Vitest in the `test` directory. Run `npm test -- --run` for the full suite, `npm run coverage` to check the 90% coverage thresholds, and `npm run check:ci` for lint and formatting checks. Yarn reporting tests use recorded audit output so registry changes do not affect their results; subprocess tests cover command arguments and error handling separately.
+
+`npm run build` cleans `dist` and emits ESM JavaScript and TypeScript declarations using TypeScript directly. `npm run test:package` builds and packs the package, installs it into a temporary consumer project, and checks the CLI, ESM imports, CommonJS dynamic imports, and declarations. The package check requires registry access to install production dependencies. `npm pack` also rebuilds automatically through `prepack`.
+
+The v8 prerelease uses the `next` npm tag through `publishConfig.tag`. When preparing the stable `8.0.0` release, change that tag to `latest` together with the version.

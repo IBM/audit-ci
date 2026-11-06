@@ -15,6 +15,7 @@ vi.mock("yargs", () => ({
         return chain;
       }),
       options: vi.fn().mockReturnThis(),
+      version: vi.fn().mockReturnThis(),
       help: vi.fn().mockReturnThis(),
       argv: Promise.resolve({
         l: false,
