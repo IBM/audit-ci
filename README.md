@@ -56,7 +56,7 @@ Also, it suppresses an advisory of `axios` and a transitive advisory of `react-s
 // audit-ci.jsonc
 {
   // $schema provides code completion hints to IDEs.
-  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "$schema": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   "moderate": true,
   "allowlist": [
     // Axios denial of service https://github.com/advisories/GHSA-42xw-2xvc-qx8m
@@ -198,6 +198,8 @@ You can also use an object notation ([NSPRecord](#nsprecord-fields)) in which yo
 ]
 ```
 
+An object may contain multiple module names, advisory IDs, or paths. Each key is processed independently using its own `active`, `expiry`, and `notes` fields.
+
 #### NSPRecord Fields
 
 | Attribute | Type             | Description                                               | Example                                                                                                                                                                                                                                                                                                                      |
@@ -294,7 +296,7 @@ A config file can manage auditing preferences for `audit-ci`. The config file's 
 
 ```txt
 {
-  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "$schema": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
   "low": <boolean>, // [Optional] defaults `false`
   "moderate": <boolean>, // [Optional] defaults `false`
@@ -327,7 +329,7 @@ With a `JSONC` config file, execute with `npx audit-ci --config ./audit-ci.jsonc
 // audit-ci.jsonc
 {
   // $schema provides code completion hints to IDEs.
-  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "$schema": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   "moderate": true,
   "allowlist": [
     // Axios denial of service https://github.com/advisories/GHSA-42xw-2xvc-qx8m
@@ -354,7 +356,7 @@ With a `JSON5` config file:
 ```json5
 // JSON5 files support trailing commas and more succinct syntax than JSONC files.
 {
-  $schema: "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  $schema: "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   low: true,
   allowlist: ["GHSA-38f5-ghc2-fcmv", "lodash", "base64url"],
   "show-found": false,
@@ -373,7 +375,7 @@ With a `JSONC` config file:
 
 ```jsonc
 {
-  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "$schema": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   "critical": true,
   "report-type": "full",
 }
@@ -391,7 +393,7 @@ With a `JSONC` config file:
 
 ```jsonc
 {
-  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "$schema": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   "report-type": "summary",
 }
 ```
@@ -408,7 +410,7 @@ With a `JSONC` config file, in a project on Yarn Berry v3.3.0 or later:
 
 ```jsonc
 {
-  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "$schema": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   "extra-args": ["--exclude", "example"],
 }
 ```
@@ -425,7 +427,7 @@ npx audit-ci@^7 --extra-args '\--exclude' example
 
 ```jsonc
 {
-  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "$schema": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   "low": true,
   "package-manager": "auto",
   "allowlist": [
@@ -450,7 +452,7 @@ npx audit-ci@^7 --directory test/npm-config-file --config test/npm-config-file/a
 
 ```json5
 {
-  $schema: "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  $schema: "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
   moderate: true,
   "package-manager": "pnpm",
   allowlist: [

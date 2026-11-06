@@ -27,7 +27,7 @@
       "additionalProperties": false,
       "properties": {
         "$schema": {
-          "default": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+          "default": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
           "type": "string"
         },
         "allowlist": {

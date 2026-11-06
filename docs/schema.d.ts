@@ -3,7 +3,7 @@
 import { type NSPRecord } from "../lib/nsp-record.js";
 
 export interface Schema {
-  /** @default https://github.com/IBM/audit-ci/raw/main/docs/schema.json */
+  /** @default https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json */
   $schema?: string;
 
   /**
