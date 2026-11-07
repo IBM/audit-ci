@@ -4,7 +4,7 @@ import { spawn } from "cross-spawn";
 import escapeStringRegexp from "escape-string-regexp";
 import eventStream from "event-stream";
 import * as JSONStream from "jsonstream-next";
-import ReadlineTransform from "readline-transform";
+import { ReadlineTransform } from "readline-transform";
 import type Allowlist from "./allowlist.js";
 import { blue, yellow } from "./colors.js";
 import { type AuditCiConfig } from "./config.js";
